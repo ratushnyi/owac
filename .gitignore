@@ -70,3 +70,10 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+Once with a Colonist/Library
+Once with a Colonist/Logs
+Once with a Colonist/UserSettings
+Once with a Colonist/obj
+Once with a Colonist/Once with a Colonist.sln.DotSettings
+.DS_Store
+Once with a Colonist/Temp
