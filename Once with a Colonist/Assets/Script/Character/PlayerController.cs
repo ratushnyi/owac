@@ -20,7 +20,7 @@ namespace TendedTarsier.Character
         private Tilemap _currentGround;
 
         [Inject]
-        private void Construct(GameplayConfig gameplayConfig)
+        private void Construct(GameplayConfig gameplayConfig, GeneralProfile profile)
         {
             _gameplayConfig = gameplayConfig;
         }
@@ -65,6 +65,14 @@ namespace TendedTarsier.Character
         private void ProcessTools()
         {
             if (Gamepad.current.xButton.isPressed)
+            {
+                if (_currentTilePosition != null)
+                {
+                    _currentGround.SetTile(_currentTilePosition.Value, _gameplayConfig.PerformedTile);
+                }
+            }
+            
+            if (Gamepad.current.yButton.isPressed)
             {
                 if (_currentTilePosition != null)
                 {
