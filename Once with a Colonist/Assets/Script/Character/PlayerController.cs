@@ -1,0 +1,145 @@
+﻿using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.Tilemaps;
+using Zenject;
+
+namespace TendedTarsier.Character
+{
+    public class PlayerController : MonoBehaviour
+    {
+        private static readonly int Direction = Animator.StringToHash("Direction");
+        private static readonly int IsMoving = Animator.StringToHash("IsMoving");
+
+        private Rigidbody2D _rigidbody2D;
+        private Animator _animator;
+        private GameplayConfig _gameplayConfig;
+
+        private Vector3Int _currentDirection = Vector3Int.down;
+        private Vector3Int _previousTilePosition;
+        private Vector3Int? _currentTilePosition;
+        private Tilemap _currentGround;
+
+        [Inject]
+        private void Construct(GameplayConfig gameplayConfig)
+        {
+            _gameplayConfig = gameplayConfig;
+        }
+
+        private void Start()
+        {
+            _rigidbody2D = GetComponent<Rigidbody2D>();
+            _animator = GetComponent<Animator>();
+            
+            _previousTilePosition = Vector3Int.RoundToInt(transform.position);
+        }
+
+        private void FixedUpdate()
+        {
+            ProcessMovement();
+        }
+
+        private void Update()
+        {
+            ProcessTools();
+        }
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.CompareTag("Ground"))
+            {
+                _currentGround = other.GetComponent<Tilemap>();
+                ProcessTile();
+            }
+        }
+
+        private void OnTriggerExit2D(Collider2D other)
+        {
+            if (other.CompareTag("Ground"))
+            {
+                if (_currentGround.gameObject == other.gameObject)
+                {
+                    _currentGround = null;
+                    _currentTilePosition = null;
+                }
+            }
+        }
+
+        private void ProcessTools()
+        {
+            if (Gamepad.current.xButton.isPressed)
+            {
+                if (_currentTilePosition != null)
+                {
+                    _currentGround.SetTile(_currentTilePosition.Value, _gameplayConfig.PerformedTile);
+                }
+            }
+        }
+
+        private void ProcessMovement()
+        {
+            var direction = Gamepad.current.leftStick.ReadValue();
+            if (Gamepad.current.leftStick.IsActuated())
+            {
+                if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
+                {
+                    switch (direction.x)
+                    {
+                        case < 0:
+                            _currentDirection = Vector3Int.left;
+                            _animator.SetInteger(Direction, 3);
+                            break;
+                        case > 0:
+                            _currentDirection = Vector3Int.right;
+                            _animator.SetInteger(Direction, 2);
+                            break;
+                    }
+                }
+
+                if (Mathf.Abs(direction.x) < Mathf.Abs(direction.y))
+                {
+                    switch (direction.y)
+                    {
+                        case > 0:
+                            _currentDirection = Vector3Int.up;
+                            _animator.SetInteger(Direction, 1);
+                            break;
+                        case < 0:
+                            _currentDirection = Vector3Int.down;
+                            _animator.SetInteger(Direction, 0);
+                            break;
+                    }
+                }
+
+                ProcessTile();
+            }
+
+            var modifier = Gamepad.current.aButton.isPressed ? 2 : 1;
+            _rigidbody2D.velocity = _gameplayConfig.MovementSpeed * modifier * direction;
+            _animator.SetBool(IsMoving, direction.magnitude > 0);
+        }
+
+        private void ProcessTile()
+        {
+            if (_currentGround != null)
+            {
+                var currentPosition = _currentGround.WorldToCell(transform.position + _currentDirection);
+
+                if (currentPosition != _previousTilePosition)
+                {
+                    _currentGround.SetColor(_previousTilePosition, Color.white);
+                    if (_currentGround.GetTile(currentPosition) != null)
+                    {
+                        _currentGround.SetTileFlags(currentPosition, TileFlags.None);
+                        _currentGround.SetColor(currentPosition, Color.red);
+                        _currentTilePosition = currentPosition;
+                        _previousTilePosition = currentPosition;
+                    }
+                    else
+                    {
+                        _currentTilePosition = null;
+                    }
+                }
+            }
+        }
+    }
+}
