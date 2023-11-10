@@ -69,8 +69,6 @@ namespace TendedTarsier.Character
                 if (_currentTilePosition != null)
                 {
                     _currentGround.SetTile(_currentTilePosition.Value, _gameplayConfig.PerformedTile);
-                    _previousTilePosition = null;
-                    ProcessTiles();
                 }
             }
         }
@@ -85,11 +83,11 @@ namespace TendedTarsier.Character
                     switch (direction.x)
                     {
                         case < 0:
-                            _currentDirection = Vector3Int.left;
+                            direction = Vector2.left;
                             _animator.SetInteger(Direction, 3);
                             break;
                         case > 0:
-                            _currentDirection = Vector3Int.right;
+                            direction = Vector2.right;
                             _animator.SetInteger(Direction, 2);
                             break;
                     }
@@ -100,11 +98,11 @@ namespace TendedTarsier.Character
                     switch (direction.y)
                     {
                         case > 0:
-                            _currentDirection = Vector3Int.up;
+                            direction = Vector2.up;
                             _animator.SetInteger(Direction, 1);
                             break;
                         case < 0:
-                            _currentDirection = Vector3Int.down;
+                            direction = Vector2.down;
                             _animator.SetInteger(Direction, 0);
                             break;
                     }
@@ -113,6 +111,7 @@ namespace TendedTarsier.Character
                 ProcessTiles();
             }
 
+            _currentDirection = Vector3Int.RoundToInt(direction);
             var modifier = Gamepad.current.aButton.isPressed ? 2 : 1;
             _rigidbody2D.velocity = _gameplayConfig.MovementSpeed * modifier * direction;
             _animator.SetBool(IsMoving, direction.magnitude > 0);
@@ -122,7 +121,9 @@ namespace TendedTarsier.Character
         {
             if (_currentGround != null)
             {
-                var currentPosition = _currentGround.WorldToCell(transform.position + _currentDirection);
+                var transformPosition = transform.position;
+                var playerPosition = new Vector3Int(Mathf.FloorToInt(transformPosition.x), Mathf.RoundToInt(transformPosition.y));
+                var currentPosition = _currentGround.WorldToCell(playerPosition + _currentDirection);
 
                 if (_previousTilePosition == null || currentPosition != _previousTilePosition)
                 {
