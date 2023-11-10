@@ -134,7 +134,6 @@ namespace TendedTarsier.Character
                     var tile = _currentGround.GetTile(currentPosition);
                     if (tile != null)
                     {
-                        _currentGround.SetTileFlags(currentPosition, TileFlags.None);
                         _currentGround.SetColor(currentPosition, Color.red);
                         _currentTilePosition = currentPosition;
                         _previousTilePosition = currentPosition;
