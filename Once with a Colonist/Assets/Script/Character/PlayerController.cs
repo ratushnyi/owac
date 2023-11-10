@@ -15,7 +15,7 @@ namespace TendedTarsier.Character
         private GameplayConfig _gameplayConfig;
 
         private Vector3Int _currentDirection = Vector3Int.down;
-        private Vector3Int _previousTilePosition;
+        private Vector3Int? _previousTilePosition;
         private Vector3Int? _currentTilePosition;
         private Tilemap _currentGround;
 
@@ -29,8 +29,6 @@ namespace TendedTarsier.Character
         {
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
-            
-            _previousTilePosition = Vector3Int.RoundToInt(transform.position);
         }
 
         private void FixedUpdate()
@@ -48,7 +46,7 @@ namespace TendedTarsier.Character
             if (other.CompareTag("Ground"))
             {
                 _currentGround = other.GetComponent<Tilemap>();
-                ProcessTile();
+                ProcessTiles();
             }
         }
 
@@ -71,6 +69,8 @@ namespace TendedTarsier.Character
                 if (_currentTilePosition != null)
                 {
                     _currentGround.SetTile(_currentTilePosition.Value, _gameplayConfig.PerformedTile);
+                    _previousTilePosition = null;
+                    ProcessTiles();
                 }
             }
         }
@@ -110,7 +110,7 @@ namespace TendedTarsier.Character
                     }
                 }
 
-                ProcessTile();
+                ProcessTiles();
             }
 
             var modifier = Gamepad.current.aButton.isPressed ? 2 : 1;
@@ -118,16 +118,21 @@ namespace TendedTarsier.Character
             _animator.SetBool(IsMoving, direction.magnitude > 0);
         }
 
-        private void ProcessTile()
+        private void ProcessTiles()
         {
             if (_currentGround != null)
             {
                 var currentPosition = _currentGround.WorldToCell(transform.position + _currentDirection);
 
-                if (currentPosition != _previousTilePosition)
+                if (_previousTilePosition == null || currentPosition != _previousTilePosition)
                 {
-                    _currentGround.SetColor(_previousTilePosition, Color.white);
-                    if (_currentGround.GetTile(currentPosition) != null)
+                    if (_previousTilePosition != null)
+                    {
+                        _currentGround.SetColor(_previousTilePosition.Value, Color.white);
+                    }
+
+                    var tile = _currentGround.GetTile(currentPosition);
+                    if (tile != null)
                     {
                         _currentGround.SetTileFlags(currentPosition, TileFlags.None);
                         _currentGround.SetColor(currentPosition, Color.red);
