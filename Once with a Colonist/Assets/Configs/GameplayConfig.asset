@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: GameplayConfig
   m_EditorClassIdentifier: 
   <MovementSpeed>k__BackingField: 2
+  <PerformedTile>k__BackingField: {fileID: 11400000, guid: 96945c2584c47b44ebe75d015b3cde49,
+    type: 2}
