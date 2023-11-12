@@ -1,23 +1,28 @@
-using NaughtyAttributes;
+using System.Collections.Generic;
 using TendedTarsier;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Zenject;
 
 public class GeneralInstaller : MonoInstaller
 {
-    [SerializeField, Scene]
-    private string _nextScene;
-
     [SerializeField]
     private GeneralConfig _generalConfig;
 
     public override void InstallBindings()
     {
-        Container.Bind<GeneralProfile>().FromNew().AsSingle();
-        Container.Bind<ProfileService>().FromNew().AsSingle();
+        BindProfiles();
+        
         Container.Bind<GeneralConfig>().FromInstance(_generalConfig).AsSingle();
+    }
 
-        // SceneManager.LoadScene(_nextScene, LoadSceneMode.Additive);
+    private void BindProfiles()
+    {
+        var profileSections = new List<ProfileBase>();
+        
+        var generalProfile = new GameplayProfile();
+        Container.Bind<GameplayProfile>().FromInstance(generalProfile).AsSingle();
+        profileSections.Add(generalProfile);
+
+        Container.Bind<ProfileService>().FromInstance(new ProfileService(profileSections)).AsSingle();
     }
 }
