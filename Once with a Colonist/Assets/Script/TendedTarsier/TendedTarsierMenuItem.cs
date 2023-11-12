@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.IO;
 using TendedTarsier;
 using UnityEditor;
@@ -16,3 +17,4 @@ public static class TendedTarsierMenuItem
         }
     }
 }
+#endif

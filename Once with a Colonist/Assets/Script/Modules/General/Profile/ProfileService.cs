@@ -8,7 +8,7 @@ namespace TendedTarsier
 {
     public class ProfileService
     {
-        public static readonly string ProfilesDirectory = "Settings/Profiles";
+        public static readonly string ProfilesDirectory = Path.Combine(Application.persistentDataPath, "Profiles");
 
         public ProfileService(List<ProfileBase> profiles)
         {
