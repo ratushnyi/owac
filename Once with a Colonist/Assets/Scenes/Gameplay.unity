@@ -5011,6 +5011,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c596e3c4abc17400ba7c1953cb4d3a74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tilemaps:
+  - {fileID: 376144705}
+  - {fileID: 1216595915}
+  - {fileID: 115708950}
+  _tilemapConfig: {fileID: 11400000, guid: 64f7cbd12842b4b44abac05e62cd0230, type: 2}
   _gameplayConfig: {fileID: 11400000, guid: 56b27b7ebda124fd9800526cb58cd2bb, type: 2}
   _gameplayController: {fileID: 1622717957}
 --- !u!4 &255009185
@@ -37239,17 +37244,17 @@ PrefabInstance:
     - target: {fileID: 5628018141983903106, guid: ef67ba864d1ecc042b5f4cf48455c0a6,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.03444671
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5628018141983903106, guid: ef67ba864d1ecc042b5f4cf48455c0a6,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.13771467
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5628018141983903106, guid: ef67ba864d1ecc042b5f4cf48455c0a6,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.09255194
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5628018141983903106, guid: ef67ba864d1ecc042b5f4cf48455c0a6,
         type: 3}

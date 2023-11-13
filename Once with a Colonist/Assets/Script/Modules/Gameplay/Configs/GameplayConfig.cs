@@ -8,8 +8,5 @@ namespace TendedTarsier
     {
         [field: SerializeField]
         public float MovementSpeed { get; set; }
-
-        [field: SerializeField]
-        public TileBase PerformedTile { get; set; }
     }
 }
