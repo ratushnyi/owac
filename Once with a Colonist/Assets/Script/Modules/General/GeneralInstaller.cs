@@ -22,6 +22,10 @@ public class GeneralInstaller : MonoInstaller
         var generalProfile = new GameplayProfile();
         Container.Bind<GameplayProfile>().FromInstance(generalProfile).AsSingle();
         profileSections.Add(generalProfile);
+        
+        var tilemapProfile = new TilemapProfile();
+        Container.Bind<TilemapProfile>().FromInstance(tilemapProfile).AsSingle();
+        profileSections.Add(tilemapProfile);
 
         Container.Bind<ProfileService>().FromInstance(new ProfileService(profileSections)).AsSingle();
     }

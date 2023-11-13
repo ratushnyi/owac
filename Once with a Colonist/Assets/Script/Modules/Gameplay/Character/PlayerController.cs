@@ -11,6 +11,8 @@ namespace TendedTarsier.Character
     {
         private readonly int _directionAnimatorKey = Animator.StringToHash("Direction");
         private readonly int _isMovingAnimatorKey = Animator.StringToHash("IsMoving");
+        private readonly CompositeDisposable _compositeDisposable = new();
+        private readonly ReactiveProperty<Tilemap> _currentTilemap = new();
 
         private IObservable<InputAction.CallbackContext> _onMovePerformed;
         private IObservable<InputAction.CallbackContext> _onXButtonPerformed;
@@ -21,19 +23,18 @@ namespace TendedTarsier.Character
         private Rigidbody2D _rigidbody2D;
         private Animator _animator;
 
-        private Vector3Int _currentDirection = Vector3Int.down;
-        private Vector3Int? _previousTilePosition;
-        private Vector3Int? _currentTilePosition;
-        private Tilemap _currentGround;
+        private Vector3Int _targetPosition;
 
         private GameplayConfig _gameplayConfig;
         private GameplayProfile _gameplayProfile;
         private GameplayController _gameplayController;
         private GameplayInput _gameplayInput;
+        private TilemapService _tilemapService;
 
         [Inject]
-        private void Construct(GameplayConfig gameplayConfig, GameplayProfile gameplayProfile, GameplayController gameplayController, GameplayInput gameplayInput)
+        private void Construct(GameplayConfig gameplayConfig, GameplayProfile gameplayProfile, GameplayController gameplayController, GameplayInput gameplayInput, TilemapService tilemapService)
         {
+            _tilemapService = tilemapService;
             _gameplayInput = gameplayInput;
             _gameplayController = gameplayController;
             _gameplayProfile = gameplayProfile;
@@ -50,6 +51,7 @@ namespace TendedTarsier.Character
             transform.SetLocalPositionAndRotation(_gameplayProfile.PlayerPosition, Quaternion.identity);
 
             _onMovePerformed.First().Subscribe(_ => _gameplayController.OnGameplayStarted());
+            _currentTilemap.SkipLatestValueOnSubscribe().First().Subscribe(_ => OnMove(Vector2.down));
         }
 
         private void InitInput()
@@ -61,6 +63,11 @@ namespace TendedTarsier.Character
             _onBButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonB.performed += t, t => _gameplayInput.Player.ButtonB.performed -= t);
 
             _gameplayInput.Player.Enable();
+
+            _onXButtonPerformed.Subscribe(OnXButtonPerformed).AddTo(_compositeDisposable);
+            _onYButtonPerformed.Subscribe(OnYButtonPerformed).AddTo(_compositeDisposable);
+            _onAButtonPerformed.Subscribe(OnAButtonPerformed).AddTo(_compositeDisposable);
+            _onBButtonPerformed.Subscribe(OnBButtonPerformed).AddTo(_compositeDisposable);
         }
 
         private void FixedUpdate()
@@ -68,17 +75,11 @@ namespace TendedTarsier.Character
             ProcessMovement();
         }
 
-        private void Update()
-        {
-            ProcessTools();
-        }
-
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.CompareTag("Ground"))
             {
-                _currentGround = other.GetComponent<Tilemap>();
-                ProcessTiles();
+                _currentTilemap.Value = other.GetComponent<Tilemap>();
             }
         }
 
@@ -86,103 +87,99 @@ namespace TendedTarsier.Character
         {
             if (other.CompareTag("Ground"))
             {
-                if (_currentGround.gameObject == other.gameObject)
+                if (_currentTilemap.Value.gameObject == other.gameObject)
                 {
-                    _currentGround = null;
-                    _currentTilePosition = null;
+                    _currentTilemap.Value = null;
                 }
             }
         }
 
-        private void ProcessTools()
+        private void OnXButtonPerformed(InputAction.CallbackContext _)
         {
-            if (Gamepad.current.xButton.isPressed)
+            if (_currentTilemap.Value != null)
             {
-                if (_currentTilePosition != null)
-                {
-                    _currentGround.SetTile(_currentTilePosition.Value, _gameplayConfig.PerformedTile);
-                }
+                _tilemapService.ChangedTile(_currentTilemap.Value, _targetPosition, TileModel.TileType.Stone);
+            }
+        }
+        
+        private void OnYButtonPerformed(InputAction.CallbackContext _)
+        {
+            if (_currentTilemap.Value != null)
+            {
+                _tilemapService.ChangedTile(_currentTilemap.Value, _targetPosition, TileModel.TileType.Grass);
+            }
+        }
+        
+        private void OnAButtonPerformed(InputAction.CallbackContext _)
+        {
+            //
+        }
+        
+        private void OnBButtonPerformed(InputAction.CallbackContext _)
+        {
+            if (_currentTilemap.Value != null)
+            {
+                _tilemapService.ChangedTile(_currentTilemap.Value, _targetPosition, TileModel.TileType.Sett);
             }
         }
 
         private void ProcessMovement()
         {
-            var direction = Gamepad.current.leftStick.ReadValue();
+            var moveDirection = Vector2.zero;
             if (Gamepad.current.leftStick.IsActuated())
             {
-                if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
-                {
-                    switch (direction.x)
-                    {
-                        case < 0:
-                            direction = Vector2.left;
-                            _animator.SetInteger(_directionAnimatorKey, 3);
-                            break;
-                        case > 0:
-                            direction = Vector2.right;
-                            _animator.SetInteger(_directionAnimatorKey, 2);
-                            break;
-                    }
-                }
-
-                if (Mathf.Abs(direction.x) < Mathf.Abs(direction.y))
-                {
-                    switch (direction.y)
-                    {
-                        case > 0:
-                            direction = Vector2.up;
-                            _animator.SetInteger(_directionAnimatorKey, 1);
-                            break;
-                        case < 0:
-                            direction = Vector2.down;
-                            _animator.SetInteger(_directionAnimatorKey, 0);
-                            break;
-                    }
-                }
-
-                ProcessTiles();
+                moveDirection = OnMove(Gamepad.current.leftStick.ReadValue());
             }
 
-            _currentDirection = Vector3Int.RoundToInt(direction);
-            var modifier = Gamepad.current.aButton.isPressed ? 2 : 1;
-            _rigidbody2D.velocity = _gameplayConfig.MovementSpeed * modifier * direction;
-            _animator.SetBool(_isMovingAnimatorKey, direction.magnitude > 0);
+            var speedModifier = Gamepad.current.aButton.isPressed ? 2 : 1;
+            _rigidbody2D.velocity = _gameplayConfig.MovementSpeed * speedModifier * moveDirection;
+            _animator.SetBool(_isMovingAnimatorKey, moveDirection.magnitude > 0);
         }
 
-        private void ProcessTiles()
+        private Vector2 OnMove(Vector2 direction)
         {
-            if (_currentGround != null)
+            if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
             {
-                var transformPosition = transform.position;
-                var playerPosition = new Vector3Int(Mathf.FloorToInt(transformPosition.x), Mathf.RoundToInt(transformPosition.y));
-                var currentPosition = _currentGround.WorldToCell(playerPosition + _currentDirection);
-
-                if (_previousTilePosition == null || currentPosition != _previousTilePosition)
+                switch (direction.x)
                 {
-                    if (_previousTilePosition != null)
-                    {
-                        _currentGround.SetColor(_previousTilePosition.Value, Color.white);
-                    }
-
-                    var tile = _currentGround.GetTile(currentPosition);
-                    if (tile != null)
-                    {
-                        _currentGround.SetColor(currentPosition, Color.red);
-                        _currentTilePosition = currentPosition;
-                        _previousTilePosition = currentPosition;
-                    }
-                    else
-                    {
-                        _currentTilePosition = null;
-                    }
+                    case < 0:
+                        direction = Vector2.left;
+                        _animator.SetInteger(_directionAnimatorKey, 3);
+                        break;
+                    case > 0:
+                        direction = Vector2.right;
+                        _animator.SetInteger(_directionAnimatorKey, 2);
+                        break;
                 }
             }
+
+            if (Mathf.Abs(direction.x) < Mathf.Abs(direction.y))
+            {
+                switch (direction.y)
+                {
+                    case > 0:
+                        direction = Vector2.up;
+                        _animator.SetInteger(_directionAnimatorKey, 1);
+                        break;
+                    case < 0:
+                        direction = Vector2.down;
+                        _animator.SetInteger(_directionAnimatorKey, 0);
+                        break;
+                }
+            }
+
+            var transformPosition = transform.position;
+            _targetPosition = new Vector3Int(Mathf.FloorToInt(transformPosition.x), Mathf.RoundToInt(transformPosition.y)) + Vector3Int.RoundToInt(direction);
+            _tilemapService.ProcessTiles(_currentTilemap.Value, _targetPosition);
+
+            return direction;
         }
 
         private void OnDestroy()
         {
             _gameplayProfile.PlayerPosition = transform.position;
             _gameplayProfile.Save();
+            _compositeDisposable.Dispose();
         }
     }
 }
