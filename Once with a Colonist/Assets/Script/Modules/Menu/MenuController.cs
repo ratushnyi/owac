@@ -22,15 +22,15 @@ public class MenuController : MonoBehaviour
     [SerializeField]
     private Button _exitButton;
 
-    private GameplayProfile _gameplayProfile;
+    private PlayerProfile _playerProfile;
     private MenuConfig _menuConfig;
     private GeneralConfig _generalConfig;
 
     [Inject]
-    private void Construct(GameplayProfile gameplayProfile, MenuConfig menuConfig, GeneralConfig generalConfig)
+    private void Construct(PlayerProfile playerProfile, MenuConfig menuConfig, GeneralConfig generalConfig)
     {
         _generalConfig = generalConfig;
-        _gameplayProfile = gameplayProfile;
+        _playerProfile = playerProfile;
         _menuConfig = menuConfig;
     }
 
@@ -59,7 +59,7 @@ public class MenuController : MonoBehaviour
 
     private void InitButtons()
     {
-        _continueButton.interactable = _gameplayProfile.StartDate != null;
+        _continueButton.interactable = _playerProfile.StartDate != null;
         _continueButton.OnClickAsObservable().Subscribe(OnContinueButtonClick).AddTo(_compositeDisposable);
         _newGameButton.OnClickAsObservable().Subscribe(OnNewGameButtonClick).AddTo(_compositeDisposable);
         _exitButton.OnClickAsObservable().Subscribe(OnExitButtonClick).AddTo(_compositeDisposable);
@@ -72,7 +72,7 @@ public class MenuController : MonoBehaviour
 
     private void OnNewGameButtonClick(Unit _)
     {
-        _gameplayProfile.Clear();
+        _playerProfile.Clear();
         SceneManager.LoadScene(_generalConfig.GameplayScene);
     }
 

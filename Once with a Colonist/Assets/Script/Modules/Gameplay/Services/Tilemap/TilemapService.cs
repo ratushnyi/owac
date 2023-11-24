@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using ModestTree;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using Zenject;
 
 namespace TendedTarsier
 {
@@ -14,9 +12,7 @@ namespace TendedTarsier
         
         private Vector3Int _lastTarget;
 
-
-        [Inject]
-        private void Construct(TilemapProfile tilemapProfile, TilemapConfig tilemapConfig, List<Tilemap> tilemaps)
+        private TilemapService(TilemapProfile tilemapProfile, TilemapConfig tilemapConfig, List<Tilemap> tilemaps)
         {
             _tilemaps = tilemaps;
             _tilemapConfig = tilemapConfig;

@@ -26,18 +26,18 @@ namespace TendedTarsier.Character
         private Vector3Int _targetPosition;
 
         private GameplayConfig _gameplayConfig;
-        private GameplayProfile _gameplayProfile;
+        private PlayerProfile _playerProfile;
         private GameplayController _gameplayController;
         private GameplayInput _gameplayInput;
         private TilemapService _tilemapService;
 
         [Inject]
-        private void Construct(GameplayConfig gameplayConfig, GameplayProfile gameplayProfile, GameplayController gameplayController, GameplayInput gameplayInput, TilemapService tilemapService)
+        private void Construct(GameplayConfig gameplayConfig, PlayerProfile playerProfile, GameplayController gameplayController, GameplayInput gameplayInput, TilemapService tilemapService)
         {
             _tilemapService = tilemapService;
             _gameplayInput = gameplayInput;
             _gameplayController = gameplayController;
-            _gameplayProfile = gameplayProfile;
+            _playerProfile = playerProfile;
             _gameplayConfig = gameplayConfig;
         }
 
@@ -48,7 +48,7 @@ namespace TendedTarsier.Character
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
 
-            transform.SetLocalPositionAndRotation(_gameplayProfile.PlayerPosition, Quaternion.identity);
+            transform.SetLocalPositionAndRotation(_playerProfile.PlayerPosition, Quaternion.identity);
 
             _onMovePerformed.First().Subscribe(_ => _gameplayController.OnGameplayStarted());
             _currentTilemap.SkipLatestValueOnSubscribe().First().Subscribe(_ => OnMove(Vector2.down));
@@ -177,8 +177,8 @@ namespace TendedTarsier.Character
 
         private void OnDestroy()
         {
-            _gameplayProfile.PlayerPosition = transform.position;
-            _gameplayProfile.Save();
+            _playerProfile.PlayerPosition = transform.position;
+            _playerProfile.Save();
             _compositeDisposable.Dispose();
         }
     }

@@ -24,6 +24,7 @@ namespace TendedTarsier
             Container.Bind<GameplayConfig>().FromInstance(_gameplayConfig).AsSingle();
             Container.Bind<GameplayController>().FromInstance(_gameplayController).AsSingle();
             Container.Bind<TilemapService>().FromNew().AsSingle();
+            Container.Bind<InventoryService>().FromNew().AsSingle();
         }
     }
 }
