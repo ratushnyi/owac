@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using TendedTarsier.Character;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Zenject;

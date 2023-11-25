@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace TendedTarsier.Character
+namespace TendedTarsier
 {
     public class PlayerCamera : MonoBehaviour
     {

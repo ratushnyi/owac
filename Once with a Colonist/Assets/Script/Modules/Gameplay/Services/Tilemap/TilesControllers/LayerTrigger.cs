@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace TendedTarsier.Tiles
+namespace TendedTarsier
 {
     public class LayerTrigger : MonoBehaviour
     {
