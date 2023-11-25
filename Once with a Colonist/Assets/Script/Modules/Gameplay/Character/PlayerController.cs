@@ -11,8 +11,8 @@ namespace TendedTarsier
     {
         private readonly int _directionAnimatorKey = Animator.StringToHash("Direction");
         private readonly int _isMovingAnimatorKey = Animator.StringToHash("IsMoving");
-        private readonly CompositeDisposable _compositeDisposable = new CompositeDisposable();
-        private readonly ReactiveProperty<Tilemap> _currentTilemap = new ReactiveProperty<Tilemap>();
+        private readonly CompositeDisposable _compositeDisposable = new ();
+        private readonly ReactiveProperty<Tilemap> _currentTilemap = new ();
 
         private IObservable<InputAction.CallbackContext> _onMovePerformed;
         private IObservable<InputAction.CallbackContext> _onXButtonPerformed;

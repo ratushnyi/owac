@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using TendedTarsier;
 using UniRx;
 using UnityEngine;
 public class InventoryPanel : MonoBehaviour
 {
+    private readonly CompositeDisposable _compositeDisposable = new ();
+    
     [SerializeField]
     private Transform _gridContainer;
 
@@ -13,7 +13,6 @@ public class InventoryPanel : MonoBehaviour
     private InventoryConfig _inventoryConfig;
 
     private InventoryCellView[][] _grid;
-    private readonly CompositeDisposable _compositeDisposable = new ();
 
     public void Init(InventoryProfile inventoryProfile, InventoryConfig inventoryConfig)
     {

@@ -7,13 +7,14 @@ namespace TendedTarsier
 {
     public class InventoryCellView : MonoBehaviour
     {
+        private readonly CompositeDisposable _compositeDisposable = new ();
+        
         [SerializeField]
         private Image _image;
         [SerializeField]
         private TextMeshProUGUI _count;
 
         private string _id;
-        private readonly CompositeDisposable _compositeDisposable = new ();
         
         public void Init(string id, ReactiveProperty<int> count, InventoryItemModel model)
         {

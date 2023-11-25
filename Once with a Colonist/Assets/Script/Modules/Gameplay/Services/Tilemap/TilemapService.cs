@@ -1,14 +1,16 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 namespace TendedTarsier
 {
+    [UsedImplicitly]
     public class TilemapService
     {
-        private TilemapProfile _tilemapProfile;
-        private TilemapConfig _tilemapConfig;
-        private List<Tilemap> _tilemaps;
+        private readonly TilemapProfile _tilemapProfile;
+        private readonly TilemapConfig _tilemapConfig;
+        private readonly List<Tilemap> _tilemaps;
         
         private Vector3Int _lastTarget;
 
