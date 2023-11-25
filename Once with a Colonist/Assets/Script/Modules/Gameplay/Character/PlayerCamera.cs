@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace TendedTarsier.Character
+namespace TendedTarsier
 {
-    public class CameraFollow : MonoBehaviour
+    public class PlayerCamera : MonoBehaviour
     {
         [SerializeField]
         private Transform _target;

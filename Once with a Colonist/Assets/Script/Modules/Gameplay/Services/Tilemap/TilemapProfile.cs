@@ -11,6 +11,6 @@ namespace TendedTarsier
         public override string Name => "Tilemap";
 
         [MemoryPackOrder(0)]
-        public Dictionary<Vector2Int, TileModel.TileType> ChangedTiles { get; [UsedImplicitly] set; } = new();
+        public Dictionary<Vector2Int, TileModel.TileType> ChangedTiles { get; [UsedImplicitly] set; } = new ();
     }
 }

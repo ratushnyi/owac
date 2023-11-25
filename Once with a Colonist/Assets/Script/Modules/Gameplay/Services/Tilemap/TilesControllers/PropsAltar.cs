@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace TendedTarsier.Tiles
+namespace TendedTarsier
 {
     public class PropsAltar : MonoBehaviour
     {

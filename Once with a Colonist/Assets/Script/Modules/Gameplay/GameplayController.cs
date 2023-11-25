@@ -1,51 +1,53 @@
 using System;
-using TendedTarsier;
 using UniRx;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Zenject;
 
-public class GameplayController : MonoBehaviour
+namespace TendedTarsier
 {
-    private readonly CompositeDisposable _compositeDisposable = new();
-
-    [SerializeField]
-    private Button _menuButton;
-
-    private GeneralConfig _generalConfig;
-    private GameplayProfile _gameplayProfile;
-
-    [Inject]
-    private void Construct(GeneralConfig generalConfig, GameplayProfile gameplayProfile)
+    public class GameplayController : MonoBehaviour
     {
-        _gameplayProfile = gameplayProfile;
-        _generalConfig = generalConfig;
-    }
+        private readonly CompositeDisposable _compositeDisposable = new ();
 
-    private void Start()
-    {
-        InitButtons();
-    }
+        [SerializeField]
+        private Button _menuButton;
 
-    public void OnGameplayStarted()
-    {
-        _gameplayProfile.StartDate ??= DateTime.UtcNow;
-        _gameplayProfile.Save();
-    }
+        private GeneralConfig _generalConfig;
+        private PlayerProfile _playerProfile;
 
-    private void InitButtons()
-    {
-        _menuButton.OnClickAsObservable().Subscribe(OnMenuButtonClick).AddTo(_compositeDisposable);
-    }
+        [Inject]
+        private void Construct(GeneralConfig generalConfig, PlayerProfile playerProfile)
+        {
+            _playerProfile = playerProfile;
+            _generalConfig = generalConfig;
+        }
 
-    private void OnMenuButtonClick(Unit _)
-    {
-        SceneManager.LoadScene(_generalConfig.MenuScene);
-    }
+        private void Start()
+        {
+            InitButtons();
+        }
 
-    private void OnDestroy()
-    {
-        _compositeDisposable.Dispose();
+        public void OnGameplayStarted()
+        {
+            _playerProfile.StartDate ??= DateTime.UtcNow;
+            _playerProfile.Save();
+        }
+
+        private void InitButtons()
+        {
+            _menuButton.OnClickAsObservable().Subscribe(OnMenuButtonClick).AddTo(_compositeDisposable);
+        }
+
+        private void OnMenuButtonClick(Unit _)
+        {
+            SceneManager.LoadScene(_generalConfig.MenuScene);
+        }
+
+        private void OnDestroy()
+        {
+            _compositeDisposable.Dispose();
+        }
     }
 }

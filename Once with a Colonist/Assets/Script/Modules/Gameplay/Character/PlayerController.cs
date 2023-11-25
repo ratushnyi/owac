@@ -5,14 +5,14 @@ using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 using Zenject;
 
-namespace TendedTarsier.Character
+namespace TendedTarsier
 {
     public class PlayerController : MonoBehaviour
     {
         private readonly int _directionAnimatorKey = Animator.StringToHash("Direction");
         private readonly int _isMovingAnimatorKey = Animator.StringToHash("IsMoving");
-        private readonly CompositeDisposable _compositeDisposable = new();
-        private readonly ReactiveProperty<Tilemap> _currentTilemap = new();
+        private readonly CompositeDisposable _compositeDisposable = new ();
+        private readonly ReactiveProperty<Tilemap> _currentTilemap = new ();
 
         private IObservable<InputAction.CallbackContext> _onMovePerformed;
         private IObservable<InputAction.CallbackContext> _onXButtonPerformed;
@@ -26,18 +26,26 @@ namespace TendedTarsier.Character
         private Vector3Int _targetPosition;
 
         private GameplayConfig _gameplayConfig;
-        private GameplayProfile _gameplayProfile;
+        private PlayerProfile _playerProfile;
         private GameplayController _gameplayController;
         private GameplayInput _gameplayInput;
         private TilemapService _tilemapService;
+        private InventoryService _inventoryService;
 
         [Inject]
-        private void Construct(GameplayConfig gameplayConfig, GameplayProfile gameplayProfile, GameplayController gameplayController, GameplayInput gameplayInput, TilemapService tilemapService)
+        private void Construct(
+            GameplayConfig gameplayConfig, 
+            PlayerProfile playerProfile, 
+            GameplayController gameplayController, 
+            GameplayInput gameplayInput, 
+            InventoryService inventoryService, 
+            TilemapService tilemapService)
         {
+            _inventoryService = inventoryService;
             _tilemapService = tilemapService;
             _gameplayInput = gameplayInput;
             _gameplayController = gameplayController;
-            _gameplayProfile = gameplayProfile;
+            _playerProfile = playerProfile;
             _gameplayConfig = gameplayConfig;
         }
 
@@ -48,7 +56,7 @@ namespace TendedTarsier.Character
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
 
-            transform.SetLocalPositionAndRotation(_gameplayProfile.PlayerPosition, Quaternion.identity);
+            transform.SetLocalPositionAndRotation(_playerProfile.PlayerPosition, Quaternion.identity);
 
             _onMovePerformed.First().Subscribe(_ => _gameplayController.OnGameplayStarted());
             _currentTilemap.SkipLatestValueOnSubscribe().First().Subscribe(_ => OnMove(Vector2.down));
@@ -81,6 +89,11 @@ namespace TendedTarsier.Character
             {
                 _currentTilemap.Value = other.GetComponent<Tilemap>();
             }
+            else if (other.CompareTag("Item"))
+            {
+                var mapItem = other.GetComponent<MapItemBase>();
+                _inventoryService.TryPut(mapItem);
+            }
         }
 
         private void OnTriggerExit2D(Collider2D other)
@@ -104,10 +117,7 @@ namespace TendedTarsier.Character
         
         private void OnYButtonPerformed(InputAction.CallbackContext _)
         {
-            if (_currentTilemap.Value != null)
-            {
-                _tilemapService.ChangedTile(_currentTilemap.Value, _targetPosition, TileModel.TileType.Grass);
-            }
+            _inventoryService.SwitchInventory();
         }
         
         private void OnAButtonPerformed(InputAction.CallbackContext _)
@@ -177,8 +187,8 @@ namespace TendedTarsier.Character
 
         private void OnDestroy()
         {
-            _gameplayProfile.PlayerPosition = transform.position;
-            _gameplayProfile.Save();
+            _playerProfile.PlayerPosition = transform.position;
+            _playerProfile.Save();
             _compositeDisposable.Dispose();
         }
     }
