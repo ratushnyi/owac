@@ -9,7 +9,7 @@ namespace TendedTarsier
 {
     public class GameplayController : MonoBehaviour
     {
-        private readonly CompositeDisposable _compositeDisposable = new();
+        private readonly CompositeDisposable _compositeDisposable = new ();
 
         [SerializeField]
         private Button _menuButton;

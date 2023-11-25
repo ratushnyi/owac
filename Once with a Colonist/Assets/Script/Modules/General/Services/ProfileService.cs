@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using MemoryPack;
+using UniRx;
 using UnityEngine;
 
 namespace TendedTarsier
@@ -34,6 +35,7 @@ namespace TendedTarsier
             MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<string, string>());
             MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<string, int>());
             MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<string, float>());
+            MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<string, ReactiveProperty<int>>());
         }
 
         private void LoadSections(List<ProfileBase> profiles)

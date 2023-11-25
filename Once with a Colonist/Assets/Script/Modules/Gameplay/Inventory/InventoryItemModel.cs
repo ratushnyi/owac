@@ -1,18 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
-public class InventoryItemModel : MonoBehaviour
+namespace TendedTarsier
 {
-    // Start is called before the first frame update
-    void Start()
+    [Serializable]
+    public class InventoryItemModel
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        [field: SerializeField]
+        public string Id { get; set; }
+        [field: SerializeField]
+        public Sprite Sprite { get; set; }
     }
 }

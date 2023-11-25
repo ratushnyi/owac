@@ -8,7 +8,7 @@ using Zenject;
 
 public class MenuController : MonoBehaviour
 {
-    private readonly CompositeDisposable _compositeDisposable = new();
+    private readonly CompositeDisposable _compositeDisposable = new CompositeDisposable();
 
     [SerializeField]
     private Image _background;
@@ -23,15 +23,23 @@ public class MenuController : MonoBehaviour
     private Button _exitButton;
 
     private PlayerProfile _playerProfile;
+    private TilemapProfile _tilemapProfile;
+    private InventoryProfile _inventoryProfile;
     private MenuConfig _menuConfig;
     private GeneralConfig _generalConfig;
 
     [Inject]
-    private void Construct(PlayerProfile playerProfile, MenuConfig menuConfig, GeneralConfig generalConfig)
+    private void Construct(PlayerProfile playerProfile,
+        TilemapProfile tilemapProfile,
+        InventoryProfile inventoryProfile,
+        MenuConfig menuConfig,
+        GeneralConfig generalConfig)
     {
-        _generalConfig = generalConfig;
         _playerProfile = playerProfile;
+        _tilemapProfile = tilemapProfile;
+        _inventoryProfile = inventoryProfile;
         _menuConfig = menuConfig;
+        _generalConfig = generalConfig;
     }
 
     private void Start()
@@ -46,14 +54,14 @@ public class MenuController : MonoBehaviour
         _continueButton.targetGraphic.color = Color.clear;
         _newGameButton.targetGraphic.color = Color.clear;
         _exitButton.targetGraphic.color = Color.clear;
-        
+
         var sequence = DOTween.Sequence();
         sequence.Append(_background.DOColor(_menuConfig.BackgroundFadeOutColor, _menuConfig.BackgroundFadeOutDuration));
         sequence.Join(_continueButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
         sequence.Join(_newGameButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
         sequence.Join(_exitButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
         sequence.SetEase(_menuConfig.BackgroundFadeOutCurve);
-        
+
         _compositeDisposable.Add(Disposable.Create(() => sequence.Kill()));
     }
 
@@ -73,6 +81,8 @@ public class MenuController : MonoBehaviour
     private void OnNewGameButtonClick(Unit _)
     {
         _playerProfile.Clear();
+        _tilemapProfile.Clear();
+        _inventoryProfile.Clear();
         SceneManager.LoadScene(_generalConfig.GameplayScene);
     }
 

@@ -10,6 +10,6 @@ namespace TendedTarsier
         public override string Name => "Inventory";
 
         [MemoryPackOrder(0)]
-        public ReactiveDictionary<string, InventoryItemModel> ChangedTiles { get; [UsedImplicitly] set; } = new();
+        public ReactiveDictionary<string, ReactiveProperty<int>> InventoryItems { get; [UsedImplicitly] set; } = new ();
     }
 }

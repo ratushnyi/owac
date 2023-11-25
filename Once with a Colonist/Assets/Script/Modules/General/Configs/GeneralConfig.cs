@@ -1,7 +1,7 @@
 using NaughtyAttributes;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "GeneralConfig", fileName = "GeneralConfig", order = 0)]
+[CreateAssetMenu(menuName = "GeneralConfig", fileName = "GeneralConfig")]
 public class GeneralConfig : ScriptableObject
 {
     [field: SerializeField, Scene]
