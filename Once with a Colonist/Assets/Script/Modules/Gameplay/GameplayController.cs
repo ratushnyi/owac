@@ -10,23 +10,22 @@ namespace TendedTarsier
     public class GameplayController : MonoBehaviour
     {
         private readonly CompositeDisposable _compositeDisposable = new ();
-
-        [SerializeField]
-        private Button _menuButton;
-
+        
         private GeneralConfig _generalConfig;
         private PlayerProfile _playerProfile;
+        private PanelLoader<ToolBarController> _toolBarPanel;
 
         [Inject]
-        private void Construct(GeneralConfig generalConfig, PlayerProfile playerProfile)
+        private void Construct(GeneralConfig generalConfig, PlayerProfile playerProfile, PanelLoader<ToolBarController> toolBarPanel)
         {
+            _toolBarPanel = toolBarPanel;
             _playerProfile = playerProfile;
             _generalConfig = generalConfig;
         }
 
         private void Start()
         {
-            InitButtons();
+            InitToolBar();
         }
 
         public void OnGameplayStarted()
@@ -35,9 +34,10 @@ namespace TendedTarsier
             _playerProfile.Save();
         }
 
-        private void InitButtons()
+        private void InitToolBar()
         {
-            _menuButton.OnClickAsObservable().Subscribe(OnMenuButtonClick).AddTo(_compositeDisposable);
+            _toolBarPanel.Show();
+            _toolBarPanel.Instance.MenuButton.OnClickAsObservable().Subscribe(OnMenuButtonClick).AddTo(_compositeDisposable);
         }
 
         private void OnMenuButtonClick(Unit _)

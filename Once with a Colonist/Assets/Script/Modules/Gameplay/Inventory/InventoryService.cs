@@ -11,48 +11,25 @@ namespace TendedTarsier
     public class InventoryService
     {
         private readonly InventoryProfile _inventoryProfile;
-        private readonly InventoryConfig _inventoryConfig;
         private readonly PlayerController _playerController;
-        private readonly Canvas _gameplayCanvas;
-        
-        private InventoryPanel _inventoryPanel;
+        private readonly PanelLoader<InventoryController> _inventoryControllerPanel;
 
-        private InventoryService(InventoryProfile inventoryProfile, InventoryConfig inventoryConfig, PlayerController playerController, Canvas gameplayCanvas)
+        private InventoryService(InventoryProfile inventoryProfile, PlayerController playerController, PanelLoader<InventoryController> inventoryControllerPanel)
         {
-            _gameplayCanvas = gameplayCanvas;
+            _inventoryControllerPanel = inventoryControllerPanel;
             _playerController = playerController;
-            _inventoryConfig = inventoryConfig;
             _inventoryProfile = inventoryProfile;
         }
-        
+
         public void SwitchInventory()
         {
-            if (_inventoryPanel != null)
+            if (_inventoryControllerPanel.Instance != null)
             {
-                HideInventory();
+                _inventoryControllerPanel.Hide();
             }
             else
             {
-                ShowInventory();
-            }
-        }
-
-        public void ShowInventory()
-        {
-            if (_inventoryPanel != null)
-            {
-                return;
-            }
-
-            _inventoryPanel = Object.Instantiate(_inventoryConfig.InventoryPanel, _gameplayCanvas.transform);
-            _inventoryPanel.Init(_inventoryProfile, _inventoryConfig);
-        }
-
-        public void HideInventory()
-        {
-            if (_inventoryPanel != null)
-            {
-                Object.DestroyImmediate(_inventoryPanel.gameObject);
+                _inventoryControllerPanel.Show();
             }
         }
 
@@ -62,14 +39,14 @@ namespace TendedTarsier
             {
                 return false;
             }
-            
+
             var existItem = _inventoryProfile.InventoryItems.FirstOrDefault(t => t.Key == item.Id);
             if (existItem.Key != null)
             {
                 addExistItem();
                 return true;
             }
-            
+
             if (_inventoryProfile.InventoryItems.Count >= 9)
             {
                 return false;
@@ -84,7 +61,7 @@ namespace TendedTarsier
                 existItem.Value.Value += item.Count;
                 _inventoryProfile.Save();
             }
-            
+
             async void addNewItem()
             {
                 await putObject();

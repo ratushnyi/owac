@@ -8,9 +8,6 @@ namespace TendedTarsier
     public class InventoryConfig : ScriptableObject
     {
         [field: SerializeField]
-        public InventoryPanel InventoryPanel { get; set; }
-        
-        [field: SerializeField]
         public InventoryCellView InventoryCellView { get; set; }
         
         [field: SerializeField]

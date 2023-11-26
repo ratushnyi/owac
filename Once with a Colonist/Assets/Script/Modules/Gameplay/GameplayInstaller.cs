@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 using Zenject;
 
 namespace TendedTarsier
@@ -21,9 +23,17 @@ namespace TendedTarsier
         [SerializeField]
         private GameplayController _gameplayController;
         [SerializeField]
-        private Canvas _gameplayCanvas;
-        [SerializeField]
         private PlayerController _playerController;
+        
+        [Header("UI")]
+        [SerializeField]
+        private Canvas _gameplayCanvas;
+        
+        [Header("Panels")]
+        [SerializeField]
+        private ToolBarController _toolBarController;
+        [SerializeField]
+        private InventoryController _inventoryController;
 
         public override void InstallBindings()
         {
@@ -36,12 +46,15 @@ namespace TendedTarsier
             Container.Bind<TilemapService>().FromNew().AsSingle();
             Container.Bind<InventoryService>().FromNew().AsSingle();
             
+            //UI
+            Container.Bind<PanelLoader<ToolBarController>>().FromNew().AsSingle().WithArguments(_toolBarController, _gameplayCanvas);
+            Container.Bind<PanelLoader<InventoryController>>().FromNew().AsSingle().WithArguments(_inventoryController, _gameplayCanvas);
+
             //Common
-            Container.Bind<List<Tilemap>>().FromInstance(_tilemaps).AsSingle();
-            Container.Bind<Canvas>().FromInstance(_gameplayCanvas).AsSingle();
             Container.Bind<GameplayController>().FromInstance(_gameplayController).AsSingle();
             Container.Bind<GameplayInput>().FromNew().AsSingle();
             Container.Bind<PlayerController>().FromInstance(_playerController).AsSingle();
+            Container.Bind<List<Tilemap>>().FromInstance(_tilemaps).AsSingle();
         }
     }
 }
