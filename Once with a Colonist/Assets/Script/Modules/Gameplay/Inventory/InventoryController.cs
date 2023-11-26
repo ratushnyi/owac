@@ -2,7 +2,8 @@ using System.Linq;
 using TendedTarsier;
 using UniRx;
 using UnityEngine;
-public class InventoryPanel : MonoBehaviour
+using Zenject;
+public class InventoryController : MonoBehaviour
 {
     private readonly CompositeDisposable _compositeDisposable = new ();
     
@@ -14,7 +15,8 @@ public class InventoryPanel : MonoBehaviour
 
     private InventoryCellView[][] _grid;
 
-    public void Init(InventoryProfile inventoryProfile, InventoryConfig inventoryConfig)
+    [Inject]
+    private void Construct(InventoryProfile inventoryProfile, InventoryConfig inventoryConfig)
     {
         _inventoryProfile = inventoryProfile;
         _inventoryConfig = inventoryConfig;
