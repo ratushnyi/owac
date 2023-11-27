@@ -21,15 +21,15 @@ namespace TendedTarsier
             _inventoryProfile = inventoryProfile;
         }
 
-        public void SwitchInventory()
+        public async void SwitchInventory()
         {
             if (_inventoryControllerPanel.Instance != null)
             {
-                _inventoryControllerPanel.Hide();
+                await _inventoryControllerPanel.Hide();
             }
             else
             {
-                _inventoryControllerPanel.Show();
+                await _inventoryControllerPanel.Show();
             }
         }
 

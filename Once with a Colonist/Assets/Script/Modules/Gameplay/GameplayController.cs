@@ -34,9 +34,9 @@ namespace TendedTarsier
             _playerProfile.Save();
         }
 
-        private void InitToolBar()
+        private async void InitToolBar()
         {
-            _toolBarPanel.Show();
+            await _toolBarPanel.Show();
             _toolBarPanel.Instance.MenuButton.OnClickAsObservable().Subscribe(OnMenuButtonClick).AddTo(_compositeDisposable);
         }
 
