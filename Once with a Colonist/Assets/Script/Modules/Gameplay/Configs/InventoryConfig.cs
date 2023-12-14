@@ -15,6 +15,8 @@ namespace TendedTarsier
         
         [field: SerializeField]
         private List<InventoryItemModel> InventoryItems { get; set; }
+        [field: SerializeField]
+        public MapItemBase MapItemPrefab { get; set; }
         
         public InventoryItemModel this[string id] => InventoryItems.FirstOrDefault(t => t.Id == id);
     }

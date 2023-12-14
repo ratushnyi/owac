@@ -1,13 +1,44 @@
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace TendedTarsier
 {
     public class ToolBarController : MonoBehaviour
     {
+        private readonly CompositeDisposable _compositeDisposable = new();
+
         [field: SerializeField]
         public Button MenuButton { get; set; }
         [field: SerializeField]
-        public InventoryCellView CurrentInstrument { get; set; }
+        public InventoryCellView SelectedItem { get; set; }
+
+        private InventoryProfile _inventoryProfile;
+        private InventoryConfig _inventoryConfig;
+
+        [Inject]
+        private void Construct(InventoryProfile inventoryProfile, InventoryConfig inventoryConfig)
+        {
+            _inventoryConfig = inventoryConfig;
+            _inventoryProfile = inventoryProfile;
+        }
+
+        private void Start()
+        {
+            _inventoryProfile.SelectedItem.Subscribe(t =>
+            {
+                if (string.IsNullOrEmpty(t))
+                {
+                    return;
+                }
+                SelectedItem.SetItem(_inventoryConfig[t], _inventoryProfile.InventoryItems[t]);
+            }).AddTo(_compositeDisposable);
+        }
+
+        private void OnDestroy()
+        {
+            _compositeDisposable.Dispose();
+        }
     }
 }

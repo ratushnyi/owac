@@ -6,7 +6,7 @@ using UnityEngine.Tilemaps;
 namespace TendedTarsier
 {
     [UsedImplicitly]
-    public class TilemapService
+    public class TilemapService : ServiceBase
     {
         private readonly TilemapProfile _tilemapProfile;
         private readonly TilemapConfig _tilemapConfig;

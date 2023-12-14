@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: GameplayConfig
   m_EditorClassIdentifier: 
   <MovementSpeed>k__BackingField: 2
-  <PerformedTile>k__BackingField: {fileID: 11400000, guid: 96945c2584c47b44ebe75d015b3cde49,
-    type: 2}
+  <MapItemPrefab>k__BackingField: {fileID: 3765728290932740887, guid: eafebc68ba360442fa71480a2eb4cff2,
+    type: 3}

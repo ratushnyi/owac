@@ -1,4 +1,6 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -11,8 +13,8 @@ namespace TendedTarsier
     {
         private readonly int _directionAnimatorKey = Animator.StringToHash("Direction");
         private readonly int _isMovingAnimatorKey = Animator.StringToHash("IsMoving");
-        private readonly CompositeDisposable _compositeDisposable = new ();
-        private readonly ReactiveProperty<Tilemap> _currentTilemap = new ();
+        private readonly CompositeDisposable _compositeDisposable = new();
+        private readonly ReactiveProperty<Tilemap> _currentTilemap = new();
 
         private IObservable<InputAction.CallbackContext> _onMovePerformed;
         private IObservable<InputAction.CallbackContext> _onXButtonPerformed;
@@ -23,26 +25,28 @@ namespace TendedTarsier
         private Rigidbody2D _rigidbody2D;
         private Animator _animator;
 
+        private Vector3Int _direction;
         private Vector3Int _targetPosition;
 
         private GameplayConfig _gameplayConfig;
         private PlayerProfile _playerProfile;
         private GameplayController _gameplayController;
         private GameplayInput _gameplayInput;
-        private TilemapService _tilemapService;
         private InventoryService _inventoryService;
+        private TilemapService _tilemapService;
+        private Transform _itemsTransform;
 
         [Inject]
         private void Construct(
-            GameplayConfig gameplayConfig, 
-            PlayerProfile playerProfile, 
-            GameplayController gameplayController, 
-            GameplayInput gameplayInput, 
-            InventoryService inventoryService, 
+            GameplayConfig gameplayConfig,
+            PlayerProfile playerProfile,
+            GameplayController gameplayController,
+            GameplayInput gameplayInput,
+            InventoryService inventoryService,
             TilemapService tilemapService)
         {
-            _inventoryService = inventoryService;
             _tilemapService = tilemapService;
+            _inventoryService = inventoryService;
             _gameplayInput = gameplayInput;
             _gameplayController = gameplayController;
             _playerProfile = playerProfile;
@@ -114,23 +118,20 @@ namespace TendedTarsier
                 _tilemapService.ChangedTile(_currentTilemap.Value, _targetPosition, TileModel.TileType.Stone);
             }
         }
-        
+
         private void OnYButtonPerformed(InputAction.CallbackContext _)
         {
             _inventoryService.SwitchInventory();
         }
-        
+
         private void OnAButtonPerformed(InputAction.CallbackContext _)
         {
             //
         }
-        
+
         private void OnBButtonPerformed(InputAction.CallbackContext _)
         {
-            if (_currentTilemap.Value != null)
-            {
-                _tilemapService.ChangedTile(_currentTilemap.Value, _targetPosition, TileModel.TileType.Sett);
-            }
+            _inventoryService.Drop(_targetPosition, _targetPosition + _direction * 3).Forget();
         }
 
         private void ProcessMovement()
@@ -179,7 +180,8 @@ namespace TendedTarsier
             }
 
             var transformPosition = transform.position;
-            _targetPosition = new Vector3Int(Mathf.FloorToInt(transformPosition.x), Mathf.RoundToInt(transformPosition.y)) + Vector3Int.RoundToInt(direction);
+            _direction = Vector3Int.RoundToInt(direction);
+            _targetPosition = new Vector3Int(Mathf.FloorToInt(transformPosition.x), Mathf.RoundToInt(transformPosition.y)) + _direction;
             _tilemapService.ProcessTiles(_currentTilemap.Value, _targetPosition);
 
             return direction;
