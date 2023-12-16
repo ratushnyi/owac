@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace TendedTarsier
 {
-    [CreateAssetMenu(menuName = "MenuConfig", fileName = "MenuConfig")]
+    [CreateAssetMenu(menuName = "Config/MenuConfig", fileName = "MenuConfig")]
     public class MenuConfig : ScriptableObject
     {
         [field: SerializeField]

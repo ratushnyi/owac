@@ -10,6 +10,7 @@ namespace TendedTarsier
         [Serializable]
         public enum TileType
         {
+            Default,
             Stone,
             Grass,
             Sett

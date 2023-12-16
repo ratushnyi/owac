@@ -43,9 +43,9 @@ namespace TendedTarsier
             Container.Bind<GameplayInput>().FromNew().AsSingle();
             
             //Configs
-            Container.Bind<InventoryConfig>().FromInstance(_inventoryConfig).AsSingle();
-            Container.Bind<TilemapConfig>().FromInstance(_tilemapConfig).AsSingle();
-            Container.Bind<GameplayConfig>().FromInstance(_gameplayConfig).AsSingle();
+            Container.Bind<InventoryConfig>().FromScriptableObject(_inventoryConfig).AsSingle();
+            Container.Bind<TilemapConfig>().FromScriptableObject(_tilemapConfig).AsSingle();
+            Container.Bind<GameplayConfig>().FromScriptableObject(_gameplayConfig).AsSingle();
             
             //Services
             Container.Bind<TilemapService>().FromNew().AsSingle();

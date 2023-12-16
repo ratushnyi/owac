@@ -5,7 +5,7 @@ using DG.Tweening;
 using JetBrains.Annotations;
 using UniRx;
 using UnityEngine;
-using Object = UnityEngine.Object;
+using UnityEngine.Tilemaps;
 
 namespace TendedTarsier
 {
@@ -103,7 +103,7 @@ namespace TendedTarsier
                 item.Collider.enabled = false;
                 item.transform.parent = _playerController.transform;
                 await item.transform.DOLocalMove(Vector3.zero, 0.5f).ToUniTask();
-                Object.DestroyImmediate(item.gameObject);
+                UnityEngine.Object.DestroyImmediate(item.gameObject);
             }
         }
 
@@ -114,7 +114,7 @@ namespace TendedTarsier
                 return;
             }
 
-            var item = Object.Instantiate(_inventoryConfig.MapItemPrefab, _itemsTransform);
+            var item = UnityEngine.Object.Instantiate(_inventoryConfig.MapItemPrefab, _itemsTransform);
             item.Count = 1;
             item.Collider.enabled = false;
             item.Id = _inventoryProfile.SelectedItem.Value;
@@ -155,7 +155,7 @@ namespace TendedTarsier
                     _inventoryProfile.InventoryItems.Remove(id);
                     if (_inventoryProfile.SelectedItem.Value == id)
                     {
-                        _inventoryProfile.SelectedItem.Value = string.Empty;
+                        _inventoryProfile.SelectedItem.Value = null;
                     }
                 }
 
@@ -166,6 +166,23 @@ namespace TendedTarsier
             {
                 CompositeDisposable.Remove(disposable);
             }
+        }
+
+        public bool Perform(Tilemap tilemap, Vector3Int targetPosition)
+        {
+            var result = false;
+            var item = _inventoryProfile.SelectedItem.Value;
+            if (!string.IsNullOrEmpty(item))
+            {
+                result = _inventoryConfig[item].Perform(tilemap, targetPosition);
+
+                if (result)
+                {
+                    _inventoryProfile.InventoryItems[item].Value--;
+                }
+            }
+
+            return result;
         }
     }
 }

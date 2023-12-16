@@ -1,6 +1,5 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -113,10 +112,7 @@ namespace TendedTarsier
 
         private void OnXButtonPerformed(InputAction.CallbackContext _)
         {
-            if (_currentTilemap.Value != null)
-            {
-                _tilemapService.ChangedTile(_currentTilemap.Value, _targetPosition, TileModel.TileType.Stone);
-            }
+            _inventoryService.Perform(_currentTilemap.Value, _targetPosition);
         }
 
         private void OnYButtonPerformed(InputAction.CallbackContext _)

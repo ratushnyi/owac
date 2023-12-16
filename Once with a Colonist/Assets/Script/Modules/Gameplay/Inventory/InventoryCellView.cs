@@ -18,11 +18,11 @@ namespace TendedTarsier
         [SerializeField]
         private TextMeshProUGUI _countTMP;
 
-        private InventoryItemModel _model;
+        private ItemModel _model;
 
         public IObservable<string> OnButtonClicked => _onButtonClicked;
 
-        public void SetItem(InventoryItemModel model, ReactiveProperty<int> count)
+        public void SetItem(ItemModel model, ReactiveProperty<int> count)
         {
             count.Subscribe(OnCountChanged).AddTo(_compositeDisposable);
 
