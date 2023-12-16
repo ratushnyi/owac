@@ -117,3 +117,4 @@ MonoBehaviour:
   <Id>k__BackingField: test
   <Count>k__BackingField: 10
   <Collider>k__BackingField: {fileID: 3765728290932740886}
+  <SpriteRenderer>k__BackingField: {fileID: 3765728290932740881}

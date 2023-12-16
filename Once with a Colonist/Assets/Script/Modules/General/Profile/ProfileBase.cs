@@ -1,10 +1,13 @@
 using System;
 using MemoryPack;
+using UniRx;
 
 namespace TendedTarsier
 {
     public abstract class ProfileBase
     {
+        protected readonly CompositeDisposable CompositeDisposable = new();
+
         private ProfileService _profileService;
 
         [MemoryPackIgnore]
@@ -36,5 +39,13 @@ namespace TendedTarsier
             TypeExtensions.PopulateObject(this, newInstance);
             _profileService.Save(this);
         }
+
+        public void Terminate()
+        {
+            CompositeDisposable.Dispose();
+            Dispose();
+        }
+
+        protected virtual void Dispose() { }
     }
 }

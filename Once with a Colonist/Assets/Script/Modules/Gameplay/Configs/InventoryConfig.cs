@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Zenject;
 
 namespace TendedTarsier
 {
-    [CreateAssetMenu(menuName = "InventoryConfig", fileName = "InventoryConfig")]
+    [CreateAssetMenu(menuName = "Config/InventoryConfig", fileName = "InventoryConfig")]
     public class InventoryConfig : ScriptableObject
     {
         [field: SerializeField]
@@ -14,8 +15,16 @@ namespace TendedTarsier
         public Vector2Int InventoryGrid { get; set; }
         
         [field: SerializeField]
-        private List<InventoryItemModel> InventoryItems { get; set; }
+        private List<ItemModel> InventoryItems { get; set; }
+        [field: SerializeField]
+        public MapItemBase MapItemPrefab { get; set; }
         
-        public InventoryItemModel this[string id] => InventoryItems.FirstOrDefault(t => t.Id == id);
+        public ItemModel this[string id] => InventoryItems.FirstOrDefault(t => t.Id == id);
+
+        [Inject]
+        public void Construct(DiContainer diContainer)
+        {
+            InventoryItems.ForEach(t => diContainer.Inject(t.PerformEntity));
+        }
     }
 }

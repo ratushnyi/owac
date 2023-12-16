@@ -7,14 +7,18 @@ using UnityEngine;
 
 namespace TendedTarsier
 {
-    public class ProfileService
+    public class ProfileService : ServiceBase
     {
         public static readonly string ProfilesDirectory = Path.Combine(Application.persistentDataPath, "Profiles");
 
+        private readonly List<ProfileBase> _profiles;
+
         public ProfileService(List<ProfileBase> profiles)
         {
+            _profiles = profiles;
+
             RegisterFormatters();
-            LoadSections(profiles);
+            LoadSections();
         }
 
         private void RegisterFormatters()
@@ -38,9 +42,9 @@ namespace TendedTarsier
             MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<string, ReactiveProperty<int>>());
         }
 
-        private void LoadSections(List<ProfileBase> profiles)
+        private void LoadSections()
         {
-            foreach (var profile in profiles)
+            foreach (var profile in _profiles)
             {
                 LoadSection(profile);
             }
@@ -106,6 +110,14 @@ namespace TendedTarsier
         {
             var fileName = name + ".json";
             return Path.Combine(ProfilesDirectory, fileName);
+        }
+
+        protected override void Dispose()
+        {
+            foreach (var profile in _profiles)
+            {
+                profile.Terminate();
+            }
         }
     }
 }

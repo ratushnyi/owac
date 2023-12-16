@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace TendedTarsier
 {
@@ -12,6 +13,8 @@ namespace TendedTarsier
         
         [field: SerializeField]
         public Collider2D Collider { get; set; }
+        [field: SerializeField]
+        public SpriteRenderer SpriteRenderer { get; set; }
     }
 
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -6,12 +7,12 @@ using UnityEngine.Tilemaps;
 namespace TendedTarsier
 {
     [UsedImplicitly]
-    public class TilemapService
+    public class TilemapService : ServiceBase
     {
         private readonly TilemapProfile _tilemapProfile;
         private readonly TilemapConfig _tilemapConfig;
         private readonly List<Tilemap> _tilemaps;
-        
+
         private Vector3Int _lastTarget;
 
         private TilemapService(TilemapProfile tilemapProfile, TilemapConfig tilemapConfig, List<Tilemap> tilemaps)
@@ -30,7 +31,7 @@ namespace TendedTarsier
                 var tilemap = GetTilemap(changedTile.Key);
                 if (tilemap != null)
                 {
-                    tilemap.SetTile((Vector3Int) changedTile.Key, _tilemapConfig[changedTile.Value]);
+                    tilemap.SetTile((Vector3Int)changedTile.Key, _tilemapConfig[changedTile.Value]);
                 }
             }
         }
@@ -43,13 +44,20 @@ namespace TendedTarsier
                 Debug.LogError($"{nameof(TilemapConfig)} does not contain a model for {type}");
                 return;
             }
-            
+
             tilemap.SetTile(chords, tile);
-            _tilemapProfile.ChangedTiles[(Vector2Int) chords] = type;
+            _tilemapProfile.ChangedTiles[(Vector2Int)chords] = type;
             _tilemapProfile.Save();
         }
-        
-        
+
+        public TileModel.TileType GetTile(Tilemap tilemap, Vector3Int chords)
+        {
+            var tile = tilemap.GetTile(chords);
+            var model = _tilemapConfig.TilesModels.FirstOrDefault(t => t.Tile == tile);
+
+            return model?.Type ?? TileModel.TileType.Default;
+        }
+
         public void ProcessTiles(Tilemap tilemap, Vector3Int? targetPosition)
         {
             if (tilemap != null && targetPosition != null)
@@ -74,7 +82,7 @@ namespace TendedTarsier
         {
             foreach (var tilemap in _tilemaps)
             {
-                if (tilemap.GetTile((Vector3Int) tilePosition) != null)
+                if (tilemap.GetTile((Vector3Int)tilePosition) != null)
                 {
                     return tilemap;
                 }

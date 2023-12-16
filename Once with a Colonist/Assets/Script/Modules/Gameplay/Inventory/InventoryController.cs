@@ -3,10 +3,11 @@ using TendedTarsier;
 using UniRx;
 using UnityEngine;
 using Zenject;
+
 public class InventoryController : MonoBehaviour
 {
-    private readonly CompositeDisposable _compositeDisposable = new ();
-    
+    private readonly CompositeDisposable _compositeDisposable = new();
+
     [SerializeField]
     private Transform _gridContainer;
 
@@ -16,11 +17,13 @@ public class InventoryController : MonoBehaviour
     private InventoryCellView[][] _grid;
 
     [Inject]
-    private void Construct(InventoryProfile inventoryProfile, InventoryConfig inventoryConfig)
+    private void Construct(
+        InventoryProfile inventoryProfile,
+        InventoryConfig inventoryConfig)
     {
         _inventoryProfile = inventoryProfile;
         _inventoryConfig = inventoryConfig;
-        
+
         _inventoryProfile.InventoryItems.ObserveAdd().Subscribe(Put).AddTo(_compositeDisposable);
     }
 
@@ -34,13 +37,20 @@ public class InventoryController : MonoBehaviour
             for (var y = 0; y < _inventoryConfig.InventoryGrid.y; y++)
             {
                 _grid[x][y] = Instantiate(_inventoryConfig.InventoryCellView, _gridContainer);
+                _grid[x][y].OnButtonClicked.Subscribe(onCellClicked).AddTo(_compositeDisposable);
                 if (_inventoryProfile.InventoryItems.Count > counter)
                 {
                     var item = _inventoryProfile.InventoryItems.ElementAt(counter);
-                    _grid[x][y].Init(item.Key, item.Value, _inventoryConfig[item.Key]);
+                    SetItem(_grid[x][y], item.Key, item.Value);
                 }
                 counter++;
             }
+        }
+
+        void onCellClicked(string id)
+        {
+            _inventoryProfile.SelectedItem.Value = id;
+            _inventoryProfile.Save();
         }
     }
 
@@ -51,10 +61,15 @@ public class InventoryController : MonoBehaviour
             var cell = row.FirstOrDefault(t => t.IsEmpty());
             if (cell != null)
             {
-                cell.Init(item.Key, item.Value, _inventoryConfig[item.Key]);
+                SetItem(cell, item.Key, item.Value);
                 break;
             }
         }
+    }
+
+    private void SetItem(InventoryCellView cell, string id, ReactiveProperty<int> value)
+    {
+        cell.SetItem(_inventoryConfig[id], value);
     }
 
     private void OnDestroy()

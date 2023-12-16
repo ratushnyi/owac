@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UniRx;
 using UnityEngine;
@@ -7,36 +8,53 @@ namespace TendedTarsier
 {
     public class InventoryCellView : MonoBehaviour
     {
-        private readonly CompositeDisposable _compositeDisposable = new ();
-        
+        private readonly CompositeDisposable _compositeDisposable = new();
+        private readonly ISubject<string> _onButtonClicked = new Subject<string>();
+
         [SerializeField]
         private Image _image;
         [SerializeField]
-        private TextMeshProUGUI _count;
+        private Button _button;
+        [SerializeField]
+        private TextMeshProUGUI _countTMP;
 
-        private string _id;
-        
-        public void Init(string id, ReactiveProperty<int> count, InventoryItemModel model)
+        private ItemModel _model;
+
+        public IObservable<string> OnButtonClicked => _onButtonClicked;
+
+        public void SetItem(ItemModel model, ReactiveProperty<int> count)
         {
-            _id = id;
-            
-            count.Subscribe(t => _count.SetText(t.ToString())).AddTo(_compositeDisposable);
-            _count.enabled = true;
-            
-            _image.sprite = model.Sprite;
+            count.Subscribe(OnCountChanged).AddTo(_compositeDisposable);
+
+            _model = model;
+            _image.sprite = _model.Sprite;
             _image.enabled = true;
+            _countTMP.enabled = true;
+            _button.OnClickAsObservable().Subscribe(_ => _onButtonClicked.OnNext(_model.Id)).AddTo(_compositeDisposable);
         }
 
         public bool IsEmpty()
         {
-            return string.IsNullOrEmpty(_id);
+            return _model == null;
+        }
+
+        private void OnCountChanged(int count)
+        {
+            if (count == 0)
+            {
+                Dispose();
+                return;
+            }
+
+            _countTMP.SetText(count.ToString());
         }
 
         public void Dispose()
         {
-            _id = null;
+            _model = null;
+            _image.sprite = null;
             _image.enabled = false;
-            _count.enabled = false;
+            _countTMP.enabled = false;
             _compositeDisposable.Clear();
         }
 

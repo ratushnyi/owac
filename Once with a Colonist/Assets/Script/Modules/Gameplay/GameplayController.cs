@@ -2,7 +2,6 @@ using System;
 using UniRx;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using Zenject;
 
 namespace TendedTarsier
@@ -34,9 +33,9 @@ namespace TendedTarsier
             _playerProfile.Save();
         }
 
-        private void InitToolBar()
+        private async void InitToolBar()
         {
-            _toolBarPanel.Show();
+            await _toolBarPanel.Show();
             _toolBarPanel.Instance.MenuButton.OnClickAsObservable().Subscribe(OnMenuButtonClick).AddTo(_compositeDisposable);
         }
 

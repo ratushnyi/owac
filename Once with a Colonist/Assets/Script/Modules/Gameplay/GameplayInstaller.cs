@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
-using UnityEngine.UI;
 using Zenject;
 
 namespace TendedTarsier
 {
     public class GameplayInstaller : MonoInstaller
     {
+        public const string ItemsTransformId = "item_transform";
+        
         [Header("Configs")]
         [SerializeField]
         private InventoryConfig _inventoryConfig;
@@ -24,6 +24,8 @@ namespace TendedTarsier
         private GameplayController _gameplayController;
         [SerializeField]
         private PlayerController _playerController;
+        [SerializeField]
+        private Transform _itemsTransform;
         
         [Header("UI")]
         [SerializeField]
@@ -37,10 +39,13 @@ namespace TendedTarsier
 
         public override void InstallBindings()
         {
+            //General
+            Container.Bind<GameplayInput>().FromNew().AsSingle();
+            
             //Configs
-            Container.Bind<InventoryConfig>().FromInstance(_inventoryConfig).AsSingle();
-            Container.Bind<TilemapConfig>().FromInstance(_tilemapConfig).AsSingle();
-            Container.Bind<GameplayConfig>().FromInstance(_gameplayConfig).AsSingle();
+            Container.Bind<InventoryConfig>().FromScriptableObject(_inventoryConfig).AsSingle();
+            Container.Bind<TilemapConfig>().FromScriptableObject(_tilemapConfig).AsSingle();
+            Container.Bind<GameplayConfig>().FromScriptableObject(_gameplayConfig).AsSingle();
             
             //Services
             Container.Bind<TilemapService>().FromNew().AsSingle();
@@ -51,8 +56,8 @@ namespace TendedTarsier
             Container.Bind<PanelLoader<InventoryController>>().FromNew().AsSingle().WithArguments(_inventoryController, _gameplayCanvas);
 
             //Common
+            Container.Bind<Transform>().FromInstance(_itemsTransform).AsSingle().WithConcreteId(ItemsTransformId);
             Container.Bind<GameplayController>().FromInstance(_gameplayController).AsSingle();
-            Container.Bind<GameplayInput>().FromNew().AsSingle();
             Container.Bind<PlayerController>().FromInstance(_playerController).AsSingle();
             Container.Bind<List<Tilemap>>().FromInstance(_tilemaps).AsSingle();
         }

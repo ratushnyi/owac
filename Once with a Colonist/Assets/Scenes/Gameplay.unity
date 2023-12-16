@@ -561,6 +561,7 @@ MonoBehaviour:
   - {fileID: 376144705}
   _gameplayController: {fileID: 1622717957}
   _playerController: {fileID: 1622224636}
+  _itemsTransform: {fileID: 36622335}
   _gameplayCanvas: {fileID: 1622717955}
   _toolBarController: {fileID: -6269519497728431671, guid: 4c8eaa2e4c5bc4a61826480b0aea28ed,
     type: 3}
