@@ -3,11 +3,12 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using JetBrains.Annotations;
-using TendedTarsier.Script.Modules.Gameplay.Configs;
-using TendedTarsier.Script.Modules.General.Services;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Zenject;
+using TendedTarsier.Script.Modules.Gameplay.Configs;
+using TendedTarsier.Script.Modules.General.Services;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 {
@@ -16,14 +17,14 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
     {
         private readonly InventoryProfile _inventoryProfile;
         private readonly InventoryConfig _inventoryConfig;
-        private readonly Transform _itemsTransform;
+        private readonly Transform _propsLayerTransform;
 
         private InventoryService(
             InventoryProfile inventoryProfile,
             InventoryConfig inventoryConfig,
-            Transform itemsTransform)
+            [Inject(Id = GameplayInstaller.PropsTransformId)] Transform propsLayerTransform)
         {
-            _itemsTransform = itemsTransform;
+            _propsLayerTransform = propsLayerTransform;
             _inventoryConfig = inventoryConfig;
             _inventoryProfile = inventoryProfile;
         }
@@ -103,7 +104,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
                 return;
             }
 
-            var item = UnityEngine.Object.Instantiate(_inventoryConfig.MapItemPrefab, _itemsTransform);
+            var item = UnityEngine.Object.Instantiate(_inventoryConfig.MapItemPrefab, _propsLayerTransform);
             item.Count = 1;
             item.Collider.enabled = false;
             item.Id = _inventoryProfile.SelectedItem.Value;

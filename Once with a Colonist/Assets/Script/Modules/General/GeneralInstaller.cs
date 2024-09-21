@@ -5,6 +5,7 @@ using TendedTarsier.Script.Modules.General.Services.Profile;
 using TendedTarsier.Script.Modules.Gameplay.Character;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Services.Input;
 
 namespace TendedTarsier.Script.Modules.General
@@ -24,15 +25,15 @@ namespace TendedTarsier.Script.Modules.General
         private void BindServices()
         {
             Container.Bind<GameplayInput>().FromNew().AsSingle();
-            Container.BindWithParents<ProfileService>();
-            Container.BindWithParents<InputService>();
+            Container.BindService<ProfileService>();
+            Container.BindService<InputService>();
         }
 
         private void BindProfiles()
         {
-            Container.BindWithParents<PlayerProfile>();
-            Container.BindWithParents<TilemapProfile>();
-            Container.BindWithParents<InventoryProfile>();
+            Container.BindProfile<PlayerProfile>();
+            Container.BindProfile<TilemapProfile>();
+            Container.BindProfile<InventoryProfile>();
         }
 
         private void BindConfigs()

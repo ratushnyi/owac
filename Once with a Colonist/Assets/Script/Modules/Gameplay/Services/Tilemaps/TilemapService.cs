@@ -20,7 +20,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
 
         private Vector3Int _lastTarget;
 
-        private TilemapService(TilemapProfile tilemapProfile, TilemapConfig tilemapConfig, List<UnityEngine.Tilemaps.Tilemap> tilemaps)
+        private TilemapService(TilemapProfile tilemapProfile, TilemapConfig tilemapConfig, List<Tilemap> tilemaps)
         {
             _tilemaps = tilemaps;
             _tilemapConfig = tilemapConfig;

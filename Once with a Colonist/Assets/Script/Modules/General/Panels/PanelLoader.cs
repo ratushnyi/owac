@@ -3,10 +3,10 @@ using JetBrains.Annotations;
 using UnityEngine;
 using Zenject;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.General.Panels
 {
     [UsedImplicitly]
-    public class PanelLoader<T> where T : MonoBehaviour
+    public class PanelLoader<T> where T : PanelBase
     {
         private readonly T _prefab;
         private readonly Canvas _canvas;

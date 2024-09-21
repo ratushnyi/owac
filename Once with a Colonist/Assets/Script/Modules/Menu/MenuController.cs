@@ -1,5 +1,6 @@
 using DG.Tweening;
 using TendedTarsier;
+using TendedTarsier.Script.Modules.General.Configs;
 using UniRx;
 using UnityEngine;
 using UnityEngine.SceneManagement;

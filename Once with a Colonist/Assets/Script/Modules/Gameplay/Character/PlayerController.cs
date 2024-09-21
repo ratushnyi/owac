@@ -28,7 +28,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         private InputService _inputService;
         private GameplayConfig _gameplayConfig;
         private PlayerProfile _playerProfile;
-        private GameplayController _gameplayController;
         private InventoryService _inventoryService;
         private TilemapService _tilemapService;
         private Transform _itemsTransform;
@@ -42,12 +41,10 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             HUDService hudService,
             TilemapService tilemapService,
             GameplayConfig gameplayConfig,
-            PlayerProfile playerProfile,
-            GameplayController gameplayController)
+            PlayerProfile playerProfile)
         {
             _tilemapService = tilemapService;
             _inventoryService = inventoryService;
-            _gameplayController = gameplayController;
             _playerProfile = playerProfile;
             _gameplayConfig = gameplayConfig;
             _inputService = inputService;
@@ -67,7 +64,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         {
             _inputService.OnLeftStickPerformed
                 .First()
-                .Subscribe(_ => _gameplayController.OnGameplayStarted());
+                .Subscribe(_ => _playerProfile.OnSessionStarted());
 
             _inputService.OnLeftStickPerformed
                 .Subscribe(t => ProcessMovement(t.ReadValue<Vector2>()))
@@ -180,8 +177,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
         private void OnDestroy()
         {
-            _playerProfile.PlayerPosition = transform.position;
-            _playerProfile.Save();
+            _playerProfile.OnSessionEnded(transform.position);
             _compositeDisposable.Dispose();
         }
     }
