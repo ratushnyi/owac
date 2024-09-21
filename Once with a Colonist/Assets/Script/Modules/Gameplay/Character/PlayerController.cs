@@ -1,7 +1,6 @@
 ﻿using TendedTarsier.Script.Modules.Gameplay.Inventory;
 using UniRx;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 using Zenject;
 
@@ -16,6 +15,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         private readonly int _directionAnimatorKey = Animator.StringToHash("Direction");
         private readonly int _isMovingAnimatorKey = Animator.StringToHash("IsMoving");
 
+        private Vector2 _moveDirection;
+        private float _speedModifier = 1;
+
         private Rigidbody2D _rigidbody2D;
         private Animator _animator;
 
@@ -26,6 +28,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         private InventoryService _inventoryService;
         private TilemapService _tilemapService;
         private Transform _itemsTransform;
+
+        private readonly CompositeDisposable _compositeDisposable = new();
 
         [Inject]
         private void Construct(
@@ -52,13 +56,31 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
             transform.SetLocalPositionAndRotation(_playerProfile.PlayerPosition, Quaternion.identity);
 
-            _inputService.OnMovePerformed.First().Subscribe(_ => _gameplayController.OnGameplayStarted());
             CurrentTilemap.SkipLatestValueOnSubscribe().First().Subscribe(_ => OnMove(Vector2.down));
+            SubscribeOnInput();
         }
 
-        private void FixedUpdate()
+        private void SubscribeOnInput()
         {
-            ProcessMovement();
+            _inputService.OnLeftStickPerformed
+                .First()
+                .Subscribe(_ => _gameplayController.OnGameplayStarted());
+
+            _inputService.OnLeftStickPerformed
+                .Subscribe(t => ProcessMovement(t.ReadValue<Vector2>()))
+                .AddTo(_compositeDisposable);
+
+            _inputService.OnLeftStickCanceled
+                .Subscribe(_ => ProcessMovement(Vector2.zero))
+                .AddTo(_compositeDisposable);
+
+            _inputService.OnAButtonStarted
+                .Subscribe(_ => OnSpeedChanged(true))
+                .AddTo(_compositeDisposable);
+
+            _inputService.OnAButtonCanceled
+                .Subscribe(_ => OnSpeedChanged(false))
+                .AddTo(_compositeDisposable);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -85,17 +107,22 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             }
         }
 
-        private void ProcessMovement()
+        private void OnSpeedChanged(bool isRunning)
         {
-            var moveDirection = Vector2.zero;
-            if (Gamepad.current.leftStick.IsActuated())
-            {
-                moveDirection = OnMove(Gamepad.current.leftStick.ReadValue());
-            }
+            _speedModifier = isRunning ? 2 : 1;
+            UpdateVelocity();
+        }
 
-            var speedModifier = Gamepad.current.aButton.isPressed ? 2 : 1;
-            _rigidbody2D.velocity = _gameplayConfig.MovementSpeed * speedModifier * moveDirection;
-            _animator.SetBool(_isMovingAnimatorKey, moveDirection.magnitude > 0);
+        private void ProcessMovement(Vector2 moveDirection)
+        {
+            _moveDirection = OnMove(moveDirection);
+            UpdateVelocity();
+            _animator.SetBool(_isMovingAnimatorKey, _moveDirection.magnitude > 0);
+        }
+
+        private void UpdateVelocity()
+        {
+            _rigidbody2D.velocity = _gameplayConfig.MovementSpeed * _speedModifier * _moveDirection;
         }
 
         private Vector2 OnMove(Vector2 direction)
@@ -142,6 +169,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         {
             _playerProfile.PlayerPosition = transform.position;
             _playerProfile.Save();
+            _compositeDisposable.Dispose();
         }
     }
 }
