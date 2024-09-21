@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using TendedTarsier.Script.Modules.Gameplay.Character;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Zenject;
+using TendedTarsier.Script.Modules.Gameplay.Configs;
+using TendedTarsier.Script.Modules.Gameplay.Inventory;
 
 namespace TendedTarsier.Script.Modules.Gameplay
 {
@@ -50,6 +53,8 @@ namespace TendedTarsier.Script.Modules.Gameplay
             //Services
             Container.Bind<TilemapService>().FromNew().AsSingle();
             Container.Bind<InventoryService>().FromNew().AsSingle();
+            Container.Bind<InputService>().FromNew().AsSingle();
+            Container.Bind<HUDService>().FromNew().AsSingle();
             
             //UI
             Container.Bind<PanelLoader<ToolBarController>>().FromNew().AsSingle().WithArguments(_toolBarController, _gameplayCanvas);

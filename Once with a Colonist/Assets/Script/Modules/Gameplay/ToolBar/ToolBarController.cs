@@ -1,3 +1,4 @@
+using TendedTarsier.Script.Modules.Gameplay.Configs;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;

@@ -1,5 +1,6 @@
 using System.Linq;
 using TendedTarsier;
+using TendedTarsier.Script.Modules.Gameplay.Configs;
 using UniRx;
 using UnityEngine;
 using Zenject;

@@ -1,84 +1,59 @@
-﻿using System;
-using Cysharp.Threading.Tasks;
+﻿using TendedTarsier.Script.Modules.Gameplay.Inventory;
 using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 using Zenject;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.Gameplay.Character
 {
     public class PlayerController : MonoBehaviour
     {
+        public readonly ReactiveProperty<Vector3Int> TargetDirection = new();
+        public readonly ReactiveProperty<Vector3Int> TargetPosition = new();
+        public readonly ReactiveProperty<Tilemap> CurrentTilemap = new();
+
         private readonly int _directionAnimatorKey = Animator.StringToHash("Direction");
         private readonly int _isMovingAnimatorKey = Animator.StringToHash("IsMoving");
-        private readonly CompositeDisposable _compositeDisposable = new();
-        private readonly ReactiveProperty<Tilemap> _currentTilemap = new();
-
-        private IObservable<InputAction.CallbackContext> _onMovePerformed;
-        private IObservable<InputAction.CallbackContext> _onXButtonPerformed;
-        private IObservable<InputAction.CallbackContext> _onYButtonPerformed;
-        private IObservable<InputAction.CallbackContext> _onAButtonPerformed;
-        private IObservable<InputAction.CallbackContext> _onBButtonPerformed;
 
         private Rigidbody2D _rigidbody2D;
         private Animator _animator;
 
-        private Vector3Int _direction;
-        private Vector3Int _targetPosition;
-
+        private InputService _inputService;
         private GameplayConfig _gameplayConfig;
         private PlayerProfile _playerProfile;
         private GameplayController _gameplayController;
-        private GameplayInput _gameplayInput;
         private InventoryService _inventoryService;
         private TilemapService _tilemapService;
         private Transform _itemsTransform;
 
         [Inject]
         private void Construct(
+            InputService inputService,
             GameplayConfig gameplayConfig,
             PlayerProfile playerProfile,
             GameplayController gameplayController,
-            GameplayInput gameplayInput,
             InventoryService inventoryService,
+            HUDService hudService,
             TilemapService tilemapService)
         {
             _tilemapService = tilemapService;
             _inventoryService = inventoryService;
-            _gameplayInput = gameplayInput;
             _gameplayController = gameplayController;
             _playerProfile = playerProfile;
             _gameplayConfig = gameplayConfig;
+            _inputService = inputService;
         }
 
         private void Start()
         {
-            InitInput();
-
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
 
             transform.SetLocalPositionAndRotation(_playerProfile.PlayerPosition, Quaternion.identity);
 
-            _onMovePerformed.First().Subscribe(_ => _gameplayController.OnGameplayStarted());
-            _currentTilemap.SkipLatestValueOnSubscribe().First().Subscribe(_ => OnMove(Vector2.down));
-        }
-
-        private void InitInput()
-        {
-            _onMovePerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.Move.performed += t, t => _gameplayInput.Player.Move.performed -= t);
-            _onXButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonX.performed += t, t => _gameplayInput.Player.ButtonX.performed -= t);
-            _onYButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonY.performed += t, t => _gameplayInput.Player.ButtonY.performed -= t);
-            _onAButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonA.performed += t, t => _gameplayInput.Player.ButtonA.performed -= t);
-            _onBButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonB.performed += t, t => _gameplayInput.Player.ButtonB.performed -= t);
-
-            _gameplayInput.Player.Enable();
-
-            _onXButtonPerformed.Subscribe(OnXButtonPerformed).AddTo(_compositeDisposable);
-            _onYButtonPerformed.Subscribe(OnYButtonPerformed).AddTo(_compositeDisposable);
-            _onAButtonPerformed.Subscribe(OnAButtonPerformed).AddTo(_compositeDisposable);
-            _onBButtonPerformed.Subscribe(OnBButtonPerformed).AddTo(_compositeDisposable);
+            _inputService.OnMovePerformed.First().Subscribe(_ => _gameplayController.OnGameplayStarted());
+            CurrentTilemap.SkipLatestValueOnSubscribe().First().Subscribe(_ => OnMove(Vector2.down));
         }
 
         private void FixedUpdate()
@@ -90,7 +65,7 @@ namespace TendedTarsier
         {
             if (other.CompareTag("Ground"))
             {
-                _currentTilemap.Value = other.GetComponent<Tilemap>();
+                CurrentTilemap.Value = other.GetComponent<Tilemap>();
             }
             else if (other.CompareTag("Item"))
             {
@@ -103,31 +78,11 @@ namespace TendedTarsier
         {
             if (other.CompareTag("Ground"))
             {
-                if (_currentTilemap.Value.gameObject == other.gameObject)
+                if (CurrentTilemap.Value.gameObject == other.gameObject)
                 {
-                    _currentTilemap.Value = null;
+                    CurrentTilemap.Value = null;
                 }
             }
-        }
-
-        private void OnXButtonPerformed(InputAction.CallbackContext _)
-        {
-            _inventoryService.Perform(_currentTilemap.Value, _targetPosition);
-        }
-
-        private void OnYButtonPerformed(InputAction.CallbackContext _)
-        {
-            _inventoryService.SwitchInventory();
-        }
-
-        private void OnAButtonPerformed(InputAction.CallbackContext _)
-        {
-            //
-        }
-
-        private void OnBButtonPerformed(InputAction.CallbackContext _)
-        {
-            _inventoryService.Drop(_targetPosition, _targetPosition + _direction * 3).Forget();
         }
 
         private void ProcessMovement()
@@ -176,9 +131,9 @@ namespace TendedTarsier
             }
 
             var transformPosition = transform.position;
-            _direction = Vector3Int.RoundToInt(direction);
-            _targetPosition = new Vector3Int(Mathf.FloorToInt(transformPosition.x), Mathf.RoundToInt(transformPosition.y)) + _direction;
-            _tilemapService.ProcessTiles(_currentTilemap.Value, _targetPosition);
+            TargetDirection.Value = Vector3Int.RoundToInt(direction);
+            TargetPosition.Value = new Vector3Int(Mathf.FloorToInt(transformPosition.x), Mathf.RoundToInt(transformPosition.y)) + TargetDirection.Value;
+            _tilemapService.ProcessTiles(CurrentTilemap.Value, TargetPosition.Value);
 
             return direction;
         }
@@ -187,7 +142,6 @@ namespace TendedTarsier
         {
             _playerProfile.PlayerPosition = transform.position;
             _playerProfile.Save();
-            _compositeDisposable.Dispose();
         }
     }
 }

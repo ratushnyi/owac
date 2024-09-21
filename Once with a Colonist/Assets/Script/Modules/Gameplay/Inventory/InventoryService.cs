@@ -3,50 +3,53 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using JetBrains.Annotations;
+using TendedTarsier.Script.Modules.Gameplay.Character;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using TendedTarsier.Script.Modules.Gameplay.Configs;
+using TendedTarsier.Script.Modules.General.Services;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.Gameplay.Inventory
 {
     [UsedImplicitly]
     public class InventoryService : ServiceBase
     {
+        private readonly InputService _inputService;
         private readonly InventoryProfile _inventoryProfile;
         private readonly InventoryConfig _inventoryConfig;
-        private readonly PanelLoader<InventoryController> _inventoryControllerPanel;
         private readonly PlayerController _playerController;
         private readonly Transform _itemsTransform;
 
         private InventoryService(
+            InputService inputService,
             InventoryProfile inventoryProfile,
             InventoryConfig inventoryConfig,
-            PanelLoader<InventoryController> inventoryControllerPanel,
             PlayerController playerController,
             Transform itemsTransform)
         {
             _itemsTransform = itemsTransform;
             _playerController = playerController;
-            _inventoryControllerPanel = inventoryControllerPanel;
             _inventoryConfig = inventoryConfig;
             _inventoryProfile = inventoryProfile;
+            _inputService = inputService;
         }
 
         protected override void Initialize()
         {
+            SubscribeOnInput();
             SubscribeOnItemsChanged();
         }
 
-        public async void SwitchInventory()
+        private void SubscribeOnInput()
         {
-            if (_inventoryControllerPanel.Instance != null)
-            {
-                await _inventoryControllerPanel.Hide();
-            }
-            else
-            {
-                await _inventoryControllerPanel.Show();
-            }
+            _inputService.OnXButtonPerformed
+                .Subscribe(_ => Perform(_playerController.CurrentTilemap.Value, _playerController.TargetPosition.Value))
+                .AddTo(CompositeDisposable);
+
+            _inputService.OnBButtonPerformed
+                .Subscribe(_ => Drop(_playerController.TargetPosition.Value, _playerController.TargetPosition.Value + _playerController.TargetDirection.Value * 3).Forget())
+                .AddTo(CompositeDisposable);
         }
 
         public bool TryPut(string id, int count, Func<UniTask> beforeItemAdd = null)

@@ -1,7 +1,7 @@
 using UniRx;
 using Zenject;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.General.Services
 {
     public abstract class ServiceBase
     {
