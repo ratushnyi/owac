@@ -4,14 +4,18 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using Zenject;
 using TendedTarsier.Script.Modules.Gameplay.Configs;
-using TendedTarsier.Script.Modules.Gameplay.Inventory;
+using TendedTarsier.Script.Modules.Gameplay.Services.HUD;
+using TendedTarsier.Script.Modules.Gameplay.Services.Input;
+using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
+using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using TendedTarsier.Script.Utilities.Extensions;
 
 namespace TendedTarsier.Script.Modules.Gameplay
 {
     public class GameplayInstaller : MonoInstaller
     {
         public const string ItemsTransformId = "item_transform";
-        
+
         [Header("Configs")]
         [SerializeField]
         private InventoryConfig _inventoryConfig;
@@ -19,7 +23,7 @@ namespace TendedTarsier.Script.Modules.Gameplay
         private TilemapConfig _tilemapConfig;
         [SerializeField]
         private GameplayConfig _gameplayConfig;
-        
+
         [Header("Common")]
         [SerializeField]
         private List<Tilemap> _tilemaps;
@@ -29,11 +33,11 @@ namespace TendedTarsier.Script.Modules.Gameplay
         private PlayerController _playerController;
         [SerializeField]
         private Transform _itemsTransform;
-        
+
         [Header("UI")]
         [SerializeField]
         private Canvas _gameplayCanvas;
-        
+
         [Header("Panels")]
         [SerializeField]
         private ToolBarController _toolBarController;
@@ -44,18 +48,18 @@ namespace TendedTarsier.Script.Modules.Gameplay
         {
             //General
             Container.Bind<GameplayInput>().FromNew().AsSingle();
-            
+
             //Configs
             Container.Bind<InventoryConfig>().FromScriptableObject(_inventoryConfig).AsSingle();
             Container.Bind<TilemapConfig>().FromScriptableObject(_tilemapConfig).AsSingle();
             Container.Bind<GameplayConfig>().FromScriptableObject(_gameplayConfig).AsSingle();
-            
+
             //Services
-            Container.Bind<TilemapService>().FromNew().AsSingle();
-            Container.Bind<InventoryService>().FromNew().AsSingle();
-            Container.Bind<InputService>().FromNew().AsSingle();
-            Container.Bind<HUDService>().FromNew().AsSingle();
-            
+            Container.BindService<TilemapService>();
+            Container.BindService<InventoryService>();
+            Container.BindService<InputService>();
+            Container.BindService<HUDService>();
+
             //UI
             Container.Bind<PanelLoader<ToolBarController>>().FromNew().AsSingle().WithArguments(_toolBarController, _gameplayCanvas);
             Container.Bind<PanelLoader<InventoryController>>().FromNew().AsSingle().WithArguments(_inventoryController, _gameplayCanvas);

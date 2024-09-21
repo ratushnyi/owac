@@ -4,35 +4,32 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using JetBrains.Annotations;
 using TendedTarsier.Script.Modules.Gameplay.Character;
+using TendedTarsier.Script.Modules.Gameplay.Configs;
+using TendedTarsier.Script.Modules.Gameplay.Inventory;
+using TendedTarsier.Script.Modules.Gameplay.Services.Input;
+using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using TendedTarsier.Script.Modules.General.Services;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using TendedTarsier.Script.Modules.Gameplay.Configs;
-using TendedTarsier.Script.Modules.General.Services;
 
-namespace TendedTarsier.Script.Modules.Gameplay.Inventory
+namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 {
     [UsedImplicitly]
     public class InventoryService : ServiceBase
     {
-        private readonly InputService _inputService;
         private readonly InventoryProfile _inventoryProfile;
         private readonly InventoryConfig _inventoryConfig;
-        private readonly PlayerController _playerController;
         private readonly Transform _itemsTransform;
 
         private InventoryService(
-            InputService inputService,
             InventoryProfile inventoryProfile,
             InventoryConfig inventoryConfig,
-            PlayerController playerController,
             Transform itemsTransform)
         {
             _itemsTransform = itemsTransform;
-            _playerController = playerController;
             _inventoryConfig = inventoryConfig;
             _inventoryProfile = inventoryProfile;
-            _inputService = inputService;
         }
 
         protected override void Initialize()
@@ -43,13 +40,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Inventory
 
         private void SubscribeOnInput()
         {
-            _inputService.OnXButtonPerformed
-                .Subscribe(_ => Perform(_playerController.CurrentTilemap.Value, _playerController.TargetPosition.Value))
-                .AddTo(CompositeDisposable);
-
-            _inputService.OnBButtonPerformed
-                .Subscribe(_ => Drop(_playerController.TargetPosition.Value, _playerController.TargetPosition.Value + _playerController.TargetDirection.Value * 3).Forget())
-                .AddTo(CompositeDisposable);
         }
 
         public bool TryPut(string id, int count, Func<UniTask> beforeItemAdd = null)
@@ -97,14 +87,14 @@ namespace TendedTarsier.Script.Modules.Gameplay.Inventory
             }
         }
 
-        public bool TryPut(MapItemBase item)
+        public bool TryPut(MapItemBase item, Transform parent)
         {
             return item.Collider.enabled && TryPut(item.Id, item.Count, putObject);
 
             async UniTask putObject()
             {
                 item.Collider.enabled = false;
-                item.transform.parent = _playerController.transform;
+                item.transform.parent = parent;
                 await item.transform.DOLocalMove(Vector3.zero, 0.5f).ToUniTask();
                 UnityEngine.Object.DestroyImmediate(item.gameObject);
             }

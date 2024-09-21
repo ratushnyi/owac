@@ -28,9 +28,27 @@ public partial class @GameplayInput: IInputActionCollection2, IDisposable
             ""id"": ""60439d12-88e2-438c-86e6-2bbbc4be5f88"",
             ""actions"": [
                 {
-                    ""name"": ""Move"",
+                    ""name"": ""LeftStick"",
                     ""type"": ""Value"",
                     ""id"": ""abd02a35-fc0c-4529-9990-17f07490fc77"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""RightStick"",
+                    ""type"": ""Value"",
+                    ""id"": ""abf81856-b5cf-461d-9baa-254e3128e1fb"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""DPad"",
+                    ""type"": ""Value"",
+                    ""id"": ""a5f3d292-2b46-4ab4-94b3-c7559eca8446"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -81,7 +99,7 @@ public partial class @GameplayInput: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Move"",
+                    ""action"": ""LeftStick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -128,6 +146,28 @@ public partial class @GameplayInput: IInputActionCollection2, IDisposable
                     ""action"": ""ButtonY"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c30728d6-51cd-407c-9ba8-55289291ef2e"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RightStick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""53d66ab9-2dc6-45d1-bf30-2b11fac1b9a1"",
+                    ""path"": ""<Gamepad>/dpad"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DPad"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -136,7 +176,9 @@ public partial class @GameplayInput: IInputActionCollection2, IDisposable
 }");
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
-        m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
+        m_Player_LeftStick = m_Player.FindAction("LeftStick", throwIfNotFound: true);
+        m_Player_RightStick = m_Player.FindAction("RightStick", throwIfNotFound: true);
+        m_Player_DPad = m_Player.FindAction("DPad", throwIfNotFound: true);
         m_Player_ButtonA = m_Player.FindAction("ButtonA", throwIfNotFound: true);
         m_Player_ButtonB = m_Player.FindAction("ButtonB", throwIfNotFound: true);
         m_Player_ButtonX = m_Player.FindAction("ButtonX", throwIfNotFound: true);
@@ -202,7 +244,9 @@ public partial class @GameplayInput: IInputActionCollection2, IDisposable
     // Player
     private readonly InputActionMap m_Player;
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
-    private readonly InputAction m_Player_Move;
+    private readonly InputAction m_Player_LeftStick;
+    private readonly InputAction m_Player_RightStick;
+    private readonly InputAction m_Player_DPad;
     private readonly InputAction m_Player_ButtonA;
     private readonly InputAction m_Player_ButtonB;
     private readonly InputAction m_Player_ButtonX;
@@ -211,7 +255,9 @@ public partial class @GameplayInput: IInputActionCollection2, IDisposable
     {
         private @GameplayInput m_Wrapper;
         public PlayerActions(@GameplayInput wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Move => m_Wrapper.m_Player_Move;
+        public InputAction @LeftStick => m_Wrapper.m_Player_LeftStick;
+        public InputAction @RightStick => m_Wrapper.m_Player_RightStick;
+        public InputAction @DPad => m_Wrapper.m_Player_DPad;
         public InputAction @ButtonA => m_Wrapper.m_Player_ButtonA;
         public InputAction @ButtonB => m_Wrapper.m_Player_ButtonB;
         public InputAction @ButtonX => m_Wrapper.m_Player_ButtonX;
@@ -225,9 +271,15 @@ public partial class @GameplayInput: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_PlayerActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_PlayerActionsCallbackInterfaces.Add(instance);
-            @Move.started += instance.OnMove;
-            @Move.performed += instance.OnMove;
-            @Move.canceled += instance.OnMove;
+            @LeftStick.started += instance.OnLeftStick;
+            @LeftStick.performed += instance.OnLeftStick;
+            @LeftStick.canceled += instance.OnLeftStick;
+            @RightStick.started += instance.OnRightStick;
+            @RightStick.performed += instance.OnRightStick;
+            @RightStick.canceled += instance.OnRightStick;
+            @DPad.started += instance.OnDPad;
+            @DPad.performed += instance.OnDPad;
+            @DPad.canceled += instance.OnDPad;
             @ButtonA.started += instance.OnButtonA;
             @ButtonA.performed += instance.OnButtonA;
             @ButtonA.canceled += instance.OnButtonA;
@@ -244,9 +296,15 @@ public partial class @GameplayInput: IInputActionCollection2, IDisposable
 
         private void UnregisterCallbacks(IPlayerActions instance)
         {
-            @Move.started -= instance.OnMove;
-            @Move.performed -= instance.OnMove;
-            @Move.canceled -= instance.OnMove;
+            @LeftStick.started -= instance.OnLeftStick;
+            @LeftStick.performed -= instance.OnLeftStick;
+            @LeftStick.canceled -= instance.OnLeftStick;
+            @RightStick.started -= instance.OnRightStick;
+            @RightStick.performed -= instance.OnRightStick;
+            @RightStick.canceled -= instance.OnRightStick;
+            @DPad.started -= instance.OnDPad;
+            @DPad.performed -= instance.OnDPad;
+            @DPad.canceled -= instance.OnDPad;
             @ButtonA.started -= instance.OnButtonA;
             @ButtonA.performed -= instance.OnButtonA;
             @ButtonA.canceled -= instance.OnButtonA;
@@ -278,7 +336,9 @@ public partial class @GameplayInput: IInputActionCollection2, IDisposable
     public PlayerActions @Player => new PlayerActions(this);
     public interface IPlayerActions
     {
-        void OnMove(InputAction.CallbackContext context);
+        void OnLeftStick(InputAction.CallbackContext context);
+        void OnRightStick(InputAction.CallbackContext context);
+        void OnDPad(InputAction.CallbackContext context);
         void OnButtonA(InputAction.CallbackContext context);
         void OnButtonB(InputAction.CallbackContext context);
         void OnButtonX(InputAction.CallbackContext context);

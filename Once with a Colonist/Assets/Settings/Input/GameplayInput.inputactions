@@ -6,9 +6,27 @@
             "id": "60439d12-88e2-438c-86e6-2bbbc4be5f88",
             "actions": [
                 {
-                    "name": "Move",
+                    "name": "LeftStick",
                     "type": "Value",
                     "id": "abd02a35-fc0c-4529-9990-17f07490fc77",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "RightStick",
+                    "type": "Value",
+                    "id": "abf81856-b5cf-461d-9baa-254e3128e1fb",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "DPad",
+                    "type": "Value",
+                    "id": "a5f3d292-2b46-4ab4-94b3-c7559eca8446",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
@@ -59,7 +77,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Move",
+                    "action": "LeftStick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -104,6 +122,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "ButtonY",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c30728d6-51cd-407c-9ba8-55289291ef2e",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RightStick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "53d66ab9-2dc6-45d1-bf30-2b11fac1b9a1",
+                    "path": "<Gamepad>/dpad",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DPad",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

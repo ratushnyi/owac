@@ -4,18 +4,18 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.Gameplay
 {
     public class GameplayController : MonoBehaviour
     {
         private readonly CompositeDisposable _compositeDisposable = new ();
         
         private GeneralConfig _generalConfig;
-        private PlayerProfile _playerProfile;
+        private Character.PlayerProfile _playerProfile;
         private PanelLoader<ToolBarController> _toolBarPanel;
 
         [Inject]
-        private void Construct(GeneralConfig generalConfig, PlayerProfile playerProfile, PanelLoader<ToolBarController> toolBarPanel)
+        private void Construct(GeneralConfig generalConfig, Character.PlayerProfile playerProfile, PanelLoader<ToolBarController> toolBarPanel)
         {
             _toolBarPanel = toolBarPanel;
             _playerProfile = playerProfile;

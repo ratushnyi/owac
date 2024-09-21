@@ -1,8 +1,9 @@
 using JetBrains.Annotations;
+using TendedTarsier.Script.Modules.Gameplay.Services.Input;
 using TendedTarsier.Script.Modules.General.Services;
 using UniRx;
 
-namespace TendedTarsier.Script.Modules.Gameplay.Inventory
+namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
 {
     [UsedImplicitly]
     public class HUDService : ServiceBase

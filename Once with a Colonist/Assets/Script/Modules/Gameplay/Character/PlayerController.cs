@@ -1,4 +1,9 @@
-﻿using TendedTarsier.Script.Modules.Gameplay.Inventory;
+﻿using Cysharp.Threading.Tasks;
+using TendedTarsier.Script.Modules.Gameplay.Configs;
+using TendedTarsier.Script.Modules.Gameplay.Services.HUD;
+using TendedTarsier.Script.Modules.Gameplay.Services.Input;
+using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
+using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -10,7 +15,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
     {
         public readonly ReactiveProperty<Vector3Int> TargetDirection = new();
         public readonly ReactiveProperty<Vector3Int> TargetPosition = new();
-        public readonly ReactiveProperty<Tilemap> CurrentTilemap = new();
 
         private readonly int _directionAnimatorKey = Animator.StringToHash("Direction");
         private readonly int _isMovingAnimatorKey = Animator.StringToHash("IsMoving");
@@ -34,12 +38,12 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         [Inject]
         private void Construct(
             InputService inputService,
-            GameplayConfig gameplayConfig,
-            PlayerProfile playerProfile,
-            GameplayController gameplayController,
             InventoryService inventoryService,
             HUDService hudService,
-            TilemapService tilemapService)
+            TilemapService tilemapService,
+            GameplayConfig gameplayConfig,
+            PlayerProfile playerProfile,
+            GameplayController gameplayController)
         {
             _tilemapService = tilemapService;
             _inventoryService = inventoryService;
@@ -55,8 +59,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             _animator = GetComponent<Animator>();
 
             transform.SetLocalPositionAndRotation(_playerProfile.PlayerPosition, Quaternion.identity);
-
-            CurrentTilemap.SkipLatestValueOnSubscribe().First().Subscribe(_ => OnMove(Vector2.down));
+            
             SubscribeOnInput();
         }
 
@@ -81,29 +84,39 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             _inputService.OnAButtonCanceled
                 .Subscribe(_ => OnSpeedChanged(false))
                 .AddTo(_compositeDisposable);
+            
+            _inputService.OnXButtonPerformed
+                .Subscribe(_ => _inventoryService.Perform(_tilemapService.CurrentTilemap.Value, TargetPosition.Value))
+                .AddTo(_compositeDisposable);
+            
+            _inputService.OnBButtonPerformed
+                .Subscribe(_ => _inventoryService.Drop(TargetPosition.Value, TargetPosition.Value + TargetDirection.Value * 3).Forget())
+                .AddTo(_compositeDisposable);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.CompareTag("Ground"))
+            switch (other.tag)
             {
-                CurrentTilemap.Value = other.GetComponent<Tilemap>();
-            }
-            else if (other.CompareTag("Item"))
-            {
-                var mapItem = other.GetComponent<MapItemBase>();
-                _inventoryService.TryPut(mapItem);
+                case "Ground":
+                    var tilemap = other.GetComponent<Tilemap>();
+                    _tilemapService.OnGroundEnter(tilemap);
+                    break;
+                case "Item":
+                    var mapItem = other.GetComponent<MapItemBase>();
+                    _inventoryService.TryPut(mapItem, transform);
+                    break;
             }
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (other.CompareTag("Ground"))
+            switch (other.tag)
             {
-                if (CurrentTilemap.Value.gameObject == other.gameObject)
-                {
-                    CurrentTilemap.Value = null;
-                }
+                case "Ground":
+                    var tilemap = other.GetComponent<Tilemap>();
+                    _tilemapService.OnGroundExit(tilemap);
+                    break;
             }
         }
 
@@ -160,7 +173,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             var transformPosition = transform.position;
             TargetDirection.Value = Vector3Int.RoundToInt(direction);
             TargetPosition.Value = new Vector3Int(Mathf.FloorToInt(transformPosition.x), Mathf.RoundToInt(transformPosition.y)) + TargetDirection.Value;
-            _tilemapService.ProcessTiles(CurrentTilemap.Value, TargetPosition.Value);
+            _tilemapService.ProcessTiles(_tilemapService.CurrentTilemap.Value, TargetPosition.Value);
 
             return direction;
         }

@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using MemoryPack;
-using TendedTarsier.Script.Modules.General.Services;
 using UniRx;
 using UnityEngine;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.General.Services
 {
     public class ProfileService : ServiceBase
     {
@@ -113,8 +112,9 @@ namespace TendedTarsier
             return Path.Combine(ProfilesDirectory, fileName);
         }
 
-        protected override void Dispose()
+        public override void Dispose()
         {
+            base.Dispose();
             foreach (var profile in _profiles)
             {
                 profile.Terminate();

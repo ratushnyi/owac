@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TendedTarsier.Script.Modules.General.Services;
 using UnityEngine;
 using Zenject;
 
@@ -20,8 +21,8 @@ namespace TendedTarsier
         {
             var profileSections = new List<ProfileBase>();
 
-            var playerProfile = new PlayerProfile();
-            Container.Bind<PlayerProfile>().FromInstance(playerProfile).AsSingle();
+            var playerProfile = new Script.Modules.Gameplay.Character.PlayerProfile();
+            Container.Bind<Script.Modules.Gameplay.Character.PlayerProfile>().FromInstance(playerProfile).AsSingle();
             profileSections.Add(playerProfile);
 
             var tilemapProfile = new TilemapProfile();

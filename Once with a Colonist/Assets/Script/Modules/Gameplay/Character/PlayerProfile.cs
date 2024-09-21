@@ -1,9 +1,8 @@
 using System;
 using MemoryPack;
-using UniRx;
 using UnityEngine;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.Gameplay.Character
 {
     [MemoryPackable(GenerateType.VersionTolerant)]
     public partial class PlayerProfile : ProfileBase

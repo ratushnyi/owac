@@ -4,7 +4,7 @@ using TendedTarsier.Script.Modules.General.Services;
 using UniRx;
 using UnityEngine.InputSystem;
 
-namespace TendedTarsier.Script.Modules.Gameplay.Inventory
+namespace TendedTarsier.Script.Modules.Gameplay.Services.Input
 {
     [UsedImplicitly]
     public class InputService : ServiceBase

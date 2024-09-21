@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.Gameplay.Configs
 {
     [CreateAssetMenu(menuName = "Config/GameplayConfig", fileName = "GameplayConfig")]
     public class GameplayConfig : ScriptableObject
