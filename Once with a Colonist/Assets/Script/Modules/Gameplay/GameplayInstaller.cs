@@ -7,7 +7,6 @@ using TendedTarsier.Script.Modules.Gameplay.Configs;
 using TendedTarsier.Script.Modules.Gameplay.Services.HUD;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
-using TendedTarsier.Script.Modules.General.Services.Input;
 using TendedTarsier.Script.Utilities.Extensions;
 
 namespace TendedTarsier.Script.Modules.Gameplay
@@ -46,25 +45,34 @@ namespace TendedTarsier.Script.Modules.Gameplay
 
         public override void InstallBindings()
         {
-            //General
-            Container.Bind<GameplayInput>().FromNew().AsSingle();
+            BindConfigs();
+            BindServices();
+            BindPanels();
+            BindCommon();
+        }
 
-            //Configs
+        private void BindServices()
+        {
+            Container.BindWithParents<TilemapService>();
+            Container.BindWithParents<InventoryService>();
+            Container.BindWithParents<HUDService>();
+        }
+
+        private void BindConfigs()
+        {
             Container.Bind<InventoryConfig>().FromScriptableObject(_inventoryConfig).AsSingle();
             Container.Bind<TilemapConfig>().FromScriptableObject(_tilemapConfig).AsSingle();
             Container.Bind<GameplayConfig>().FromScriptableObject(_gameplayConfig).AsSingle();
+        }
 
-            //Services
-            Container.BindWithParents<TilemapService>();
-            Container.BindWithParents<InventoryService>();
-            Container.BindWithParents<InputService>();
-            Container.BindWithParents<HUDService>();
-
-            //UI
+        private void BindPanels()
+        {
             Container.Bind<PanelLoader<ToolBarController>>().FromNew().AsSingle().WithArguments(_toolBarController, _gameplayCanvas);
             Container.Bind<PanelLoader<InventoryController>>().FromNew().AsSingle().WithArguments(_inventoryController, _gameplayCanvas);
+        }
 
-            //Common
+        private void BindCommon()
+        {
             Container.Bind<Transform>().FromInstance(_itemsTransform).AsSingle().WithConcreteId(ItemsTransformId);
             Container.Bind<GameplayController>().FromInstance(_gameplayController).AsSingle();
             Container.Bind<PlayerController>().FromInstance(_playerController).AsSingle();
