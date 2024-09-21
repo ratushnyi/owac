@@ -5,7 +5,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Zenject;
+using InventoryProfile = TendedTarsier.Script.Modules.Gameplay.Services.Inventory.InventoryProfile;
 using PlayerProfile = TendedTarsier.Script.Modules.Gameplay.Character.PlayerProfile;
+using TilemapProfile = TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps.TilemapProfile;
 
 public class MenuController : MonoBehaviour
 {

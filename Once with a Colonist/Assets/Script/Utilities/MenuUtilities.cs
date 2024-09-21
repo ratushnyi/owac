@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System.IO;
 using TendedTarsier.Script.Modules.General.Services;
+using TendedTarsier.Script.Modules.General.Services.Profile;
 using UnityEditor;
 
 namespace TendedTarsier.Script.Utilities

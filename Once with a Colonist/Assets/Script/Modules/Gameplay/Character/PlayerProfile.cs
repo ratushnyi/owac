@@ -1,6 +1,7 @@
 using System;
 using MemoryPack;
 using UnityEngine;
+using TendedTarsier.Script.Modules.General.Profile;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Character
 {

@@ -4,6 +4,7 @@ using TendedTarsier.Script.Modules.Gameplay.Configs;
 using UniRx;
 using UnityEngine;
 using Zenject;
+using InventoryProfile = TendedTarsier.Script.Modules.Gameplay.Services.Inventory.InventoryProfile;
 
 public class InventoryController : MonoBehaviour
 {

@@ -1,10 +1,9 @@
 using System;
 using JetBrains.Annotations;
-using TendedTarsier.Script.Modules.General.Services;
 using UniRx;
 using UnityEngine.InputSystem;
 
-namespace TendedTarsier.Script.Modules.Gameplay.Services.Input
+namespace TendedTarsier.Script.Modules.General.Services.Input
 {
     [UsedImplicitly]
     public class InputService : ServiceBase
@@ -44,13 +43,13 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Input
 
         private void InitInput()
         {
-            OnLeftStickStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.Move.started += t, t => _gameplayInput.Player.Move.started -= t);
-            OnLeftStickPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.Move.performed += t, t => _gameplayInput.Player.Move.performed -= t);
-            OnLeftStickCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.Move.canceled += t, t => _gameplayInput.Player.Move.canceled -= t);
+            OnLeftStickStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.LeftStick.started += t, t => _gameplayInput.Player.LeftStick.started -= t);
+            OnLeftStickPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.LeftStick.performed += t, t => _gameplayInput.Player.LeftStick.performed -= t);
+            OnLeftStickCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.LeftStick.canceled += t, t => _gameplayInput.Player.LeftStick.canceled -= t);
             
-            OnRightStickStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.Move.started += t, t => _gameplayInput.Player.Move.started -= t);
-            OnRightStickPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.Move.performed += t, t => _gameplayInput.Player.Move.performed -= t);
-            OnRightStickCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.Move.canceled += t, t => _gameplayInput.Player.Move.canceled -= t);
+            OnRightStickStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.RightStick.started += t, t => _gameplayInput.Player.RightStick.started -= t);
+            OnRightStickPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.RightStick.performed += t, t => _gameplayInput.Player.RightStick.performed -= t);
+            OnRightStickCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.RightStick.canceled += t, t => _gameplayInput.Player.RightStick.canceled -= t);
             
             OnXButtonStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonX.started += t, t => _gameplayInput.Player.ButtonX.started -= t);
             OnXButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonX.performed += t, t => _gameplayInput.Player.ButtonX.performed -= t);

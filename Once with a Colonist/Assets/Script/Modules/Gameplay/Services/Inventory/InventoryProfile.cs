@@ -1,9 +1,9 @@
-using System;
 using JetBrains.Annotations;
 using MemoryPack;
 using UniRx;
+using TendedTarsier.Script.Modules.General.Profile;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 {
     [MemoryPackable(GenerateType.VersionTolerant)]
     public partial class InventoryProfile : ProfileBase

@@ -1,9 +1,9 @@
 ﻿using Cysharp.Threading.Tasks;
 using TendedTarsier.Script.Modules.Gameplay.Configs;
 using TendedTarsier.Script.Modules.Gameplay.Services.HUD;
-using TendedTarsier.Script.Modules.Gameplay.Services.Input;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using TendedTarsier.Script.Modules.General.Services.Input;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Tilemaps;

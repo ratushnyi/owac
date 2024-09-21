@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
-using TendedTarsier.Script.Modules.Gameplay.Services.Input;
 using TendedTarsier.Script.Modules.General.Services;
+using TendedTarsier.Script.Modules.General.Services.Input;
 using UniRx;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD

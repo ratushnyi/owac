@@ -1,18 +1,16 @@
 using System.Linq;
-using TendedTarsier.Script.Modules.General.Services;
 using Zenject;
 
 namespace TendedTarsier.Script.Utilities.Extensions
 {
     public static class ContainerExtensions
     {
-        public static void BindService<TService>(this DiContainer container) where TService : ServiceBase
+        public static void BindWithParents<T>(this DiContainer container)
         {
-            var current = typeof(TService);
+            var current = typeof(T);
             var types = current.GetInterfaces().ToHashSet();
             types.Add(current);
-            container.Bind(types).To<TService>().AsSingle().NonLazy();
+            container.Bind(types).To<T>().AsSingle().NonLazy();
         }
-
     }
 }

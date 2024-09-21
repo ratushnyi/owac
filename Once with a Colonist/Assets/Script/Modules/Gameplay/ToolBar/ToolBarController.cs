@@ -15,11 +15,11 @@ namespace TendedTarsier
         [field: SerializeField]
         public InventoryCellView SelectedItem { get; set; }
 
-        private InventoryProfile _inventoryProfile;
+        private Script.Modules.Gameplay.Services.Inventory.InventoryProfile _inventoryProfile;
         private InventoryConfig _inventoryConfig;
 
         [Inject]
-        private void Construct(InventoryProfile inventoryProfile, InventoryConfig inventoryConfig)
+        private void Construct(Script.Modules.Gameplay.Services.Inventory.InventoryProfile inventoryProfile, InventoryConfig inventoryConfig)
         {
             _inventoryConfig = inventoryConfig;
             _inventoryProfile = inventoryProfile;

@@ -1,9 +1,12 @@
 using System.Collections.Generic;
+using TendedTarsier.Script.Modules.Gameplay.Character;
 using TendedTarsier.Script.Modules.General.Services;
+using TendedTarsier.Script.Modules.General.Services.Profile;
+using TendedTarsier.Script.Utilities.Extensions;
 using UnityEngine;
 using Zenject;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.General
 {
     public class GeneralInstaller : MonoInstaller
     {
@@ -19,21 +22,11 @@ namespace TendedTarsier
 
         private void BindProfiles()
         {
-            var profileSections = new List<ProfileBase>();
-
-            var playerProfile = new Script.Modules.Gameplay.Character.PlayerProfile();
-            Container.Bind<Script.Modules.Gameplay.Character.PlayerProfile>().FromInstance(playerProfile).AsSingle();
-            profileSections.Add(playerProfile);
-
-            var tilemapProfile = new TilemapProfile();
-            Container.Bind<TilemapProfile>().FromInstance(tilemapProfile).AsSingle();
-            profileSections.Add(tilemapProfile);
-
-            var inventoryProfile = new InventoryProfile();
-            Container.Bind<InventoryProfile>().FromInstance(inventoryProfile).AsSingle();
-            profileSections.Add(inventoryProfile);
-
-            Container.Bind<ProfileService>().FromInstance(new ProfileService(profileSections)).AsSingle();
+            Container.BindWithParents<PlayerProfile>();
+            Container.BindWithParents<Gameplay.Services.Tilemaps.TilemapProfile>();
+            Container.BindWithParents<Gameplay.Services.Inventory.InventoryProfile>();
+            
+            Container.BindWithParents<ProfileService>();
         }
     }
 }

@@ -5,9 +5,9 @@ using UnityEngine.Tilemaps;
 using Zenject;
 using TendedTarsier.Script.Modules.Gameplay.Configs;
 using TendedTarsier.Script.Modules.Gameplay.Services.HUD;
-using TendedTarsier.Script.Modules.Gameplay.Services.Input;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using TendedTarsier.Script.Modules.General.Services.Input;
 using TendedTarsier.Script.Utilities.Extensions;
 
 namespace TendedTarsier.Script.Modules.Gameplay
@@ -55,10 +55,10 @@ namespace TendedTarsier.Script.Modules.Gameplay
             Container.Bind<GameplayConfig>().FromScriptableObject(_gameplayConfig).AsSingle();
 
             //Services
-            Container.BindService<TilemapService>();
-            Container.BindService<InventoryService>();
-            Container.BindService<InputService>();
-            Container.BindService<HUDService>();
+            Container.BindWithParents<TilemapService>();
+            Container.BindWithParents<InventoryService>();
+            Container.BindWithParents<InputService>();
+            Container.BindWithParents<HUDService>();
 
             //UI
             Container.Bind<PanelLoader<ToolBarController>>().FromNew().AsSingle().WithArguments(_toolBarController, _gameplayCanvas);

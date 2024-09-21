@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using MemoryPack;
 using UnityEngine;
+using TendedTarsier.Script.Modules.General.Profile;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
 {
     [MemoryPackable(GenerateType.VersionTolerant)]
     public partial class TilemapProfile : ProfileBase

@@ -1,11 +1,11 @@
 using System;
 using MemoryPack;
-using TendedTarsier.Script.Modules.General.Services;
 using UniRx;
+using TendedTarsier.Script.Modules.General.Services.Profile;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.General.Profile
 {
-    public abstract class ProfileBase
+    public abstract class ProfileBase : IProfile, IDisposable
     {
         protected readonly CompositeDisposable CompositeDisposable = new();
 
@@ -21,12 +21,10 @@ namespace TendedTarsier
 
         public virtual void OnSectionCreated()
         {
-
         }
 
         public virtual void OnSectionLoaded()
         {
-
         }
 
         public void Save()
@@ -41,12 +39,9 @@ namespace TendedTarsier
             _profileService.Save(this);
         }
 
-        public void Terminate()
+        public virtual void Dispose()
         {
             CompositeDisposable.Dispose();
-            Dispose();
         }
-
-        protected virtual void Dispose() { }
     }
 }

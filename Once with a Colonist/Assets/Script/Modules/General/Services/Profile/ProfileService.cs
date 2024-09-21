@@ -1,19 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JetBrains.Annotations;
 using MemoryPack;
 using UniRx;
 using UnityEngine;
+using TendedTarsier.Script.Modules.General.Profile;
 
-namespace TendedTarsier.Script.Modules.General.Services
+namespace TendedTarsier.Script.Modules.General.Services.Profile
 {
+    [UsedImplicitly]
     public class ProfileService : ServiceBase
     {
         public static readonly string ProfilesDirectory = Path.Combine(Application.persistentDataPath, "Profiles");
 
-        private readonly List<ProfileBase> _profiles;
+        private readonly List<IProfile> _profiles;
 
-        public ProfileService(List<ProfileBase> profiles)
+        public ProfileService(List<IProfile> profiles)
         {
             _profiles = profiles;
 
@@ -50,7 +53,7 @@ namespace TendedTarsier.Script.Modules.General.Services
             }
         }
 
-        private void LoadSection(ProfileBase profile)
+        private void LoadSection(IProfile profile)
         {
             var path = GetSectionPath(profile.Name);
             if (File.Exists(path))
@@ -76,7 +79,7 @@ namespace TendedTarsier.Script.Modules.General.Services
             profile.Init(this);
         }
 
-        public void Save(ProfileBase profile)
+        public void Save(IProfile profile)
         {
             try
             {
@@ -100,7 +103,7 @@ namespace TendedTarsier.Script.Modules.General.Services
             }
         }
 
-        private void CreateSection(ProfileBase profile)
+        private void CreateSection(IProfile profile)
         {
             profile.OnSectionCreated();
             Save(profile);
@@ -110,15 +113,6 @@ namespace TendedTarsier.Script.Modules.General.Services
         {
             var fileName = name + ".json";
             return Path.Combine(ProfilesDirectory, fileName);
-        }
-
-        public override void Dispose()
-        {
-            base.Dispose();
-            foreach (var profile in _profiles)
-            {
-                profile.Terminate();
-            }
         }
     }
 }
