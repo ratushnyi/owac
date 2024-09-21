@@ -1,9 +1,8 @@
 using System;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.Gameplay.Inventory.Items
 {
     [Serializable]
     public class ItemModel

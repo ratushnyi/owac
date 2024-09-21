@@ -1,4 +1,5 @@
 using System;
+using TendedTarsier.Script.Modules.Gameplay.Inventory.Items;
 using TMPro;
 using UniRx;
 using UnityEngine;

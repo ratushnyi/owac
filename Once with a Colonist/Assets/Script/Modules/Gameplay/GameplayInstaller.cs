@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using Zenject;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.Gameplay
 {
     public class GameplayInstaller : MonoInstaller
     {

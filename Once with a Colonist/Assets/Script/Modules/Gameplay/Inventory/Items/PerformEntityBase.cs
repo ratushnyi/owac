@@ -1,8 +1,8 @@
 using System;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-namespace TendedTarsier
+
+namespace TendedTarsier.Script.Modules.Gameplay.Inventory.Items
 {
     public class PerformEntityBase : ScriptableObject
     {
@@ -11,5 +11,4 @@ namespace TendedTarsier
             throw new NotImplementedException();
         }
     }
-
 }

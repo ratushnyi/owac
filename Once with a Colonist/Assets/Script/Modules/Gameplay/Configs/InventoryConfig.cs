@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using TendedTarsier.Script.Modules.Gameplay.Inventory.Items;
 using UnityEngine;
 using Zenject;
 
