@@ -11,25 +11,25 @@ namespace TendedTarsier.Script.Utilities.Extensions
     {
         public static void BindPanel<TPanel>(this DiContainer container, PanelBase panel, Canvas canvas) where TPanel : PanelBase
         {
-            container.Bind<PanelLoader<TPanel>>().FromNew().AsSingle().WithArguments(panel, canvas);
+            container.BindWithParents<PanelLoader<TPanel>>().FromNew().AsSingle().WithArguments(panel, canvas);
         }
 
         public static void BindService<TService>(this DiContainer container) where TService : ServiceBase
         {
-            BindWithParents<TService>(container);
+            BindWithParents<TService>(container).AsSingle().NonLazy();
         }
 
         public static void BindProfile<TProfile>(this DiContainer container) where TProfile : ProfileBase
         {
-            BindWithParents<TProfile>(container);
+            BindWithParents<TProfile>(container).AsSingle().NonLazy();
         }
 
-        private static void BindWithParents<T>(this DiContainer container)
+        private static FromBinderNonGeneric BindWithParents<T>(this DiContainer container)
         {
             var current = typeof(T);
             var types = current.GetInterfaces().ToHashSet();
             types.Add(current);
-            container.Bind(types).To<T>().AsSingle().NonLazy();
+            return container.Bind(types).To<T>();
         }
     }
 }

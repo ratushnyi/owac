@@ -13,12 +13,13 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
     [UsedImplicitly]
     public class HUDService : ServiceBase
     {
+        private readonly InputService _inputService;
         private readonly GeneralConfig _generalConfig;
         private readonly PanelLoader<ToolBarPanel> _toolBarPanel;
         private readonly PanelLoader<InventoryPanel> _inventoryPanel;
-        private readonly InputService _inputService;
 
-        public HUDService(InputService inputService,
+        public HUDService(
+            InputService inputService,
             GeneralConfig generalConfig,
             PanelLoader<InventoryPanel> inventoryPanel,
             PanelLoader<ToolBarPanel> toolBarPanel)
