@@ -47,8 +47,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
 
-            _inventoryService.OnTargetPosition = () => TargetPosition.Value;
-            _inventoryService.OnTargetDirection = () => TargetDirection.Value;
+            _inventoryService.GetTargetPosition = () => TargetPosition.Value;
+            _inventoryService.GetTargetDirection = () => TargetDirection.Value;
+            _inventoryService.GetCharacterPosition = () => transform.position;
 
             transform.SetLocalPositionAndRotation(_statsService.PlayerPosition, Quaternion.identity);
 
