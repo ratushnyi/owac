@@ -1,9 +1,10 @@
+using System;
 using UniRx;
 using Zenject;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.General.Services
 {
-    public abstract class ServiceBase
+    public abstract class ServiceBase : IDisposable
     {
         protected readonly CompositeDisposable CompositeDisposable = new();
 
@@ -15,10 +16,12 @@ namespace TendedTarsier
 
         private void Terminate()
         {
-            CompositeDisposable.Dispose();
             Dispose();
         }
 
-        protected virtual void Dispose() { }
+        public virtual void Dispose()
+        {
+            CompositeDisposable.Dispose();
+        }
     }
 }

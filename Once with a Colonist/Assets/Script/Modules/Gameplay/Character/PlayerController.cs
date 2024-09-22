@@ -1,146 +1,129 @@
-﻿using System;
-using Cysharp.Threading.Tasks;
-using UniRx;
+﻿using UniRx;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 using Zenject;
+using TendedTarsier.Script.Modules.General.Services.Input;
+using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
+using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.Gameplay.Character
 {
     public class PlayerController : MonoBehaviour
     {
+        public readonly ReactiveProperty<Vector3Int> TargetDirection = new();
+        public readonly ReactiveProperty<Vector3Int> TargetPosition = new();
+
         private readonly int _directionAnimatorKey = Animator.StringToHash("Direction");
         private readonly int _isMovingAnimatorKey = Animator.StringToHash("IsMoving");
-        private readonly CompositeDisposable _compositeDisposable = new();
-        private readonly ReactiveProperty<Tilemap> _currentTilemap = new();
 
-        private IObservable<InputAction.CallbackContext> _onMovePerformed;
-        private IObservable<InputAction.CallbackContext> _onXButtonPerformed;
-        private IObservable<InputAction.CallbackContext> _onYButtonPerformed;
-        private IObservable<InputAction.CallbackContext> _onAButtonPerformed;
-        private IObservable<InputAction.CallbackContext> _onBButtonPerformed;
+        private Vector2 _moveDirection;
+        private float _speedModifier = 1;
 
         private Rigidbody2D _rigidbody2D;
         private Animator _animator;
 
-        private Vector3Int _direction;
-        private Vector3Int _targetPosition;
-
-        private GameplayConfig _gameplayConfig;
-        private PlayerProfile _playerProfile;
-        private GameplayController _gameplayController;
-        private GameplayInput _gameplayInput;
+        private InputService _inputService;
         private InventoryService _inventoryService;
+        private StatsService _statsService;
         private TilemapService _tilemapService;
-        private Transform _itemsTransform;
+
+        private readonly CompositeDisposable _compositeDisposable = new();
 
         [Inject]
         private void Construct(
-            GameplayConfig gameplayConfig,
-            PlayerProfile playerProfile,
-            GameplayController gameplayController,
-            GameplayInput gameplayInput,
+            InputService inputService,
             InventoryService inventoryService,
+            StatsService statsService,
             TilemapService tilemapService)
         {
-            _tilemapService = tilemapService;
+            _inputService = inputService;
             _inventoryService = inventoryService;
-            _gameplayInput = gameplayInput;
-            _gameplayController = gameplayController;
-            _playerProfile = playerProfile;
-            _gameplayConfig = gameplayConfig;
+            _statsService = statsService;
+            _tilemapService = tilemapService;
         }
 
         private void Start()
         {
-            InitInput();
-
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
 
-            transform.SetLocalPositionAndRotation(_playerProfile.PlayerPosition, Quaternion.identity);
+            _inventoryService.OnTargetPosition = () => TargetPosition.Value;
+            _inventoryService.OnTargetDirection = () => TargetDirection.Value;
 
-            _onMovePerformed.First().Subscribe(_ => _gameplayController.OnGameplayStarted());
-            _currentTilemap.SkipLatestValueOnSubscribe().First().Subscribe(_ => OnMove(Vector2.down));
+            transform.SetLocalPositionAndRotation(_statsService.PlayerPosition, Quaternion.identity);
+
+            SubscribeOnInput();
         }
 
-        private void InitInput()
+        private void SubscribeOnInput()
         {
-            _onMovePerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.Move.performed += t, t => _gameplayInput.Player.Move.performed -= t);
-            _onXButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonX.performed += t, t => _gameplayInput.Player.ButtonX.performed -= t);
-            _onYButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonY.performed += t, t => _gameplayInput.Player.ButtonY.performed -= t);
-            _onAButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonA.performed += t, t => _gameplayInput.Player.ButtonA.performed -= t);
-            _onBButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonB.performed += t, t => _gameplayInput.Player.ButtonB.performed -= t);
+            _inputService.OnLeftStickPerformed
+                .First()
+                .Subscribe(_ => _statsService.OnSessionStarted());
 
-            _gameplayInput.Player.Enable();
+            _inputService.OnLeftStickPerformed
+                .Subscribe(t => ProcessMovement(t.ReadValue<Vector2>()))
+                .AddTo(_compositeDisposable);
 
-            _onXButtonPerformed.Subscribe(OnXButtonPerformed).AddTo(_compositeDisposable);
-            _onYButtonPerformed.Subscribe(OnYButtonPerformed).AddTo(_compositeDisposable);
-            _onAButtonPerformed.Subscribe(OnAButtonPerformed).AddTo(_compositeDisposable);
-            _onBButtonPerformed.Subscribe(OnBButtonPerformed).AddTo(_compositeDisposable);
-        }
+            _inputService.OnLeftStickCanceled
+                .Subscribe(_ => ProcessMovement(Vector2.zero))
+                .AddTo(_compositeDisposable);
 
-        private void FixedUpdate()
-        {
-            ProcessMovement();
+            _inputService.OnBButtonStarted
+                .Subscribe(_ => OnSpeedChanged(true))
+                .AddTo(_compositeDisposable);
+
+            _inputService.OnBButtonCanceled
+                .Subscribe(_ => OnSpeedChanged(false))
+                .AddTo(_compositeDisposable);
+
+            _inputService.OnXButtonPerformed
+                .Subscribe(_ => _inventoryService.Perform())
+                .AddTo(_compositeDisposable);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.CompareTag("Ground"))
+            switch (other.tag)
             {
-                _currentTilemap.Value = other.GetComponent<Tilemap>();
-            }
-            else if (other.CompareTag("Item"))
-            {
-                var mapItem = other.GetComponent<MapItemBase>();
-                _inventoryService.TryPut(mapItem);
+                case "Ground":
+                    var tilemap = other.GetComponent<Tilemap>();
+                    _tilemapService.OnGroundEnter(tilemap);
+                    break;
+                case "Item":
+                    var mapItem = other.GetComponent<MapItemBase>();
+                    _inventoryService.TryPut(mapItem, transform);
+                    break;
             }
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (other.CompareTag("Ground"))
+            switch (other.tag)
             {
-                if (_currentTilemap.Value.gameObject == other.gameObject)
-                {
-                    _currentTilemap.Value = null;
-                }
+                case "Ground":
+                    var tilemap = other.GetComponent<Tilemap>();
+                    _tilemapService.OnGroundExit(tilemap);
+                    break;
             }
         }
 
-        private void OnXButtonPerformed(InputAction.CallbackContext _)
+        private void OnSpeedChanged(bool isRunning)
         {
-            _inventoryService.Perform(_currentTilemap.Value, _targetPosition);
+            _speedModifier = isRunning ? 2 : 1;
+            UpdateVelocity();
         }
 
-        private void OnYButtonPerformed(InputAction.CallbackContext _)
+        private void ProcessMovement(Vector2 moveDirection)
         {
-            _inventoryService.SwitchInventory();
+            _moveDirection = OnMove(moveDirection);
+            UpdateVelocity();
+            _animator.SetBool(_isMovingAnimatorKey, _moveDirection.magnitude > 0);
         }
 
-        private void OnAButtonPerformed(InputAction.CallbackContext _)
+        private void UpdateVelocity()
         {
-            //
-        }
-
-        private void OnBButtonPerformed(InputAction.CallbackContext _)
-        {
-            _inventoryService.Drop(_targetPosition, _targetPosition + _direction * 3).Forget();
-        }
-
-        private void ProcessMovement()
-        {
-            var moveDirection = Vector2.zero;
-            if (Gamepad.current.leftStick.IsActuated())
-            {
-                moveDirection = OnMove(Gamepad.current.leftStick.ReadValue());
-            }
-
-            var speedModifier = Gamepad.current.aButton.isPressed ? 2 : 1;
-            _rigidbody2D.velocity = _gameplayConfig.MovementSpeed * speedModifier * moveDirection;
-            _animator.SetBool(_isMovingAnimatorKey, moveDirection.magnitude > 0);
+            _rigidbody2D.velocity = _statsService.MovementSpeed * _speedModifier * _moveDirection;
         }
 
         private Vector2 OnMove(Vector2 direction)
@@ -176,17 +159,19 @@ namespace TendedTarsier
             }
 
             var transformPosition = transform.position;
-            _direction = Vector3Int.RoundToInt(direction);
-            _targetPosition = new Vector3Int(Mathf.FloorToInt(transformPosition.x), Mathf.RoundToInt(transformPosition.y)) + _direction;
-            _tilemapService.ProcessTiles(_currentTilemap.Value, _targetPosition);
+            if (direction != Vector2.zero)
+            {
+                TargetDirection.Value = Vector3Int.RoundToInt(direction);
+            }
+            TargetPosition.Value = new Vector3Int(Mathf.FloorToInt(transformPosition.x), Mathf.RoundToInt(transformPosition.y)) + TargetDirection.Value;
+            _tilemapService.ProcessTiles(_tilemapService.CurrentTilemap.Value, TargetPosition.Value);
 
             return direction;
         }
 
         private void OnDestroy()
         {
-            _playerProfile.PlayerPosition = transform.position;
-            _playerProfile.Save();
+            _statsService.OnSessionEnded(transform.position);
             _compositeDisposable.Dispose();
         }
     }

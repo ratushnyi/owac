@@ -1,38 +1,53 @@
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
+using TendedTarsier.Script.Utilities.Extensions;
+using TendedTarsier.Script.Modules.General.Services.Profile;
+using TendedTarsier.Script.Modules.Gameplay.Character;
+using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
+using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using TendedTarsier.Script.Modules.General.Configs;
+using TendedTarsier.Script.Modules.General.Services.Input;
+using UnityEngine.EventSystems;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.General
 {
     public class GeneralInstaller : MonoInstaller
     {
         [SerializeField]
         private GeneralConfig _generalConfig;
+        [SerializeField]
+        private EventSystem _eventSystem;
 
         public override void InstallBindings()
         {
+            BindSystem();
+            BindConfigs();
             BindProfiles();
+            BindServices();
+        }
 
-            Container.Bind<GeneralConfig>().FromInstance(_generalConfig).AsSingle();
+        private void BindSystem()
+        {
+            Container.Bind<GameplayInput>().FromNew().AsSingle();
+            Container.Bind<EventSystem>().FromInstance(_eventSystem).AsSingle();
+        }
+
+        private void BindServices()
+        {
+            Container.BindService<ProfileService>();
+            Container.BindService<InputService>();
         }
 
         private void BindProfiles()
         {
-            var profileSections = new List<ProfileBase>();
+            Container.BindProfile<PlayerProfile>();
+            Container.BindProfile<TilemapProfile>();
+            Container.BindProfile<InventoryProfile>();
+        }
 
-            var playerProfile = new PlayerProfile();
-            Container.Bind<PlayerProfile>().FromInstance(playerProfile).AsSingle();
-            profileSections.Add(playerProfile);
-
-            var tilemapProfile = new TilemapProfile();
-            Container.Bind<TilemapProfile>().FromInstance(tilemapProfile).AsSingle();
-            profileSections.Add(tilemapProfile);
-
-            var inventoryProfile = new InventoryProfile();
-            Container.Bind<InventoryProfile>().FromInstance(inventoryProfile).AsSingle();
-            profileSections.Add(inventoryProfile);
-
-            Container.Bind<ProfileService>().FromInstance(new ProfileService(profileSections)).AsSingle();
+        private void BindConfigs()
+        {
+            Container.Bind<GeneralConfig>().FromInstance(_generalConfig).AsSingle();
         }
     }
 }

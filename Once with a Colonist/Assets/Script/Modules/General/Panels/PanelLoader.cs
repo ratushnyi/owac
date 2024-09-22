@@ -3,16 +3,25 @@ using JetBrains.Annotations;
 using UnityEngine;
 using Zenject;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.General.Panels
 {
     [UsedImplicitly]
-    public class PanelLoader<T> where T : MonoBehaviour
+    public class PanelLoader<T> where T : PanelBase
     {
+        public enum State
+        {
+            Hide = 0,
+            Show = 1,
+            Hiding = 2,
+            Showing = 3,
+        }
+
         private readonly T _prefab;
         private readonly Canvas _canvas;
         private readonly DiContainer _container;
 
         public T Instance;
+        public State PanelState;
 
         private PanelLoader(T prefab, Canvas canvas, DiContainer container)
         {
@@ -25,12 +34,15 @@ namespace TendedTarsier
         {
             if (Instance != null)
             {
-                Debug.LogError($"You try to Show {nameof(T)} panel, but it already exist.");
+                Debug.LogError($"You try to Show {nameof(T)} panel, but it already Showed.");
                 return Instance;
             }
-            
+
+            PanelState = State.Showing;
             await Load();
-            await PlayAnimation(true);
+            await Instance.InitializeAsync();
+            await Instance.ShowAnimation();
+            PanelState = State.Show;
             return Instance;
         }
 
@@ -42,14 +54,11 @@ namespace TendedTarsier
                 return;
             }
 
-            await PlayAnimation(false);
+            PanelState = State.Hiding;
+            await Instance.HideAnimation();
+            await Instance.DisposeAsync();
             await Unload();
-        }
-        
-        private UniTask PlayAnimation(bool isShowing)
-        {
-            Instance.gameObject.SetActive(isShowing);
-            return UniTask.CompletedTask;
+            PanelState = State.Hide;
         }
 
         private UniTask Load()
@@ -57,7 +66,7 @@ namespace TendedTarsier
             Instance = _container.InstantiatePrefabForComponent<T>(_prefab, _canvas.transform);
             return UniTask.CompletedTask;
         }
-        
+
         private UniTask Unload()
         {
             Object.DestroyImmediate(Instance.gameObject);

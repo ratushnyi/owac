@@ -1,9 +1,9 @@
 using System;
 using MemoryPack;
-using UniRx;
 using UnityEngine;
+using TendedTarsier.Script.Modules.General.Profile;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.Gameplay.Character
 {
     [MemoryPackable(GenerateType.VersionTolerant)]
     public partial class PlayerProfile : ProfileBase
@@ -12,7 +12,10 @@ namespace TendedTarsier
             
         [MemoryPackOrder(0)]
         public DateTime? StartDate { get; set; }
+            
         [MemoryPackOrder(1)]
+        public DateTime? LastSaveDate { get; set; }
+        [MemoryPackOrder(2)]
         public Vector2 PlayerPosition { get; set; }
     }
 }

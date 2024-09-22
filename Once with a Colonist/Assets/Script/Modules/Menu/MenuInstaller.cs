@@ -1,7 +1,7 @@
 using UnityEngine;
 using Zenject;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.Menu
 {
     public class MenuInstaller : MonoInstaller
     {
