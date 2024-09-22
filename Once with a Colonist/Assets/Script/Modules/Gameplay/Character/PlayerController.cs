@@ -46,7 +46,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         {
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
-            _inventoryService.OnDroppedItem = () => (TargetPosition.Value, TargetPosition.Value + TargetDirection.Value * _statsService.DropDistance);
+
+            _inventoryService.OnTargetPosition = () => TargetPosition.Value;
+            _inventoryService.OnTargetDirection = () => TargetDirection.Value;
 
             transform.SetLocalPositionAndRotation(_statsService.PlayerPosition, Quaternion.identity);
 
@@ -76,7 +78,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
                 .AddTo(_compositeDisposable);
 
             _inputService.OnXButtonPerformed
-                .Subscribe(_ => _inventoryService.Perform(_tilemapService.CurrentTilemap.Value, TargetPosition.Value))
+                .Subscribe(_ => _inventoryService.Perform())
                 .AddTo(_compositeDisposable);
         }
 
@@ -157,7 +159,10 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             }
 
             var transformPosition = transform.position;
-            TargetDirection.Value = Vector3Int.RoundToInt(direction);
+            if (direction != Vector2.zero)
+            {
+                TargetDirection.Value = Vector3Int.RoundToInt(direction);
+            }
             TargetPosition.Value = new Vector3Int(Mathf.FloorToInt(transformPosition.x), Mathf.RoundToInt(transformPosition.y)) + TargetDirection.Value;
             _tilemapService.ProcessTiles(_tilemapService.CurrentTilemap.Value, TargetPosition.Value);
 

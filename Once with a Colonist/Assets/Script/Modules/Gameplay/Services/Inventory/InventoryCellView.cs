@@ -1,11 +1,11 @@
 using System;
-using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 using TMPro;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
+using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 {
     public class InventoryCellView : MonoBehaviour
     {
@@ -23,6 +23,11 @@ namespace TendedTarsier
 
         public IObservable<string> OnButtonClicked => _onButtonClicked;
 
+        private void Start()
+        {
+            _button.OnClickAsObservable().Subscribe(_ => _onButtonClicked.OnNext(_model?.Id)).AddTo(_compositeDisposable);
+        }
+
         public void SetItem(ItemModel model, ReactiveProperty<int> count)
         {
             count.Subscribe(OnCountChanged).AddTo(_compositeDisposable);
@@ -31,7 +36,6 @@ namespace TendedTarsier
             _image.sprite = _model.Sprite;
             _image.enabled = true;
             _countTMP.enabled = true;
-            _button.OnClickAsObservable().Subscribe(_ => _onButtonClicked.OnNext(_model.Id)).AddTo(_compositeDisposable);
         }
 
         public bool IsEmpty()
@@ -43,25 +47,24 @@ namespace TendedTarsier
         {
             if (count == 0)
             {
-                Dispose();
+                SetEmpty();
                 return;
             }
 
             _countTMP.SetText(count.ToString());
         }
 
-        public void Dispose()
+        public void SetEmpty()
         {
             _model = null;
             _image.sprite = null;
             _image.enabled = false;
             _countTMP.enabled = false;
-            _compositeDisposable.Clear();
         }
 
         private void OnDestroy()
         {
-            Dispose();
+            _compositeDisposable.Clear();
         }
     }
 }

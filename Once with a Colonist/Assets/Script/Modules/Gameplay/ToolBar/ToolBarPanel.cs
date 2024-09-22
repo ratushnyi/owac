@@ -34,6 +34,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.ToolBar
             {
                 if (string.IsNullOrEmpty(itemId))
                 {
+                    SelectedItem.SetEmpty();
                     return;
                 }
                 SelectedItem.SetItem(_inventoryConfig[itemId], _inventoryProfile.InventoryItems[itemId]);
