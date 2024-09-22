@@ -1,9 +1,9 @@
-using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Zenject;
+using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 
-namespace TendedTarsier.Script.Modules.Gameplay.Inventory.Items
+namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
 {
     [CreateAssetMenu(menuName = "Items/PerformTest", fileName = "PerformTest")]
     public class PerformTest : PerformEntityBase

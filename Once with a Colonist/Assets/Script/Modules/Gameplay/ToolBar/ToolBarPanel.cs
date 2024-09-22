@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,17 +16,19 @@ namespace TendedTarsier.Script.Modules.Gameplay.ToolBar
         [field: SerializeField]
         public InventoryCellView SelectedItem { get; set; }
 
+        private InventoryService _inventoryService;
         private InventoryProfile _inventoryProfile;
         private InventoryConfig _inventoryConfig;
 
         [Inject]
-        private void Construct(InventoryProfile inventoryProfile, InventoryConfig inventoryConfig)
+        private void Construct(InventoryService inventoryService, InventoryProfile inventoryProfile, InventoryConfig inventoryConfig)
         {
             _inventoryConfig = inventoryConfig;
             _inventoryProfile = inventoryProfile;
+            _inventoryService = inventoryService;
         }
 
-        private void Start()
+        protected override void Initialize()
         {
             _inventoryProfile.SelectedItem.Subscribe(itemId =>
             {
@@ -35,6 +38,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.ToolBar
                 }
                 SelectedItem.SetItem(_inventoryConfig[itemId], _inventoryProfile.InventoryItems[itemId]);
             }).AddTo(CompositeDisposable);
+
+            SelectedItem.OnButtonClicked.Subscribe(t => _inventoryService.Drop(t).Forget());
         }
     }
 }

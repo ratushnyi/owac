@@ -17,19 +17,5 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         public DateTime? LastSaveDate { get; set; }
         [MemoryPackOrder(2)]
         public Vector2 PlayerPosition { get; set; }
-
-        public void OnSessionStarted()
-        {
-            StartDate ??= DateTime.UtcNow;
-            LastSaveDate = DateTime.UtcNow;
-            Save();
-        }
-        
-        public void OnSessionEnded(Vector2 position)
-        {
-            PlayerPosition = position;
-            LastSaveDate = DateTime.UtcNow;
-            Save();
-        }
     }
 }

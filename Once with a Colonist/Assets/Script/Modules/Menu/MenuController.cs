@@ -1,102 +1,109 @@
 using DG.Tweening;
-using TendedTarsier;
-using TendedTarsier.Script.Modules.General.Configs;
 using UniRx;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Zenject;
-using InventoryProfile = TendedTarsier.Script.Modules.Gameplay.Services.Inventory.InventoryProfile;
-using PlayerProfile = TendedTarsier.Script.Modules.Gameplay.Character.PlayerProfile;
-using TilemapProfile = TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps.TilemapProfile;
+using TendedTarsier.Script.Modules.General.Configs;
+using TendedTarsier.Script.Modules.Gameplay.Character;
+using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
+using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using UnityEngine.EventSystems;
 
-public class MenuController : MonoBehaviour
+namespace TendedTarsier.Script.Modules.Menu
 {
-    private readonly CompositeDisposable _compositeDisposable = new CompositeDisposable();
-
-    [SerializeField]
-    private Image _background;
-
-    [SerializeField]
-    private Button _continueButton;
-
-    [SerializeField]
-    private Button _newGameButton;
-
-    [SerializeField]
-    private Button _exitButton;
-
-    private PlayerProfile _playerProfile;
-    private TilemapProfile _tilemapProfile;
-    private InventoryProfile _inventoryProfile;
-    private MenuConfig _menuConfig;
-    private GeneralConfig _generalConfig;
-
-    [Inject]
-    private void Construct(PlayerProfile playerProfile,
-        TilemapProfile tilemapProfile,
-        InventoryProfile inventoryProfile,
-        MenuConfig menuConfig,
-        GeneralConfig generalConfig)
+    public class MenuController : MonoBehaviour
     {
-        _playerProfile = playerProfile;
-        _tilemapProfile = tilemapProfile;
-        _inventoryProfile = inventoryProfile;
-        _menuConfig = menuConfig;
-        _generalConfig = generalConfig;
-    }
+        private readonly CompositeDisposable _compositeDisposable = new CompositeDisposable();
 
-    private void Start()
-    {
-        InitBackground();
-        InitButtons();
-    }
+        [SerializeField]
+        private Image _background;
 
-    private void InitBackground()
-    {
-        _background.color = Color.black;
-        _continueButton.targetGraphic.color = Color.clear;
-        _newGameButton.targetGraphic.color = Color.clear;
-        _exitButton.targetGraphic.color = Color.clear;
+        [SerializeField]
+        private Button _continueButton;
 
-        var sequence = DOTween.Sequence();
-        sequence.Append(_background.DOColor(_menuConfig.BackgroundFadeOutColor, _menuConfig.BackgroundFadeOutDuration));
-        sequence.Join(_continueButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
-        sequence.Join(_newGameButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
-        sequence.Join(_exitButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
-        sequence.SetEase(_menuConfig.BackgroundFadeOutCurve);
+        [SerializeField]
+        private Button _newGameButton;
 
-        _compositeDisposable.Add(Disposable.Create(() => sequence.Kill()));
-    }
+        [SerializeField]
+        private Button _exitButton;
 
-    private void InitButtons()
-    {
-        _continueButton.interactable = _playerProfile.StartDate != null;
-        _continueButton.OnClickAsObservable().Subscribe(OnContinueButtonClick).AddTo(_compositeDisposable);
-        _newGameButton.OnClickAsObservable().Subscribe(OnNewGameButtonClick).AddTo(_compositeDisposable);
-        _exitButton.OnClickAsObservable().Subscribe(OnExitButtonClick).AddTo(_compositeDisposable);
-    }
+        private PlayerProfile _playerProfile;
+        private TilemapProfile _tilemapProfile;
+        private InventoryProfile _inventoryProfile;
+        private MenuConfig _menuConfig;
+        private GeneralConfig _generalConfig;
+        private EventSystem _eventSystem;
 
-    private void OnContinueButtonClick(Unit _)
-    {
-        SceneManager.LoadScene(_generalConfig.GameplayScene);
-    }
+        [Inject]
+        private void Construct(PlayerProfile playerProfile,
+            TilemapProfile tilemapProfile,
+            InventoryProfile inventoryProfile,
+            MenuConfig menuConfig,
+            GeneralConfig generalConfig,
+            EventSystem eventSystem)
+        {
+            _playerProfile = playerProfile;
+            _tilemapProfile = tilemapProfile;
+            _inventoryProfile = inventoryProfile;
+            _menuConfig = menuConfig;
+            _generalConfig = generalConfig;
+            _eventSystem = eventSystem;
+        }
 
-    private void OnNewGameButtonClick(Unit _)
-    {
-        _playerProfile.Clear();
-        _tilemapProfile.Clear();
-        _inventoryProfile.Clear();
-        SceneManager.LoadScene(_generalConfig.GameplayScene);
-    }
+        private void Start()
+        {
+            InitBackground();
+            InitButtons();
+        }
 
-    private void OnExitButtonClick(Unit _)
-    {
-        Application.Quit();
-    }
+        private void InitBackground()
+        {
+            _background.color = Color.black;
+            _continueButton.targetGraphic.color = Color.clear;
+            _newGameButton.targetGraphic.color = Color.clear;
+            _exitButton.targetGraphic.color = Color.clear;
 
-    private void OnDestroy()
-    {
-        _compositeDisposable.Dispose();
+            var sequence = DOTween.Sequence();
+            sequence.Append(_background.DOColor(_menuConfig.BackgroundFadeOutColor, _menuConfig.BackgroundFadeOutDuration));
+            sequence.Join(_continueButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
+            sequence.Join(_newGameButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
+            sequence.Join(_exitButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
+            sequence.SetEase(_menuConfig.BackgroundFadeOutCurve);
+
+            _compositeDisposable.Add(Disposable.Create(() => sequence.Kill()));
+        }
+
+        private void InitButtons()
+        {
+            _continueButton.interactable = _playerProfile.StartDate != null;
+            _continueButton.OnClickAsObservable().Subscribe(OnContinueButtonClick).AddTo(_compositeDisposable);
+            _newGameButton.OnClickAsObservable().Subscribe(OnNewGameButtonClick).AddTo(_compositeDisposable);
+            _exitButton.OnClickAsObservable().Subscribe(OnExitButtonClick).AddTo(_compositeDisposable);
+            _eventSystem.SetSelectedGameObject(_continueButton.interactable ? _continueButton.gameObject : _newGameButton.gameObject);
+        }
+
+        private void OnContinueButtonClick(Unit _)
+        {
+            SceneManager.LoadScene(_generalConfig.GameplayScene);
+        }
+
+        private void OnNewGameButtonClick(Unit _)
+        {
+            _playerProfile.Clear();
+            _tilemapProfile.Clear();
+            _inventoryProfile.Clear();
+            SceneManager.LoadScene(_generalConfig.GameplayScene);
+        }
+
+        private void OnExitButtonClick(Unit _)
+        {
+            Application.Quit();
+        }
+
+        private void OnDestroy()
+        {
+            _compositeDisposable.Dispose();
+        }
     }
 }

@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-namespace TendedTarsier.Script.Modules.Gameplay.Inventory.Items
+namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
 {
     [Serializable]
     public class ItemModel

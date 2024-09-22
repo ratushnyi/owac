@@ -11,11 +11,11 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
     {
         [SerializeField]
         private Transform _gridContainer;
-
         private InventoryProfile _inventoryProfile;
         private InventoryConfig _inventoryConfig;
-
         private InventoryCellView[][] _grid;
+        
+        public InventoryCellView FirstCellView => _grid?[0][0];
 
         [Inject]
         private void Construct(
@@ -28,7 +28,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             _inventoryProfile.InventoryItems.ObserveAdd().Subscribe(Put).AddTo(CompositeDisposable);
         }
 
-        private void Start()
+        protected override void Initialize()
         {
             var counter = 0;
             _grid = new InventoryCellView[_inventoryConfig.InventoryGrid.x][];
@@ -71,11 +71,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
         private void SetItem(InventoryCellView cell, string id, ReactiveProperty<int> value)
         {
             cell.SetItem(_inventoryConfig[id], value);
-        }
-
-        private void OnDestroy()
-        {
-            CompositeDisposable.Dispose();
         }
     }
 }

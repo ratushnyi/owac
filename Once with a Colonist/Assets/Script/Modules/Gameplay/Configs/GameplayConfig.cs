@@ -6,7 +6,10 @@ namespace TendedTarsier.Script.Modules.Gameplay.Configs
     public class GameplayConfig : ScriptableObject
     {
         [field: SerializeField]
-        public float MovementSpeed { get; set; }
+        public float MovementSpeed { get; set; } = 2;
+
+        [field: SerializeField]
+        public int DropDistance { get; set; } = 5;
     }
 
 }

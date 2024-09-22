@@ -1,13 +1,10 @@
-﻿using Cysharp.Threading.Tasks;
-using TendedTarsier.Script.Modules.Gameplay.Configs;
-using TendedTarsier.Script.Modules.Gameplay.Services.HUD;
-using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
-using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
-using TendedTarsier.Script.Modules.General.Services.Input;
-using UniRx;
+﻿using UniRx;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Zenject;
+using TendedTarsier.Script.Modules.General.Services.Input;
+using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
+using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Character
 {
@@ -26,11 +23,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         private Animator _animator;
 
         private InputService _inputService;
-        private GameplayConfig _gameplayConfig;
-        private PlayerProfile _playerProfile;
         private InventoryService _inventoryService;
+        private StatsService _statsService;
         private TilemapService _tilemapService;
-        private Transform _itemsTransform;
 
         private readonly CompositeDisposable _compositeDisposable = new();
 
@@ -38,25 +33,23 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         private void Construct(
             InputService inputService,
             InventoryService inventoryService,
-            HUDService hudService,
-            TilemapService tilemapService,
-            GameplayConfig gameplayConfig,
-            PlayerProfile playerProfile)
+            StatsService statsService,
+            TilemapService tilemapService)
         {
-            _tilemapService = tilemapService;
-            _inventoryService = inventoryService;
-            _playerProfile = playerProfile;
-            _gameplayConfig = gameplayConfig;
             _inputService = inputService;
+            _inventoryService = inventoryService;
+            _statsService = statsService;
+            _tilemapService = tilemapService;
         }
 
         private void Start()
         {
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
+            _inventoryService.OnDroppedItem = () => (TargetPosition.Value, TargetPosition.Value + TargetDirection.Value * _statsService.DropDistance);
 
-            transform.SetLocalPositionAndRotation(_playerProfile.PlayerPosition, Quaternion.identity);
-            
+            transform.SetLocalPositionAndRotation(_statsService.PlayerPosition, Quaternion.identity);
+
             SubscribeOnInput();
         }
 
@@ -64,7 +57,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         {
             _inputService.OnLeftStickPerformed
                 .First()
-                .Subscribe(_ => _playerProfile.OnSessionStarted());
+                .Subscribe(_ => _statsService.OnSessionStarted());
 
             _inputService.OnLeftStickPerformed
                 .Subscribe(t => ProcessMovement(t.ReadValue<Vector2>()))
@@ -74,20 +67,16 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
                 .Subscribe(_ => ProcessMovement(Vector2.zero))
                 .AddTo(_compositeDisposable);
 
-            _inputService.OnAButtonStarted
+            _inputService.OnBButtonStarted
                 .Subscribe(_ => OnSpeedChanged(true))
                 .AddTo(_compositeDisposable);
 
-            _inputService.OnAButtonCanceled
+            _inputService.OnBButtonCanceled
                 .Subscribe(_ => OnSpeedChanged(false))
                 .AddTo(_compositeDisposable);
-            
+
             _inputService.OnXButtonPerformed
                 .Subscribe(_ => _inventoryService.Perform(_tilemapService.CurrentTilemap.Value, TargetPosition.Value))
-                .AddTo(_compositeDisposable);
-            
-            _inputService.OnBButtonPerformed
-                .Subscribe(_ => _inventoryService.Drop(TargetPosition.Value, TargetPosition.Value + TargetDirection.Value * 3).Forget())
                 .AddTo(_compositeDisposable);
         }
 
@@ -132,7 +121,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
         private void UpdateVelocity()
         {
-            _rigidbody2D.velocity = _gameplayConfig.MovementSpeed * _speedModifier * _moveDirection;
+            _rigidbody2D.velocity = _statsService.MovementSpeed * _speedModifier * _moveDirection;
         }
 
         private Vector2 OnMove(Vector2 direction)
@@ -177,7 +166,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
         private void OnDestroy()
         {
-            _playerProfile.OnSessionEnded(transform.position);
+            _statsService.OnSessionEnded(transform.position);
             _compositeDisposable.Dispose();
         }
     }

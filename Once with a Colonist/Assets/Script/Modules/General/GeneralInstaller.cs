@@ -7,6 +7,7 @@ using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Services.Input;
+using UnityEngine.EventSystems;
 
 namespace TendedTarsier.Script.Modules.General
 {
@@ -14,17 +15,25 @@ namespace TendedTarsier.Script.Modules.General
     {
         [SerializeField]
         private GeneralConfig _generalConfig;
+        [SerializeField]
+        private EventSystem _eventSystem;
 
         public override void InstallBindings()
         {
+            BindSystem();
             BindConfigs();
             BindProfiles();
             BindServices();
         }
 
-        private void BindServices()
+        private void BindSystem()
         {
             Container.Bind<GameplayInput>().FromNew().AsSingle();
+            Container.Bind<EventSystem>().FromInstance(_eventSystem).AsSingle();
+        }
+
+        private void BindServices()
+        {
             Container.BindService<ProfileService>();
             Container.BindService<InputService>();
         }

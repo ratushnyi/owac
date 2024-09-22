@@ -43,31 +43,31 @@ namespace TendedTarsier.Script.Modules.General.Services.Input
 
         private void InitInput()
         {
-            OnLeftStickStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.LeftStick.started += t, t => _gameplayInput.Player.LeftStick.started -= t);
-            OnLeftStickPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.LeftStick.performed += t, t => _gameplayInput.Player.LeftStick.performed -= t);
-            OnLeftStickCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.LeftStick.canceled += t, t => _gameplayInput.Player.LeftStick.canceled -= t);
+            OnLeftStickStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.LeftStick.started += t, t => _gameplayInput.Gameplay.LeftStick.started -= t);
+            OnLeftStickPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.LeftStick.performed += t, t => _gameplayInput.Gameplay.LeftStick.performed -= t);
+            OnLeftStickCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.LeftStick.canceled += t, t => _gameplayInput.Gameplay.LeftStick.canceled -= t);
             
-            OnRightStickStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.RightStick.started += t, t => _gameplayInput.Player.RightStick.started -= t);
-            OnRightStickPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.RightStick.performed += t, t => _gameplayInput.Player.RightStick.performed -= t);
-            OnRightStickCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.RightStick.canceled += t, t => _gameplayInput.Player.RightStick.canceled -= t);
+            OnRightStickStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.RightStick.started += t, t => _gameplayInput.Gameplay.RightStick.started -= t);
+            OnRightStickPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.RightStick.performed += t, t => _gameplayInput.Gameplay.RightStick.performed -= t);
+            OnRightStickCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.RightStick.canceled += t, t => _gameplayInput.Gameplay.RightStick.canceled -= t);
             
-            OnXButtonStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonX.started += t, t => _gameplayInput.Player.ButtonX.started -= t);
-            OnXButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonX.performed += t, t => _gameplayInput.Player.ButtonX.performed -= t);
-            OnXButtonCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonX.canceled += t, t => _gameplayInput.Player.ButtonX.canceled -= t);
+            OnXButtonStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.ButtonX.started += t, t => _gameplayInput.Gameplay.ButtonX.started -= t);
+            OnXButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.ButtonX.performed += t, t => _gameplayInput.Gameplay.ButtonX.performed -= t);
+            OnXButtonCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.ButtonX.canceled += t, t => _gameplayInput.Gameplay.ButtonX.canceled -= t);
             
-            OnYButtonStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonY.started += t, t => _gameplayInput.Player.ButtonY.started -= t);
-            OnYButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonY.performed += t, t => _gameplayInput.Player.ButtonY.performed -= t);
-            OnYButtonCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonY.canceled += t, t => _gameplayInput.Player.ButtonY.canceled -= t);
+            OnYButtonStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.ButtonY.started += t, t => _gameplayInput.Gameplay.ButtonY.started -= t);
+            OnYButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.ButtonY.performed += t, t => _gameplayInput.Gameplay.ButtonY.performed -= t);
+            OnYButtonCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.ButtonY.canceled += t, t => _gameplayInput.Gameplay.ButtonY.canceled -= t);
             
-            OnAButtonStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonA.started += t, t => _gameplayInput.Player.ButtonA.started -= t);
-            OnAButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonA.performed += t, t => _gameplayInput.Player.ButtonA.performed -= t);
-            OnAButtonCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonA.canceled += t, t => _gameplayInput.Player.ButtonA.canceled -= t);
+            OnAButtonStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.ButtonA.started += t, t => _gameplayInput.Gameplay.ButtonA.started -= t);
+            OnAButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.ButtonA.performed += t, t => _gameplayInput.Gameplay.ButtonA.performed -= t);
+            OnAButtonCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.ButtonA.canceled += t, t => _gameplayInput.Gameplay.ButtonA.canceled -= t);
             
-            OnBButtonStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonB.started += t, t => _gameplayInput.Player.ButtonB.started -= t);
-            OnBButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonB.performed += t, t => _gameplayInput.Player.ButtonB.performed -= t);
-            OnBButtonCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Player.ButtonB.canceled += t, t => _gameplayInput.Player.ButtonB.canceled -= t);
+            OnBButtonStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.ButtonB.started += t, t => _gameplayInput.Gameplay.ButtonB.started -= t);
+            OnBButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.ButtonB.performed += t, t => _gameplayInput.Gameplay.ButtonB.performed -= t);
+            OnBButtonCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.ButtonB.canceled += t, t => _gameplayInput.Gameplay.ButtonB.canceled -= t);
 
-            _gameplayInput.Player.Enable();
+            _gameplayInput.Gameplay.Enable();
         }
     }
 }

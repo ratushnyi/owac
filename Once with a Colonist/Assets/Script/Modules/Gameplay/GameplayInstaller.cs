@@ -60,6 +60,7 @@ namespace TendedTarsier.Script.Modules.Gameplay
             Container.BindService<TilemapService>();
             Container.BindService<InventoryService>();
             Container.BindService<HUDService>();
+            Container.BindService<StatsService>();
         }
 
         private void BindConfigs()

@@ -19,14 +19,17 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
         private readonly InventoryConfig _inventoryConfig;
         private readonly Transform _propsLayerTransform;
 
+        public Func<(Vector3Int startPosition, Vector3Int targetPosition)> OnDroppedItem;
+
         private InventoryService(
+            [Inject(Id = GameplayInstaller.PropsTransformId)] 
+            Transform propsLayerTransform,
             InventoryProfile inventoryProfile,
-            InventoryConfig inventoryConfig,
-            [Inject(Id = GameplayInstaller.PropsTransformId)] Transform propsLayerTransform)
+            InventoryConfig inventoryConfig)
         {
             _propsLayerTransform = propsLayerTransform;
-            _inventoryConfig = inventoryConfig;
             _inventoryProfile = inventoryProfile;
+            _inventoryConfig = inventoryConfig;
         }
 
         protected override void Initialize()
@@ -97,25 +100,25 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             }
         }
 
-        public async UniTask Drop(Vector3Int startPosition, Vector3Int endPosition)
+        public async UniTask Drop(string itemId)
         {
-            if (string.IsNullOrEmpty(_inventoryProfile.SelectedItem.Value))
+            if (string.IsNullOrEmpty(itemId) || OnDroppedItem == null)
             {
                 return;
             }
-
+            
+            var (startPosition, endPosition) = OnDroppedItem.Invoke();
             var item = UnityEngine.Object.Instantiate(_inventoryConfig.MapItemPrefab, _propsLayerTransform);
             item.Count = 1;
             item.Collider.enabled = false;
-            item.Id = _inventoryProfile.SelectedItem.Value;
+            item.Id = itemId;
             item.SpriteRenderer.sprite = _inventoryConfig[item.Id].Sprite;
-            item.transform.position = startPosition;
-
             _inventoryProfile.InventoryItems[item.Id].Value--;
-
+            item.transform.position = startPosition;
+            
             await item.transform.DOMove(endPosition, 0.5f).SetEase(Ease.OutQuad).ToUniTask();
-
             item.Collider.enabled = true;
+
         }
 
         private void SubscribeOnItemsChanged()

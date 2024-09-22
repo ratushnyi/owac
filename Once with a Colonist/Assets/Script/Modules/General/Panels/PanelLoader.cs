@@ -40,6 +40,7 @@ namespace TendedTarsier.Script.Modules.General.Panels
 
             PanelState = State.Showing;
             await Load();
+            await Instance.InitializeAsync();
             await Instance.ShowAnimation();
             PanelState = State.Show;
             return Instance;
@@ -55,6 +56,7 @@ namespace TendedTarsier.Script.Modules.General.Panels
 
             PanelState = State.Hiding;
             await Instance.HideAnimation();
+            await Instance.DisposeAsync();
             await Unload();
             PanelState = State.Hide;
         }
