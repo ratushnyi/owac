@@ -21,8 +21,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
         private readonly InventoryProfile _inventoryProfile;
         private readonly Transform _propsLayerTransform;
 
-        public Func<Vector3Int> OnTargetDirection;
-        public Func<Vector3Int> OnTargetPosition;
+        public Func<Vector3Int> GetTargetDirection;
+        public Func<Vector3Int> GetTargetPosition;
+        public Func<Vector3> GetCharacterPosition;
 
         private InventoryService(
             [Inject(Id = GameplayInstaller.PropsTransformId)] Transform propsLayerTransform,
@@ -143,34 +144,34 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 
         public async UniTask Drop(string itemId)
         {
-            if (string.IsNullOrEmpty(itemId) || OnTargetPosition == null || OnTargetDirection == null)
+            if (string.IsNullOrEmpty(itemId) || GetCharacterPosition == null || GetTargetDirection == null)
             {
                 return;
             }
 
-            var targetPosition = OnTargetPosition.Invoke();
-            var targetDirection = OnTargetDirection.Invoke();
+            var characterPosition = GetCharacterPosition.Invoke();
+            var targetDirection = GetTargetDirection.Invoke();
             var item = UnityEngine.Object.Instantiate(_inventoryConfig.MapItemPrefab, _propsLayerTransform);
             item.Count = 1;
             item.Collider.enabled = false;
             item.Id = itemId;
             item.SpriteRenderer.sprite = _inventoryConfig[item.Id].Sprite;
             _inventoryProfile.InventoryItems[item.Id].Value--;
-            item.transform.position = targetPosition;
+            item.transform.position = characterPosition;
 
-            await item.transform.DOMove(targetPosition + targetDirection * _statsService.DropDistance, 0.5f).SetEase(Ease.OutQuad).ToUniTask();
+            await item.transform.DOMove(characterPosition + targetDirection * _statsService.DropDistance, 0.5f).SetEase(Ease.OutQuad).ToUniTask();
             item.Collider.enabled = true;
         }
 
         public bool Perform()
         {
-            if (OnTargetPosition == null)
+            if (GetTargetPosition == null)
             {
                 return false;
             }
             
             var result = false;
-            var targetPosition = OnTargetPosition.Invoke();
+            var targetPosition = GetTargetPosition.Invoke();
             var item = _inventoryProfile.SelectedItem.Value;
             if (!string.IsNullOrEmpty(item))
             {
