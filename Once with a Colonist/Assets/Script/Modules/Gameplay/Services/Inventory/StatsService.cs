@@ -39,14 +39,14 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             var energyLevel = _statsProfile.StatsDictionary[StatType.EnergyLevel];
             var energyValue = _statsProfile.StatsDictionary[StatType.Energy];
             var statLevelEntity = _statsConfig.GetStatsEntity(StatType.Energy).Levels[energyLevel.Value];
-            
-            Observable.Timer(TimeSpan.FromSeconds(statLevelEntity.RecoveryRate))
+
+            Observable.Timer(TimeSpan.FromSeconds(statLevelEntity.RecoveryRate)).Repeat()
                 .Subscribe(_ => onEnergyRecovered())
                 .AddTo(CompositeDisposable);
 
             void onEnergyRecovered()
             {
-                energyValue.Value = Math.Max(statLevelEntity.BorderValue, energyValue.Value + 1);
+                energyValue.Value = Math.Min(statLevelEntity.BorderValue, energyValue.Value + 1);
             }
         }
 

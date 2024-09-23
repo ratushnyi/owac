@@ -61,9 +61,9 @@ namespace TendedTarsier.Script.Modules.Gameplay
 
         private void BindConfigs()
         {
-            Container.Bind<InventoryConfig>().FromScriptableObject(_inventoryConfig).AsSingle();
-            Container.Bind<TilemapConfig>().FromScriptableObject(_tilemapConfig).AsSingle();
-            Container.Bind<GameplayConfig>().FromScriptableObject(_gameplayConfig).AsSingle();
+            Container.Bind<InventoryConfig>().FromScriptableObject(_inventoryConfig).AsSingle().NonLazy();
+            Container.Bind<TilemapConfig>().FromScriptableObject(_tilemapConfig).AsSingle().NonLazy();
+            Container.Bind<GameplayConfig>().FromScriptableObject(_gameplayConfig).AsSingle().NonLazy();
         }
 
         private void BindPanels()

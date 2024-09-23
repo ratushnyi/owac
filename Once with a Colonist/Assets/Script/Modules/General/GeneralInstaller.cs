@@ -14,11 +14,12 @@ namespace TendedTarsier.Script.Modules.General
     public class GeneralInstaller : MonoInstaller
     {
         [SerializeField]
+        private EventSystem _eventSystem;
+        [Header("Configs")]
+        [SerializeField]
         private StatsConfig _statsConfig;
         [SerializeField]
         private GeneralConfig _generalConfig;
-        [SerializeField]
-        private EventSystem _eventSystem;
 
         public override void InstallBindings()
         {
@@ -49,8 +50,8 @@ namespace TendedTarsier.Script.Modules.General
 
         private void BindConfigs()
         {
-            Container.Bind<GeneralConfig>().FromInstance(_generalConfig).AsSingle();
-            Container.Bind<StatsConfig>().FromInstance(_statsConfig).AsSingle();
+            Container.Bind<GeneralConfig>().FromInstance(_generalConfig).AsSingle().NonLazy();
+            Container.Bind<StatsConfig>().FromInstance(_statsConfig).AsSingle().NonLazy();
         }
     }
 }

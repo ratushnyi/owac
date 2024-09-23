@@ -39,7 +39,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             {
                 if (!StatsDictionary.ContainsKey(statEntity.StatType))
                 {
-                    StatsDictionary.Add(statEntity.StatType, new ReactiveProperty<int>(statEntity.Levels[0].BorderValue));
+                    StatsDictionary.Add(statEntity.StatType, new ReactiveProperty<int>(statEntity.Levels[0].Range));
                 }
             }
         }
@@ -48,7 +48,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         {
             foreach (var statEntity in _config.StatsList)
             {
-                StatsDictionary.Add(statEntity.StatType, new ReactiveProperty<int>(statEntity.Levels[0].BorderValue));
+                StatsDictionary.Add(statEntity.StatType, new ReactiveProperty<int>(statEntity.Levels[0].Range));
             }
         }
     }

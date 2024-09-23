@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Zenject;
+using TendedTarsier.Script.Modules.Gameplay.Configs;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
@@ -18,6 +19,11 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
 
         public override bool Perform(Tilemap tilemap, Vector3Int targetPosition)
         {
+            if (!IsEnoughResources)
+            {
+                return false;
+            }
+
             if (tilemap == null)
             {
                 return false;
@@ -30,6 +36,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
 
             _tilemapService.ChangedTile(tilemap, targetPosition, TileModel.TileType.Stone);
 
+            UseResources();
             return true;
         }
     }

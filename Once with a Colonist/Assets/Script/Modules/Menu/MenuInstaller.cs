@@ -10,7 +10,7 @@ namespace TendedTarsier.Script.Modules.Menu
 
         public override void InstallBindings()
         {
-            Container.Bind<MenuConfig>().FromInstance(_menuConfig).AsSingle();
+            Container.Bind<MenuConfig>().FromInstance(_menuConfig).AsSingle().NonLazy();
         }
     }
 }
