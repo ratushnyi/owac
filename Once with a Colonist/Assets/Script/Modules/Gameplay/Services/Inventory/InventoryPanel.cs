@@ -13,9 +13,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
         private Transform _gridContainer;
         private InventoryProfile _inventoryProfile;
         private InventoryConfig _inventoryConfig;
-        private InventoryCellView[][] _grid;
+        private InventoryCellView[] _cellsList;
         
-        public InventoryCellView FirstCellView => _grid?[0][0];
+        public InventoryCellView FirstCellView => _cellsList?[0];
 
         [Inject]
         private void Construct(
@@ -30,21 +30,16 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 
         protected override void Initialize()
         {
-            var counter = 0;
-            _grid = new InventoryCellView[_inventoryConfig.InventoryGrid.x][];
-            for (var x = 0; x < _inventoryConfig.InventoryGrid.x; x++)
+            _cellsList = new InventoryCellView[_inventoryConfig.InventoryCapacity];
+            for (var i = 0; i < _inventoryConfig.InventoryCapacity; i++)
             {
-                _grid[x] = new InventoryCellView[_inventoryConfig.InventoryGrid.y];
-                for (var y = 0; y < _inventoryConfig.InventoryGrid.y; y++)
+                _cellsList[i] = Instantiate(_inventoryConfig.InventoryCellView, _gridContainer);
+                _cellsList[i].OnButtonClicked.Subscribe(onCellClicked).AddTo(CompositeDisposable);
+
+                if (_inventoryProfile.InventoryItems.Count > i)
                 {
-                    _grid[x][y] = Instantiate(_inventoryConfig.InventoryCellView, _gridContainer);
-                    _grid[x][y].OnButtonClicked.Subscribe(onCellClicked).AddTo(CompositeDisposable);
-                    if (_inventoryProfile.InventoryItems.Count > counter)
-                    {
-                        var item = _inventoryProfile.InventoryItems.ElementAt(counter);
-                        SetItem(_grid[x][y], item.Key, item.Value);
-                    }
-                    counter++;
+                    var item = _inventoryProfile.InventoryItems.ElementAt(i);
+                    SetItem(_cellsList[i], item.Key, item.Value);
                 }
             }
 
@@ -57,14 +52,10 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 
         private void Put(DictionaryAddEvent<string, ReactiveProperty<int>> item)
         {
-            foreach (var row in _grid)
+            var cell = _cellsList.FirstOrDefault(t => t.IsEmpty());
+            if (cell != null)
             {
-                var cell = row.FirstOrDefault(t => t.IsEmpty());
-                if (cell != null)
-                {
-                    SetItem(cell, item.Key, item.Value);
-                    break;
-                }
+                SetItem(cell, item.Key, item.Value);
             }
         }
 

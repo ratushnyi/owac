@@ -93,7 +93,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
                 return true;
             }
 
-            if (_inventoryProfile.InventoryItems.Count >= _inventoryConfig.InventoryGrid.x * _inventoryConfig.InventoryGrid.y)
+            if (_inventoryProfile.InventoryItems.Count >= _inventoryConfig.InventoryCapacity)
             {
                 return false;
             }

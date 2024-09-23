@@ -14,7 +14,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Configs
         public InventoryCellView InventoryCellView { get; set; }
 
         [field: SerializeField]
-        public Vector2Int InventoryGrid { get; set; }
+        public int InventoryCapacity { get; set; }
 
         [field: SerializeField]
         private List<ItemModel> InventoryItems { get; set; }
