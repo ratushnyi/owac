@@ -1,7 +1,7 @@
 using NaughtyAttributes;
 using UnityEngine;
 
-namespace TendedTarsier.Script.Modules.General.Configs
+namespace TendedTarsier.Script.Modules.General
 {
     [CreateAssetMenu(menuName = "Config/GeneralConfig", fileName = "GeneralConfig")]
     public class GeneralConfig : ScriptableObject

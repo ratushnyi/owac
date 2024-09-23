@@ -1,16 +1,14 @@
 using System.Collections.Generic;
 using TendedTarsier.Script.Modules.Gameplay.Character;
+using TendedTarsier.Script.Modules.Gameplay.Configs;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Zenject;
 using TendedTarsier.Script.Utilities.Extensions;
 using TendedTarsier.Script.Modules.Gameplay.ToolBar;
-using TendedTarsier.Script.Modules.Gameplay.Configs;
 using TendedTarsier.Script.Modules.Gameplay.Services.HUD;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
-using TendedTarsier.Script.Modules.General.Panels;
-using UnityEngine.Serialization;
 
 namespace TendedTarsier.Script.Modules.Gameplay
 {
@@ -39,11 +37,9 @@ namespace TendedTarsier.Script.Modules.Gameplay
         [SerializeField]
         private Canvas _gameplayCanvas;
 
-        [FormerlySerializedAs("_toolBarController")]
         [Header("Panels")]
         [SerializeField]
         private ToolBarPanel _toolBarPanel;
-        [FormerlySerializedAs("_inventoryController")]
         [SerializeField]
         private InventoryPanel _inventoryPanel;
 

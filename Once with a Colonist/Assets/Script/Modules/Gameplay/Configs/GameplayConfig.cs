@@ -10,6 +10,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Configs
 
         [field: SerializeField]
         public int DropDistance { get; set; } = 5;
-    }
 
+        [field: SerializeField]
+        public int EnergyRecoveryRate { get; set; } = 10;
+    }
 }

@@ -4,10 +4,10 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Zenject;
-using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.Gameplay.Character;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using TendedTarsier.Script.Modules.General;
 using UnityEngine.EventSystems;
 
 namespace TendedTarsier.Script.Modules.Menu
@@ -28,7 +28,7 @@ namespace TendedTarsier.Script.Modules.Menu
         [SerializeField]
         private Button _exitButton;
 
-        private PlayerProfile _playerProfile;
+        private StatsProfile _statsProfile;
         private TilemapProfile _tilemapProfile;
         private InventoryProfile _inventoryProfile;
         private MenuConfig _menuConfig;
@@ -36,14 +36,14 @@ namespace TendedTarsier.Script.Modules.Menu
         private EventSystem _eventSystem;
 
         [Inject]
-        private void Construct(PlayerProfile playerProfile,
+        private void Construct(StatsProfile statsProfile,
             TilemapProfile tilemapProfile,
             InventoryProfile inventoryProfile,
             MenuConfig menuConfig,
             GeneralConfig generalConfig,
             EventSystem eventSystem)
         {
-            _playerProfile = playerProfile;
+            _statsProfile = statsProfile;
             _tilemapProfile = tilemapProfile;
             _inventoryProfile = inventoryProfile;
             _menuConfig = menuConfig;
@@ -76,7 +76,7 @@ namespace TendedTarsier.Script.Modules.Menu
 
         private void InitButtons()
         {
-            _continueButton.interactable = _playerProfile.StartDate != null;
+            _continueButton.interactable = _statsProfile.StartDate != null;
             _continueButton.OnClickAsObservable().Subscribe(OnContinueButtonClick).AddTo(_compositeDisposable);
             _newGameButton.OnClickAsObservable().Subscribe(OnNewGameButtonClick).AddTo(_compositeDisposable);
             _exitButton.OnClickAsObservable().Subscribe(OnExitButtonClick).AddTo(_compositeDisposable);
@@ -90,7 +90,7 @@ namespace TendedTarsier.Script.Modules.Menu
 
         private void OnNewGameButtonClick(Unit _)
         {
-            _playerProfile.Clear();
+            _statsProfile.Clear();
             _tilemapProfile.Clear();
             _inventoryProfile.Clear();
             SceneManager.LoadScene(_generalConfig.GameplayScene);

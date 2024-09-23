@@ -1,8 +1,8 @@
 using System.Linq;
+using TendedTarsier.Script.Modules.Gameplay.Configs;
 using UniRx;
 using UnityEngine;
 using Zenject;
-using TendedTarsier.Script.Modules.Gameplay.Configs;
 using TendedTarsier.Script.Modules.General.Panels;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory

@@ -9,8 +9,10 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
     {
         [field: SerializeField]
         public string Id { get; set; }
+
         [field: SerializeField]
         public Sprite Sprite { get; set; }
+
         [field: SerializeField]
         public PerformEntityBase PerformEntity { get; set; }
 
@@ -19,5 +21,4 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
             return PerformEntity != null && PerformEntity.Perform(tilemap, targetPosition);
         }
     }
-
 }

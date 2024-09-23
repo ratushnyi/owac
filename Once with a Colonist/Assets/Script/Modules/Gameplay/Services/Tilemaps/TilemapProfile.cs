@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using MemoryPack;
 using UnityEngine;
 using TendedTarsier.Script.Modules.General.Profile;
+using TendedTarsier.Script.Modules.General.Services.Profile;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
 {

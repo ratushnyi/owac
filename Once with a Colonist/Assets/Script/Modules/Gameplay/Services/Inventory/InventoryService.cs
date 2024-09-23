@@ -3,10 +3,10 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using JetBrains.Annotations;
+using TendedTarsier.Script.Modules.Gameplay.Configs;
 using UniRx;
 using UnityEngine;
 using Zenject;
-using TendedTarsier.Script.Modules.Gameplay.Configs;
 using TendedTarsier.Script.Modules.Gameplay.Field;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General.Services;
@@ -170,7 +170,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             {
                 return false;
             }
-            
+
             var result = false;
             var targetPosition = GetTargetPosition.Invoke();
             var item = _inventoryProfile.SelectedItem.Value;

@@ -2,11 +2,11 @@ using JetBrains.Annotations;
 using UniRx;
 using UnityEngine.SceneManagement;
 using TendedTarsier.Script.Modules.Gameplay.ToolBar;
-using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Panels;
 using TendedTarsier.Script.Modules.General.Services;
 using TendedTarsier.Script.Modules.General.Services.Input;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
+using TendedTarsier.Script.Modules.General;
 using UnityEngine.EventSystems;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD

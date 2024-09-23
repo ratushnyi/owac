@@ -1,9 +1,9 @@
 using System;
 using MemoryPack;
 using UniRx;
-using TendedTarsier.Script.Modules.General.Services.Profile;
+using TendedTarsier.Script.Modules.General.Profile;
 
-namespace TendedTarsier.Script.Modules.General.Profile
+namespace TendedTarsier.Script.Modules.General.Services.Profile
 {
     public abstract class ProfileBase : IProfile, IDisposable
     {
@@ -36,6 +36,7 @@ namespace TendedTarsier.Script.Modules.General.Profile
         {
             var newInstance = Activator.CreateInstance(GetType());
             TypeExtensions.PopulateObject(this, newInstance);
+            OnSectionCreated();
             _profileService.Save(this);
         }
 

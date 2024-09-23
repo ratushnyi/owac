@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <InventoryCellView>k__BackingField: {fileID: 8281480634303324935, guid: 834a674fb393a4c4da566030af850898,
     type: 3}
-  <InventoryGrid>k__BackingField: {x: 3, y: 3}
+  <InventoryCapacity>k__BackingField: 10
   <InventoryItems>k__BackingField:
   - <Id>k__BackingField: test
     <Sprite>k__BackingField: {fileID: 21300092, guid: 29c9cded5e558164aaf8c9bf08aa1510,

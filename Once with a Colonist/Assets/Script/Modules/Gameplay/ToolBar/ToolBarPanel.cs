@@ -1,10 +1,10 @@
 using Cysharp.Threading.Tasks;
+using TendedTarsier.Script.Modules.Gameplay.Configs;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 using TendedTarsier.Script.Modules.General.Panels;
-using TendedTarsier.Script.Modules.Gameplay.Configs;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 
 namespace TendedTarsier.Script.Modules.Gameplay.ToolBar
