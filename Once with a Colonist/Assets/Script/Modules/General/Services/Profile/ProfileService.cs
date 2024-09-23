@@ -6,6 +6,7 @@ using MemoryPack;
 using UniRx;
 using UnityEngine;
 using TendedTarsier.Script.Modules.General.Profile;
+using TendedTarsier.Script.Utilities.MemoryPack.FormatterProviders;
 
 namespace TendedTarsier.Script.Modules.General.Services.Profile
 {

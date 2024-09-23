@@ -25,7 +25,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
 
             if (_tilemapService.GetTile(tilemap, targetPosition) == TileModel.TileType.Stone)
             {
-                Debug.Log($"{nameof(Tilemap)} already has {TileModel.TileType.Stone} at {targetPosition}");
                 return false;
             }
 

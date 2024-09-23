@@ -7,6 +7,7 @@ using UniRx;
 using UnityEngine;
 using Zenject;
 using TendedTarsier.Script.Modules.Gameplay.Configs;
+using TendedTarsier.Script.Modules.Gameplay.Field;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General.Services;
 

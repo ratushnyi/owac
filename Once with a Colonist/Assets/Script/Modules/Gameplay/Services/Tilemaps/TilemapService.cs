@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using TendedTarsier.Script.Modules.Gameplay.Configs;
 using TendedTarsier.Script.Modules.General.Services;
 using UniRx;
 using UnityEngine;

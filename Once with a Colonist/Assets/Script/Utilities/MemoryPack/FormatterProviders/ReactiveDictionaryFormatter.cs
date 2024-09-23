@@ -2,7 +2,7 @@
 using MemoryPack.Formatters;
 using UniRx;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Utilities.MemoryPack.FormatterProviders
 {
 #pragma warning disable CS8631 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match constraint type.
     public class ReactiveDictionaryFormatter<TKey, TValue> : GenericDictionaryFormatterBase<ReactiveDictionary<TKey, TValue>, TKey, TValue>

@@ -1,7 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.Gameplay.Field
 {
     public abstract class MapItemBase : MonoBehaviour
     {

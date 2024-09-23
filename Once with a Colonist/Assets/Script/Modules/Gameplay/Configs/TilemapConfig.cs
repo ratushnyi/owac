@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
+using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.Gameplay.Configs
 {
     [CreateAssetMenu(menuName = "Config/TilemapConfig", fileName = "TilemapConfig", order = 0)]
     public class TilemapConfig : ScriptableObject
