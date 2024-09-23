@@ -16,6 +16,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         private readonly int _directionAnimatorKey = Animator.StringToHash("Direction");
         private readonly int _isMovingAnimatorKey = Animator.StringToHash("IsMoving");
 
+        private Vector3 _playerPosition;
         private Vector2 _moveDirection;
         private float _speedModifier = 1;
 
@@ -54,6 +55,24 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             transform.SetLocalPositionAndRotation(_statsService.PlayerPosition, Quaternion.identity);
 
             SubscribeOnInput();
+        }
+
+        private void Update()
+        {
+            if (_playerPosition == transform.position)
+            {
+                return;
+            }
+
+            _playerPosition = transform.position;
+
+            if (_moveDirection != Vector2.zero)
+            {
+                TargetDirection.Value = Vector3Int.RoundToInt(_moveDirection);
+            }
+
+            TargetPosition.Value = new Vector3Int(Mathf.FloorToInt(_playerPosition.x), Mathf.RoundToInt(_playerPosition.y)) + TargetDirection.Value;
+            _tilemapService.ProcessTiles(_tilemapService.CurrentTilemap.Value, TargetPosition.Value);
         }
 
         private void SubscribeOnInput()
@@ -158,14 +177,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
                         break;
                 }
             }
-
-            var transformPosition = transform.position;
-            if (direction != Vector2.zero)
-            {
-                TargetDirection.Value = Vector3Int.RoundToInt(direction);
-            }
-            TargetPosition.Value = new Vector3Int(Mathf.FloorToInt(transformPosition.x), Mathf.RoundToInt(transformPosition.y)) + TargetDirection.Value;
-            _tilemapService.ProcessTiles(_tilemapService.CurrentTilemap.Value, TargetPosition.Value);
 
             return direction;
         }
