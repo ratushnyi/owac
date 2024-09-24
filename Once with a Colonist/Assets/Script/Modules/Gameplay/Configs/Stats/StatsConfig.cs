@@ -13,7 +13,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Configs.Stats
         [field: SerializeField]
         public List<StatModel> StatsList { get; set; }
 
-        public StatModel GetStatsEntity(StatType statType)
+        public StatModel GetStatsModel(StatType statType)
         {
             return StatsList.FirstOrDefault(t => t.StatType == statType);
         }

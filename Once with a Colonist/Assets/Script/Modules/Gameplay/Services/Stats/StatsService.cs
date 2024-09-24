@@ -37,7 +37,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
         {
             base.Initialize();
             InitializeProfile();
-            ObserveEnergy();
         }
 
         private void InitializeProfile()
@@ -47,7 +46,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
                 if (!_statsProfile.StatsDictionary.ContainsKey(statEntity.StatType))
                 {
                     var levelEntity = statEntity.GetLevel(0);
-                    _statsProfile.StatsDictionary.Add(statEntity.StatType, new StatsProfileElement
+                    _statsProfile.StatsDictionary.Add(statEntity.StatType, new StatProfileElement
                     {
                         Value = new ReactiveProperty<int>(levelEntity.DefaultValue),
                         Range = new ReactiveProperty<int>(levelEntity.Range)
@@ -57,51 +56,41 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
 
             foreach (var stat in _statsProfile.StatsDictionary)
             {
-                _hudService.ShowStatBar(stat.Key, stat.Value.Value, stat.Value.Range);
+                var statsModel = _statsConfig.GetStatsModel(stat.Key);
                 stat.Value.Experience.Subscribe(_ => OnExperienceChanged(stat.Key, stat.Value)).AddTo(CompositeDisposable);
+
+                if (statsModel.Observable)
+                {
+                    _hudService.ShowStatBar(stat.Key, stat.Value.Value, stat.Value.Range);
+                    ObserveStat(stat.Key);
+                }
             }
         }
 
-        private void OnExperienceChanged(StatType statType, StatsProfileElement statsProfileElement)
+        private void OnExperienceChanged(StatType statType, StatProfileElement statProfileElement)
         {
-            var statEntity = _statsConfig.GetStatsEntity(statType);
+            var statsModel = _statsConfig.GetStatsModel(statType);
 
-            var extraExperience = statsProfileElement.Experience.Value - statEntity.GetLevel(statsProfileElement.Level.Value).BorderValue;
+            var extraExperience = statProfileElement.Experience.Value - statsModel.GetLevel(statProfileElement.Level.Value).BorderValue;
             if (extraExperience >= 0)
             {
-                statsProfileElement.Experience.Value = extraExperience;
-                statsProfileElement.Level.Value++;
+                statProfileElement.Experience.Value = extraExperience;
+                statProfileElement.Level.Value++;
 
-                var levelEntity = statEntity.GetLevel(statsProfileElement.Level.Value);
-                statsProfileElement.Value.Value = levelEntity.DefaultValue;
-                statsProfileElement.Range.Value = levelEntity.Range;
+                var levelEntity = statsModel.GetLevel(statProfileElement.Level.Value);
+                statProfileElement.Value.Value = levelEntity.DefaultValue;
+                statProfileElement.Range.Value = levelEntity.Range;
             }
         }
 
-        private void ObserveEnergy()
+        private void ObserveStat(StatType statType)
         {
-            var energyElement = _statsProfile.StatsDictionary[StatType.Energy];
-            var statLevelEntity = _statsConfig.GetStatsEntity(StatType.Energy).GetLevel(energyElement.Level.Value);
+            var profileElement = _statsProfile.StatsDictionary[statType];
+            var levelModel = _statsConfig.GetStatsModel(statType).GetLevel(profileElement.Level.Value);
 
-            energyElement.Level.Subscribe(onLevelChanged)
+            Observable.Timer(TimeSpan.FromSeconds(levelModel.RecoveryRate)).Repeat()
+                .Subscribe(_ => ApplyValue(statType, 1))
                 .AddTo(CompositeDisposable);
-
-            Observable.Timer(TimeSpan.FromSeconds(statLevelEntity.RecoveryRate)).Repeat()
-                .Subscribe(_ => onEnergyRecovered())
-                .AddTo(CompositeDisposable);
-
-            void onEnergyRecovered()
-            {
-                var newValue = Math.Min(statLevelEntity.Range, energyElement.Value.Value + 1);
-                var experience = newValue - energyElement.Value.Value;
-                energyElement.Value.Value = newValue;
-                energyElement.Experience.Value += experience;
-            }
-
-            void onLevelChanged(int level)
-            {
-                statLevelEntity = _statsConfig.GetStatsEntity(StatType.Energy).GetLevel(level);
-            }
         }
 
         public void OnSessionStarted()
@@ -116,6 +105,36 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
             _statsProfile.PlayerPosition = position;
             _statsProfile.LastSaveDate = DateTime.UtcNow;
             _statsProfile.Save();
+        }
+
+        public bool IsSuitable(StatType statType, int value)
+        {
+            var profileElement = _statsProfile.StatsDictionary[statType];
+            var levelModel = _statsConfig.GetStatsModel(statType).GetLevel(profileElement.Level.Value);
+            var hypotheticalValue = profileElement.Value.Value + value;
+            var newValue = Math.Min(levelModel.Range, profileElement.Value.Value + value);
+            newValue = Math.Max(0, newValue);
+
+            return hypotheticalValue == newValue;
+        }
+
+        public bool ApplyValue(StatType statType, int value)
+        {
+            var profileElement = _statsProfile.StatsDictionary[statType];
+            var levelModel = _statsConfig.GetStatsModel(statType).GetLevel(profileElement.Level.Value);
+            var newValue = Math.Min(levelModel.Range, profileElement.Value.Value + value);
+            newValue = Math.Max(0, newValue);
+
+            if (profileElement.Value.Value == newValue)
+            {
+                return false;
+            }
+
+            var experience = newValue - profileElement.Value.Value;
+            profileElement.Value.Value = newValue;
+            profileElement.Experience.Value += experience;
+
+            return true;
         }
     }
 }

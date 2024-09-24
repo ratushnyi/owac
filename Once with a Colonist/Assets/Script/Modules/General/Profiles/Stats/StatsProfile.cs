@@ -25,6 +25,6 @@ namespace TendedTarsier.Script.Modules.General.Profiles.Stats
         public Vector2 PlayerPosition { get; set; }
 
         [MemoryPackOrder(3)]
-        public Dictionary<StatType, StatsProfileElement> StatsDictionary { get; [UsedImplicitly] set; } = new();
+        public Dictionary<StatType, StatProfileElement> StatsDictionary { get; [UsedImplicitly] set; } = new();
     }
 }

@@ -42,7 +42,7 @@ namespace TendedTarsier.Script.Modules.General.Services.Profile
             MemoryPackFormatterProvider.Register(new ReactivePropertyFormatter<string>());
             MemoryPackFormatterProvider.Register(new ReactivePropertyFormatter<int>());
             MemoryPackFormatterProvider.Register(new ReactivePropertyFormatter<float>());
-            MemoryPackFormatterProvider.Register(new ReactivePropertyFormatter<StatsProfileElement>());
+            MemoryPackFormatterProvider.Register(new ReactivePropertyFormatter<StatProfileElement>());
             MemoryPackFormatterProvider.Register(new ReactiveCollectionFormatter<bool>());
             MemoryPackFormatterProvider.Register(new ReactiveCollectionFormatter<string>());
             MemoryPackFormatterProvider.Register(new ReactiveCollectionFormatter<int>());
@@ -52,7 +52,7 @@ namespace TendedTarsier.Script.Modules.General.Services.Profile
             MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<string, int>());
             MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<string, float>());
             MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<string, ReactiveProperty<int>>());
-            MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<StatType, ReactiveProperty<StatsProfileElement>>());
+            MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<StatType, ReactiveProperty<StatProfileElement>>());
         }
 
         private void LoadSections()

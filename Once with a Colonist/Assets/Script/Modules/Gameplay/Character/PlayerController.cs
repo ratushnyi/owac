@@ -1,4 +1,5 @@
-﻿using TendedTarsier.Script.Modules.Gameplay.Field;
+﻿using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
+using TendedTarsier.Script.Modules.Gameplay.Field;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -20,7 +21,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
         private Vector3 _playerPosition;
         private Vector2 _moveDirection;
-        private float _speedModifier = 1;
+        private int _speedModifier = 1;
+        private float _runFeeDelay = 1;
 
         private Rigidbody2D _rigidbody2D;
         private Animator _animator;
@@ -75,6 +77,25 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
             TargetPosition.Value = new Vector3Int(Mathf.FloorToInt(_playerPosition.x), Mathf.RoundToInt(_playerPosition.y)) + TargetDirection.Value;
             _tilemapService.ProcessTiles(_tilemapService.CurrentTilemap.Value, TargetPosition.Value);
+
+            if (_speedModifier == 2)
+            {
+                if (!_statsService.IsSuitable(StatType.Energy, -1))
+                {
+                    _speedModifier = 1;
+                    _runFeeDelay = 1;
+                    return;
+                }
+                
+                _runFeeDelay -= Time.deltaTime;
+
+                if (_runFeeDelay <= 0)
+                {
+                    _statsService.ApplyValue(StatType.Energy, -1);
+                    
+                    _runFeeDelay = 1;
+                }
+            }
         }
 
         private void SubscribeOnInput()

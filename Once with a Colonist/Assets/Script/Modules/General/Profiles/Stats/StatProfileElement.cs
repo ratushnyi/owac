@@ -4,7 +4,7 @@ using UniRx;
 namespace TendedTarsier.Script.Modules.General.Profiles.Stats
 {
     [MemoryPackable]
-    public partial class StatsProfileElement
+    public partial class StatProfileElement
     {
         [MemoryPackAllowSerialize]
         public ReactiveProperty<int> Level = new();
