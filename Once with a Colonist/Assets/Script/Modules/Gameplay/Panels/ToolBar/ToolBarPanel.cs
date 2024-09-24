@@ -7,6 +7,7 @@ using TendedTarsier.Script.Modules.General.Panels;
 using TendedTarsier.Script.Modules.General.Profiles;
 using TendedTarsier.Script.Modules.Gameplay.Configs.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
+using InventoryProfile = TendedTarsier.Script.Modules.General.Profiles.Inventory.InventoryProfile;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Panels.ToolBar
 {

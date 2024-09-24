@@ -15,8 +15,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
 
         protected StatsProfile StatsProfile;
 
-        protected bool IsEnoughResources => StatsProfile.StatsDictionary[_statType].Value.Value >= _requiredValue;
-        protected void UseResources() => StatsProfile.StatsDictionary[_statType].Value.Value -= _requiredValue;
+        protected bool IsEnoughResources => StatsProfile.StatsDictionary[_statType].CurrentValue.Value >= _requiredValue;
+        protected void UseResources() => StatsProfile.StatsDictionary[_statType].CurrentValue.Value -= _requiredValue;
 
         [Inject]
         public void Construct(StatsProfile statsProfile)

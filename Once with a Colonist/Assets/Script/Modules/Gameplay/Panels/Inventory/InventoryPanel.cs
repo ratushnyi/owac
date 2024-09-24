@@ -5,6 +5,7 @@ using UniRx;
 using UnityEngine;
 using Zenject;
 using TendedTarsier.Script.Modules.General.Panels;
+using TendedTarsier.Script.Modules.General.Profiles.Inventory;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 {
@@ -12,7 +13,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
     {
         [SerializeField]
         private Transform _gridContainer;
-        private General.Profiles.InventoryProfile _inventoryProfile;
+        private InventoryProfile _inventoryProfile;
         private InventoryConfig _inventoryConfig;
         private InventoryCellView[] _cellsList;
         
@@ -20,7 +21,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 
         [Inject]
         private void Construct(
-            General.Profiles.InventoryProfile inventoryProfile,
+            InventoryProfile inventoryProfile,
             InventoryConfig inventoryConfig)
         {
             _inventoryProfile = inventoryProfile;

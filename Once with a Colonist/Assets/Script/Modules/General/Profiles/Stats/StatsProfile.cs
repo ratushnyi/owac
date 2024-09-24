@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using MemoryPack;
 using UniRx;
@@ -24,6 +25,6 @@ namespace TendedTarsier.Script.Modules.General.Profiles.Stats
         public Vector2 PlayerPosition { get; set; }
 
         [MemoryPackOrder(3)]
-        public ReactiveDictionary<StatType, ReactiveProperty<StatsProfileElement>> StatsDictionary { get; [UsedImplicitly] set; } = new();
+        public Dictionary<StatType, StatsProfileElement> StatsDictionary { get; [UsedImplicitly] set; } = new();
     }
 }

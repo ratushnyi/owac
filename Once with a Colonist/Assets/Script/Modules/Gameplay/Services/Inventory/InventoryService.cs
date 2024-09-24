@@ -9,7 +9,9 @@ using UniRx;
 using UnityEngine;
 using Zenject;
 using TendedTarsier.Script.Modules.Gameplay.Field;
+using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using TendedTarsier.Script.Modules.General.Profiles.Inventory;
 using TendedTarsier.Script.Modules.General.Services;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
@@ -20,7 +22,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
         private readonly StatsService _statsService;
         private readonly TilemapService _tilemapService;
         private readonly InventoryConfig _inventoryConfig;
-        private readonly General.Profiles.InventoryProfile _inventoryProfile;
+        private readonly InventoryProfile _inventoryProfile;
         private readonly Transform _propsLayerTransform;
 
         public Func<Vector3Int> GetTargetDirection;
@@ -29,7 +31,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 
         private InventoryService(
             [Inject(Id = GameplayInstaller.PropsTransformId)] Transform propsLayerTransform,
-            General.Profiles.InventoryProfile inventoryProfile,
+            InventoryProfile inventoryProfile,
             InventoryConfig inventoryConfig,
             TilemapService tilemapService,
             StatsService statsService)

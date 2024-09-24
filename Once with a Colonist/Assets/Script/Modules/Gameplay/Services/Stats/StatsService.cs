@@ -1,16 +1,13 @@
 using System;
-using UnityEngine;
 using JetBrains.Annotations;
-using TendedTarsier.Script.Modules.Gameplay.Character;
-using TendedTarsier.Script.Modules.Gameplay.Configs;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Gameplay;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
-using TendedTarsier.Script.Modules.General.Profiles.Stats;
-using TendedTarsier.Script.Modules.General.Services;
 using UniRx;
-using StatsProfile = TendedTarsier.Script.Modules.General.Profiles.Stats.StatsProfile;
+using UnityEngine;
+using TendedTarsier.Script.Modules.General.Services;
+using TendedTarsier.Script.Modules.General.Profiles.Stats;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Gameplay;
 
-namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
+namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
 {
     [UsedImplicitly]
     public class StatsService : ServiceBase
@@ -45,15 +42,32 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             {
                 if (!_statsProfile.StatsDictionary.ContainsKey(statEntity.StatType))
                 {
-                    _statsProfile.StatsDictionary.Add(statEntity.StatType, new ReactiveProperty<StatsProfileElement>(new StatsProfileElement{Value = statEntity.Levels[0].Range}));
+                    _statsProfile.StatsDictionary.Add(statEntity.StatType, new StatsProfileElement { CurrentValue = new ReactiveProperty<int>(statEntity.GetLevel(0).Range)});
                 }
+            }
+
+            foreach (var stat in _statsProfile.StatsDictionary)
+            {
+                stat.Value.Experience.Subscribe(_ => OnExperienceIncreased(stat.Key, stat.Value)).AddTo(CompositeDisposable);
+            }
+        }
+
+        private void OnExperienceIncreased(StatType statType, StatsProfileElement statsProfileElement)
+        {
+            var statEntity = _statsConfig.GetStatsEntity(statType);
+
+            var extraExperience = statsProfileElement.Experience.Value - statEntity.GetLevel(statsProfileElement.Level.Value).BorderValue;
+            if (extraExperience >= 0)
+            {
+                statsProfileElement.Level.Value++;
+                statsProfileElement.Experience.Value = extraExperience;
             }
         }
 
         private void ObserveEnergy()
         {
             var energyElement = _statsProfile.StatsDictionary[StatType.Energy];
-            var statLevelEntity = _statsConfig.GetStatsEntity(StatType.Energy).Levels[energyElement.Value.Level];
+            var statLevelEntity = _statsConfig.GetStatsEntity(StatType.Energy).GetLevel(energyElement.Level.Value);
 
             Observable.Timer(TimeSpan.FromSeconds(statLevelEntity.RecoveryRate)).Repeat()
                 .Subscribe(_ => onEnergyRecovered())
@@ -61,9 +75,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 
             void onEnergyRecovered()
             {
-                var newValue = Math.Min(statLevelEntity.BorderValue, energyElement.Value.Value + 1);
-                energyElement.Value.Experience += newValue - energyElement.Value.Value;
-                energyElement.Value.Value = newValue;
+                var newValue = Math.Min(statLevelEntity.BorderValue, energyElement.CurrentValue.Value + 1);
+                energyElement.Experience.Value += newValue - energyElement.CurrentValue.Value;
+                energyElement.CurrentValue.Value = newValue;
             }
         }
 

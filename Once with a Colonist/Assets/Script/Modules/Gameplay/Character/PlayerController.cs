@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 using Zenject;
 using TendedTarsier.Script.Modules.General.Services.Input;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
+using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Character

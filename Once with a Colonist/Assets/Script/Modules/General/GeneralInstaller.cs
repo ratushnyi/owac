@@ -1,17 +1,12 @@
 using UnityEngine;
 using Zenject;
-using TendedTarsier.Script.Utilities.Extensions;
-using TendedTarsier.Script.Modules.General.Services.Profile;
-using TendedTarsier.Script.Modules.Gameplay.Character;
-using TendedTarsier.Script.Modules.Gameplay.Configs;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
-using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
-using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
-using TendedTarsier.Script.Modules.General.Services.Input;
 using UnityEngine.EventSystems;
-using InventoryProfile = TendedTarsier.Script.Modules.General.Profiles.InventoryProfile;
-using StatsProfile = TendedTarsier.Script.Modules.General.Profiles.Stats.StatsProfile;
-using TilemapProfile = TendedTarsier.Script.Modules.General.Profiles.TilemapProfile;
+using TendedTarsier.Script.Utilities.Extensions;
+using TendedTarsier.Script.Modules.General.Profiles.Stats;
+using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
+using TendedTarsier.Script.Modules.General.Profiles.Inventory;
+using TendedTarsier.Script.Modules.General.Services.Profile;
+using TendedTarsier.Script.Modules.General.Services.Input;
 
 namespace TendedTarsier.Script.Modules.General
 {

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Configs.Stats
 {
@@ -14,7 +16,13 @@ namespace TendedTarsier.Script.Modules.Gameplay.Configs.Stats
             public int RecoveryRate;
         }
 
+        [SerializeField]
+        private List<StatLevelModel> Levels;
         public StatType StatType;
-        public List<StatLevelModel> Levels;
+
+        public StatLevelModel GetLevel(int level)
+        {
+            return Levels.Count > level ? Levels[level] : Levels.Last();
+        }
     }
 }

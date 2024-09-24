@@ -3,6 +3,7 @@ using System.Linq;
 using JetBrains.Annotations;
 using TendedTarsier.Script.Modules.Gameplay.Configs;
 using TendedTarsier.Script.Modules.Gameplay.Configs.Tilemap;
+using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
 using TendedTarsier.Script.Modules.General.Services;
 using UniRx;
 using UnityEngine;
@@ -16,13 +17,13 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
         public IReadOnlyReactiveProperty<Tilemap> CurrentTilemap => _currentTilemap;
         
         private readonly ReactiveProperty<Tilemap> _currentTilemap = new();
-        private readonly General.Profiles.TilemapProfile _tilemapProfile;
+        private readonly TilemapProfile _tilemapProfile;
         private readonly TilemapConfig _tilemapConfig;
         private readonly List<Tilemap> _tilemaps;
 
         private Vector3Int _lastTarget;
 
-        private TilemapService(General.Profiles.TilemapProfile tilemapProfile, TilemapConfig tilemapConfig, List<Tilemap> tilemaps)
+        private TilemapService(TilemapProfile tilemapProfile, TilemapConfig tilemapConfig, List<Tilemap> tilemaps)
         {
             _tilemaps = tilemaps;
             _tilemapConfig = tilemapConfig;

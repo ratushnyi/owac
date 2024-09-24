@@ -11,6 +11,7 @@ using TendedTarsier.Script.Modules.Gameplay.Configs.Tilemap;
 using TendedTarsier.Script.Modules.Gameplay.Panels.ToolBar;
 using TendedTarsier.Script.Modules.Gameplay.Services.HUD;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
+using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 
 namespace TendedTarsier.Script.Modules.Gameplay
