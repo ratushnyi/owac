@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using JetBrains.Annotations;
 using TendedTarsier.Script.Modules.Gameplay.Configs;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Inventory;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -19,7 +20,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
         private readonly StatsService _statsService;
         private readonly TilemapService _tilemapService;
         private readonly InventoryConfig _inventoryConfig;
-        private readonly InventoryProfile _inventoryProfile;
+        private readonly General.Profiles.InventoryProfile _inventoryProfile;
         private readonly Transform _propsLayerTransform;
 
         public Func<Vector3Int> GetTargetDirection;
@@ -28,7 +29,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 
         private InventoryService(
             [Inject(Id = GameplayInstaller.PropsTransformId)] Transform propsLayerTransform,
-            InventoryProfile inventoryProfile,
+            General.Profiles.InventoryProfile inventoryProfile,
             InventoryConfig inventoryConfig,
             TilemapService tilemapService,
             StatsService statsService)

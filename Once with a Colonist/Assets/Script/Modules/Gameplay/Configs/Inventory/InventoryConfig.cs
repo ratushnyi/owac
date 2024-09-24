@@ -6,7 +6,7 @@ using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 using UnityEngine;
 using Zenject;
 
-namespace TendedTarsier.Script.Modules.Gameplay.Configs
+namespace TendedTarsier.Script.Modules.Gameplay.Configs.Inventory
 {
     [CreateAssetMenu(menuName = "Config/InventoryConfig", fileName = "InventoryConfig")]
     public class InventoryConfig : ScriptableObject
@@ -28,7 +28,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Configs
         [Inject]
         public void Construct(DiContainer diContainer)
         {
-            InventoryItems.ForEach(t => diContainer.Inject(t.PerformEntity));
+            InventoryItems.ForEach(t => diContainer.Inject(t.ToolEntity));
         }
     }
 }

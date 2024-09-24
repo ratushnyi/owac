@@ -20,6 +20,6 @@ MonoBehaviour:
       RecoveryRate: 0
   - StatType: 1
     Levels:
-    - BorderValue: 0
+    - BorderValue: 100
       Range: 100
       RecoveryRate: 5

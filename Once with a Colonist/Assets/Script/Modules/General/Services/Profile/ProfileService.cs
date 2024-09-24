@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
 using MemoryPack;
-using TendedTarsier.Script.Modules.Gameplay.Configs;
 using UniRx;
 using UnityEngine;
 using TendedTarsier.Script.Modules.General.Profile;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
+using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using TendedTarsier.Script.Utilities.MemoryPack.FormatterProviders;
 
 namespace TendedTarsier.Script.Modules.General.Services.Profile
@@ -36,6 +37,7 @@ namespace TendedTarsier.Script.Modules.General.Services.Profile
             MemoryPackFormatterProvider.Register(new ReactivePropertyFormatter<string>());
             MemoryPackFormatterProvider.Register(new ReactivePropertyFormatter<int>());
             MemoryPackFormatterProvider.Register(new ReactivePropertyFormatter<float>());
+            MemoryPackFormatterProvider.Register(new ReactivePropertyFormatter<StatsProfileElement>());
             MemoryPackFormatterProvider.Register(new ReactiveCollectionFormatter<bool>());
             MemoryPackFormatterProvider.Register(new ReactiveCollectionFormatter<string>());
             MemoryPackFormatterProvider.Register(new ReactiveCollectionFormatter<int>());
@@ -45,7 +47,7 @@ namespace TendedTarsier.Script.Modules.General.Services.Profile
             MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<string, int>());
             MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<string, float>());
             MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<string, ReactiveProperty<int>>());
-            MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<StatType, ReactiveProperty<int>>());
+            MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<StatType, ReactiveProperty<StatsProfileElement>>());
         }
 
         private void LoadSections()

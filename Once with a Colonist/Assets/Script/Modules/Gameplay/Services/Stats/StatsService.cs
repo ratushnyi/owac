@@ -3,8 +3,12 @@ using UnityEngine;
 using JetBrains.Annotations;
 using TendedTarsier.Script.Modules.Gameplay.Character;
 using TendedTarsier.Script.Modules.Gameplay.Configs;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Gameplay;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
+using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using TendedTarsier.Script.Modules.General.Services;
 using UniRx;
+using StatsProfile = TendedTarsier.Script.Modules.General.Profiles.Stats.StatsProfile;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 {
@@ -31,14 +35,25 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
         protected override void Initialize()
         {
             base.Initialize();
+            InitializeProfile();
             ObserveEnergy();
+        }
+
+        private void InitializeProfile()
+        {
+            foreach (var statEntity in _statsConfig.StatsList)
+            {
+                if (!_statsProfile.StatsDictionary.ContainsKey(statEntity.StatType))
+                {
+                    _statsProfile.StatsDictionary.Add(statEntity.StatType, new ReactiveProperty<StatsProfileElement>(new StatsProfileElement{Value = statEntity.Levels[0].Range}));
+                }
+            }
         }
 
         private void ObserveEnergy()
         {
-            var energyLevel = _statsProfile.StatsDictionary[StatType.EnergyLevel];
-            var energyValue = _statsProfile.StatsDictionary[StatType.Energy];
-            var statLevelEntity = _statsConfig.GetStatsEntity(StatType.Energy).Levels[energyLevel.Value];
+            var energyElement = _statsProfile.StatsDictionary[StatType.Energy];
+            var statLevelEntity = _statsConfig.GetStatsEntity(StatType.Energy).Levels[energyElement.Value.Level];
 
             Observable.Timer(TimeSpan.FromSeconds(statLevelEntity.RecoveryRate)).Repeat()
                 .Subscribe(_ => onEnergyRecovered())
@@ -46,7 +61,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 
             void onEnergyRecovered()
             {
-                energyValue.Value = Math.Min(statLevelEntity.BorderValue, energyValue.Value + 1);
+                var newValue = Math.Min(statLevelEntity.BorderValue, energyElement.Value.Value + 1);
+                energyElement.Value.Experience += newValue - energyElement.Value.Value;
+                energyElement.Value.Value = newValue;
             }
         }
 

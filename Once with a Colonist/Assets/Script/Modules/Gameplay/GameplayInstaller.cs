@@ -1,11 +1,14 @@
 using System.Collections.Generic;
-using TendedTarsier.Script.Modules.Gameplay.Character;
-using TendedTarsier.Script.Modules.Gameplay.Configs;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Zenject;
 using TendedTarsier.Script.Utilities.Extensions;
-using TendedTarsier.Script.Modules.Gameplay.ToolBar;
+using TendedTarsier.Script.Modules.Gameplay.Character;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Gameplay;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Inventory;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Tilemap;
+using TendedTarsier.Script.Modules.Gameplay.Panels.ToolBar;
 using TendedTarsier.Script.Modules.Gameplay.Services.HUD;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
@@ -24,6 +27,8 @@ namespace TendedTarsier.Script.Modules.Gameplay
         private TilemapConfig _tilemapConfig;
         [SerializeField]
         private GameplayConfig _gameplayConfig;
+        [SerializeField]
+        private StatsConfig _statsConfig;
 
         [Header("Common")]
         [SerializeField]
@@ -64,6 +69,7 @@ namespace TendedTarsier.Script.Modules.Gameplay
             Container.Bind<InventoryConfig>().FromScriptableObject(_inventoryConfig).AsSingle().NonLazy();
             Container.Bind<TilemapConfig>().FromScriptableObject(_tilemapConfig).AsSingle().NonLazy();
             Container.Bind<GameplayConfig>().FromScriptableObject(_gameplayConfig).AsSingle().NonLazy();
+            Container.Bind<StatsConfig>().FromInstance(_statsConfig).AsSingle().NonLazy();
         }
 
         private void BindPanels()

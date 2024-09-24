@@ -3,7 +3,7 @@ using MemoryPack;
 using UniRx;
 using TendedTarsier.Script.Modules.General.Services.Profile;
 
-namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
+namespace TendedTarsier.Script.Modules.General.Profiles
 {
     [MemoryPackable(GenerateType.VersionTolerant)]
     public partial class InventoryProfile : ProfileBase

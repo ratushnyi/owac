@@ -9,6 +9,9 @@ using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General;
 using UnityEngine.EventSystems;
+using InventoryProfile = TendedTarsier.Script.Modules.General.Profiles.InventoryProfile;
+using StatsProfile = TendedTarsier.Script.Modules.General.Profiles.Stats.StatsProfile;
+using TilemapProfile = TendedTarsier.Script.Modules.General.Profiles.TilemapProfile;
 
 namespace TendedTarsier.Script.Modules.Menu
 {

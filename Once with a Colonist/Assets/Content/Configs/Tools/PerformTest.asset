@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a759bdee2cae4cdbb21f867609b17cf9, type: 3}
   m_Name: PerformTest
   m_EditorClassIdentifier: 
+  _statType: 1
+  _requiredValue: 5

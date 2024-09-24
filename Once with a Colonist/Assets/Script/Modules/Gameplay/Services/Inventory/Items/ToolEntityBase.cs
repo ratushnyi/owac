@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Zenject;
-using TendedTarsier.Script.Modules.Gameplay.Character;
-using TendedTarsier.Script.Modules.Gameplay.Configs;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
+using StatsProfile = TendedTarsier.Script.Modules.General.Profiles.Stats.StatsProfile;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
 {
-    public class PerformEntityBase : ScriptableObject
+    public class ToolEntityBase : ScriptableObject
     {
         [SerializeField]
         private StatType _statType;
@@ -15,8 +15,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
 
         protected StatsProfile StatsProfile;
 
-        protected bool IsEnoughResources => StatsProfile.StatsDictionary[_statType].Value >= _requiredValue;
-        protected void UseResources() => StatsProfile.StatsDictionary[_statType].Value -= _requiredValue;
+        protected bool IsEnoughResources => StatsProfile.StatsDictionary[_statType].Value.Value >= _requiredValue;
+        protected void UseResources() => StatsProfile.StatsDictionary[_statType].Value.Value -= _requiredValue;
 
         [Inject]
         public void Construct(StatsProfile statsProfile)

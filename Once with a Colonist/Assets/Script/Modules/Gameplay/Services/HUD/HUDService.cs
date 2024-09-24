@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
+using TendedTarsier.Script.Modules.Gameplay.Panels.ToolBar;
 using UniRx;
 using UnityEngine.SceneManagement;
-using TendedTarsier.Script.Modules.Gameplay.ToolBar;
 using TendedTarsier.Script.Modules.General.Panels;
 using TendedTarsier.Script.Modules.General.Services;
 using TendedTarsier.Script.Modules.General.Services.Input;

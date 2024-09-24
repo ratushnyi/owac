@@ -1,13 +1,14 @@
 using Cysharp.Threading.Tasks;
-using TendedTarsier.Script.Modules.Gameplay.Configs;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 using TendedTarsier.Script.Modules.General.Panels;
+using TendedTarsier.Script.Modules.General.Profiles;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 
-namespace TendedTarsier.Script.Modules.Gameplay.ToolBar
+namespace TendedTarsier.Script.Modules.Gameplay.Panels.ToolBar
 {
     public class ToolBarPanel : PanelBase
     {
