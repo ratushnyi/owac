@@ -3,15 +3,16 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using JetBrains.Annotations;
-using TendedTarsier.Script.Modules.Gameplay.Configs;
 using TendedTarsier.Script.Modules.Gameplay.Configs.Inventory;
 using UniRx;
 using UnityEngine;
 using Zenject;
 using TendedTarsier.Script.Modules.Gameplay.Field;
+using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General.Profiles.Inventory;
+using TendedTarsier.Script.Modules.General.Panels;
 using TendedTarsier.Script.Modules.General.Services;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
@@ -19,6 +20,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
     [UsedImplicitly]
     public class InventoryService : ServiceBase
     {
+        private readonly PanelLoader<HUDPanel> _hudPanel;
         private readonly StatsService _statsService;
         private readonly TilemapService _tilemapService;
         private readonly InventoryConfig _inventoryConfig;
@@ -34,18 +36,28 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             InventoryProfile inventoryProfile,
             InventoryConfig inventoryConfig,
             TilemapService tilemapService,
-            StatsService statsService)
+            StatsService statsService,
+            PanelLoader<HUDPanel> hudPanel)
         {
             _propsLayerTransform = propsLayerTransform;
             _inventoryProfile = inventoryProfile;
             _inventoryConfig = inventoryConfig;
             _tilemapService = tilemapService;
             _statsService = statsService;
+            _hudPanel = hudPanel;
         }
 
         protected override void Initialize()
         {
+            base.Initialize();
+
             SubscribeOnItemsChanged();
+            SubscribeOnItemDropped();
+        }
+
+        private void SubscribeOnItemDropped()
+        {
+            _hudPanel.Instance.SelectedItem.OnButtonClicked.Subscribe(t => Drop(t).Forget()).AddTo(CompositeDisposable);
         }
 
         private void SubscribeOnItemsChanged()

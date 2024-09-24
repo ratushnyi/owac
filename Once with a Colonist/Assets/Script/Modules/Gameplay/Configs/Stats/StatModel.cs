@@ -13,6 +13,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Configs.Stats
         {
             public int BorderValue;
             public int Range;
+            public int DefaultValue;
             public int RecoveryRate;
         }
 

@@ -12,14 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 224f3149678d468fb966d6870f2047db, type: 3}
   m_Name: StatsConfig
   m_EditorClassIdentifier: 
+  <StatBarView>k__BackingField: {fileID: 938961447773219070, guid: 0e7724fc4e3e8479f9d48c1e87873c25,
+    type: 3}
   <StatsList>k__BackingField:
-  - StatType: 0
-    Levels:
-    - BorderValue: 0
-      Range: 0
-      RecoveryRate: 0
-  - StatType: 1
-    Levels:
-    - BorderValue: 100
+  - Levels:
+    - BorderValue: 10
       Range: 100
+      DefaultValue: 100
       RecoveryRate: 5
+    - BorderValue: 20
+      Range: 110
+      DefaultValue: 110
+      RecoveryRate: 4
+    - BorderValue: 30
+      Range: 120
+      DefaultValue: 120
+      RecoveryRate: 3
+    StatType: 0

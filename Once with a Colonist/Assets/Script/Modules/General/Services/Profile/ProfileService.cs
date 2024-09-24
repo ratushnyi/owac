@@ -22,6 +22,11 @@ namespace TendedTarsier.Script.Modules.General.Services.Profile
         public ProfileService(List<IProfile> profiles)
         {
             _profiles = profiles;
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
 
             RegisterFormatters();
             LoadSections();

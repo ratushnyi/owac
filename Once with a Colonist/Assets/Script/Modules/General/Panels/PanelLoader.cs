@@ -28,6 +28,11 @@ namespace TendedTarsier.Script.Modules.General.Panels
             _prefab = prefab;
             _canvas = canvas;
             _container = container;
+
+            if (_prefab.ShowInstantly)
+            {
+                Show().Forget();
+            }
         }
 
         public async UniTask<T> Show()

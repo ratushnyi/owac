@@ -6,6 +6,7 @@ namespace TendedTarsier.Script.Modules.General.Panels
 {
     public abstract class PanelBase : MonoBehaviour
     {
+        public bool ShowInstantly;
         protected readonly CompositeDisposable CompositeDisposable = new();
 
         public virtual UniTask InitializeAsync()

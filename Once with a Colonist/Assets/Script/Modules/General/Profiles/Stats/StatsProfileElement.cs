@@ -7,10 +7,12 @@ namespace TendedTarsier.Script.Modules.General.Profiles.Stats
     public partial class StatsProfileElement
     {
         [MemoryPackAllowSerialize]
-        public ReactiveProperty<int> Level;
+        public ReactiveProperty<int> Level = new();
         [MemoryPackAllowSerialize]
-        public ReactiveProperty<int> Experience;
+        public ReactiveProperty<int> Experience = new();
         [MemoryPackAllowSerialize]
-        public ReactiveProperty<int> CurrentValue;
+        public ReactiveProperty<int> Value = new();
+        [MemoryPackAllowSerialize]
+        public ReactiveProperty<int> Range = new();
     }
 }

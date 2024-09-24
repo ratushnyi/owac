@@ -1,5 +1,8 @@
+using System;
+using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
-using TendedTarsier.Script.Modules.Gameplay.Panels.ToolBar;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
+using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
 using UniRx;
 using UnityEngine.SceneManagement;
 using TendedTarsier.Script.Modules.General.Panels;
@@ -17,7 +20,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
         private readonly EventSystem _eventSystem;
         private readonly InputService _inputService;
         private readonly GeneralConfig _generalConfig;
-        private readonly PanelLoader<ToolBarPanel> _toolBarPanel;
+        private readonly PanelLoader<HUDPanel> _hudPanel;
         private readonly PanelLoader<InventoryPanel> _inventoryPanel;
 
         public HUDService(
@@ -25,10 +28,10 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
             InputService inputService,
             GeneralConfig generalConfig,
             PanelLoader<InventoryPanel> inventoryPanel,
-            PanelLoader<ToolBarPanel> toolBarPanel)
+            PanelLoader<HUDPanel> hudPanel)
         {
             _inventoryPanel = inventoryPanel;
-            _toolBarPanel = toolBarPanel;
+            _hudPanel = hudPanel;
             _generalConfig = generalConfig;
             _inputService = inputService;
             _eventSystem = eventSystem;
@@ -36,6 +39,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
 
         protected override void Initialize()
         {
+            base.Initialize();
+
             SubscribeOnInput();
             InitHUD();
         }
@@ -47,12 +52,12 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
                 .AddTo(CompositeDisposable);
         }
 
-        public async void SwitchInventory()
+        private async void SwitchInventory()
         {
             if (_inventoryPanel.Instance != null)
             {
                 await _inventoryPanel.Hide();
-                _eventSystem.SetSelectedGameObject(_toolBarPanel.Instance.SelectedItem.gameObject);
+                _eventSystem.SetSelectedGameObject(_hudPanel.Instance.SelectedItem.gameObject);
             }
             else
             {
@@ -61,21 +66,28 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
             }
         }
 
-        private async void InitHUD()
+        private void InitHUD()
         {
-            var toolBarPanel = await _toolBarPanel.Show();
-
-            toolBarPanel.MenuButton
+            _hudPanel.Instance.MenuButton
                 .OnClickAsObservable()
                 .Subscribe(OnMenuButtonClick)
                 .AddTo(CompositeDisposable);
-
-            _eventSystem.SetSelectedGameObject(toolBarPanel.SelectedItem.gameObject);
+            
+            _eventSystem.SetSelectedGameObject(_hudPanel.Instance.SelectedItem.gameObject);
         }
 
         private void OnMenuButtonClick(Unit _)
         {
             SceneManager.LoadScene(_generalConfig.MenuScene);
+        }
+
+        public void ShowStatBar(StatType statType, ReactiveProperty<int> value, ReactiveProperty<int> range)
+        {
+            var statBar = _hudPanel.Instance.GetStatBar(statType);
+
+            statBar.Setup(value.Value, range.Value);
+            value.SkipLatestValueOnSubscribe().Subscribe(t => statBar.UpdateValue(t)).AddTo(CompositeDisposable);
+            range.SkipLatestValueOnSubscribe().Subscribe(t => statBar.UpdateRange(t)).AddTo(CompositeDisposable);
         }
     }
 }

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using TendedTarsier.Script.Modules.Gameplay.Configs;
 using TendedTarsier.Script.Modules.Gameplay.Configs.Tilemap;
 using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
 using TendedTarsier.Script.Modules.General.Services;
@@ -15,7 +14,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
     public class TilemapService : ServiceBase
     {
         public IReadOnlyReactiveProperty<Tilemap> CurrentTilemap => _currentTilemap;
-        
+
         private readonly ReactiveProperty<Tilemap> _currentTilemap = new();
         private readonly TilemapProfile _tilemapProfile;
         private readonly TilemapConfig _tilemapConfig;
@@ -28,6 +27,11 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
             _tilemaps = tilemaps;
             _tilemapConfig = tilemapConfig;
             _tilemapProfile = tilemapProfile;
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
 
             LoadTileMap();
         }
@@ -48,7 +52,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
         {
             _currentTilemap.Value = groundTilemap;
         }
-        
+
         public void OnGroundExit(Tilemap groundTilemap)
         {
             if (_currentTilemap.Value == groundTilemap)

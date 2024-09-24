@@ -8,11 +8,12 @@ using TendedTarsier.Script.Modules.Gameplay.Configs.Gameplay;
 using TendedTarsier.Script.Modules.Gameplay.Configs.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Configs.Tilemap;
-using TendedTarsier.Script.Modules.Gameplay.Panels.ToolBar;
+using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
 using TendedTarsier.Script.Modules.Gameplay.Services.HUD;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using UnityEngine.Serialization;
 
 namespace TendedTarsier.Script.Modules.Gameplay
 {
@@ -43,9 +44,10 @@ namespace TendedTarsier.Script.Modules.Gameplay
         [SerializeField]
         private Canvas _gameplayCanvas;
 
+        [FormerlySerializedAs("_toolBarPanel")]
         [Header("Panels")]
         [SerializeField]
-        private ToolBarPanel _toolBarPanel;
+        private HUDPanel _hudPanel;
         [SerializeField]
         private InventoryPanel _inventoryPanel;
 
@@ -75,7 +77,7 @@ namespace TendedTarsier.Script.Modules.Gameplay
 
         private void BindPanels()
         {
-            Container.BindPanel<ToolBarPanel>(_toolBarPanel, _gameplayCanvas);
+            Container.BindPanel<HUDPanel>(_hudPanel, _gameplayCanvas);
             Container.BindPanel<InventoryPanel>(_inventoryPanel, _gameplayCanvas);
         }
 
