@@ -34,6 +34,10 @@ namespace TendedTarsier.Script.Modules.General.Services.Input
         public IObservable<InputAction.CallbackContext> OnBButtonPerformed { get; private set; }
         public IObservable<InputAction.CallbackContext> OnBButtonCanceled { get; private set; }
 
+        public IObservable<InputAction.CallbackContext> OnMenuButtonStarted { get; private set; }
+        public IObservable<InputAction.CallbackContext> OnMenuButtonPerformed { get; private set; }
+        public IObservable<InputAction.CallbackContext> OnMenuButtonCanceled { get; private set; }
+
         public InputService(GameplayInput gameplayInput)
         {
             _gameplayInput = gameplayInput;
@@ -71,6 +75,10 @@ namespace TendedTarsier.Script.Modules.General.Services.Input
             OnBButtonStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.ButtonB.started += t, t => _gameplayInput.Gameplay.ButtonB.started -= t);
             OnBButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.ButtonB.performed += t, t => _gameplayInput.Gameplay.ButtonB.performed -= t);
             OnBButtonCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.ButtonB.canceled += t, t => _gameplayInput.Gameplay.ButtonB.canceled -= t);
+
+            OnMenuButtonStarted = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.Menu.started += t, t => _gameplayInput.Gameplay.Menu.started -= t);
+            OnMenuButtonPerformed = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.Menu.performed += t, t => _gameplayInput.Gameplay.Menu.performed -= t);
+            OnMenuButtonCanceled = Observable.FromEvent<InputAction.CallbackContext>(t => _gameplayInput.Gameplay.Menu.canceled += t, t => _gameplayInput.Gameplay.Menu.canceled -= t);
 
             _gameplayInput.Gameplay.Enable();
         }

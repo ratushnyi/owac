@@ -1,18 +1,16 @@
-using System;
-using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
-using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
 using UniRx;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using TendedTarsier.Script.Modules.General;
 using TendedTarsier.Script.Modules.General.Panels;
+using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using TendedTarsier.Script.Modules.General.Services;
 using TendedTarsier.Script.Modules.General.Services.Input;
-using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
-using TendedTarsier.Script.Modules.General;
-using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using TendedTarsier.Script.Modules.General.Services.Profile;
-using UnityEngine.EventSystems;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
+using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
+using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
 {
@@ -47,7 +45,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
             base.Initialize();
 
             SubscribeOnInput();
-            InitHUD();
         }
 
         private void SubscribeOnInput()
@@ -55,6 +52,17 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
             _inputService.OnYButtonPerformed
                 .Subscribe(_ => SwitchInventory())
                 .AddTo(CompositeDisposable);
+
+            _inputService.OnMenuButtonPerformed
+                .Subscribe(_ => OnMenuButtonClick())
+                .AddTo(CompositeDisposable);
+
+            _hudPanel.Instance.MenuButton
+                .OnClickAsObservable()
+                .Subscribe(_ => OnMenuButtonClick())
+                .AddTo(CompositeDisposable);
+
+            _eventSystem.SetSelectedGameObject(_hudPanel.Instance.SelectedItem.gameObject);
         }
 
         private async void SwitchInventory()
@@ -71,17 +79,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
             }
         }
 
-        private void InitHUD()
-        {
-            _hudPanel.Instance.MenuButton
-                .OnClickAsObservable()
-                .Subscribe(OnMenuButtonClick)
-                .AddTo(CompositeDisposable);
-            
-            _eventSystem.SetSelectedGameObject(_hudPanel.Instance.SelectedItem.gameObject);
-        }
-
-        private void OnMenuButtonClick(Unit _)
+        private void OnMenuButtonClick()
         {
             _profileService.SaveAll();
             SceneManager.LoadScene(_generalConfig.MenuScene);

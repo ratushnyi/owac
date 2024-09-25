@@ -12,7 +12,7 @@ namespace TendedTarsier.Script.Utilities.Extensions
     {
         public static void BindPanel<TPanel>(this DiContainer container, PanelBase panel, Canvas canvas) where TPanel : PanelBase
         {
-            container.BindWithParents<PanelLoader<TPanel>>().FromNew().AsSingle().WithArguments(panel, canvas);
+            container.BindWithParents<PanelLoader<TPanel>>().FromNew().AsSingle().WithArguments(panel, canvas).NonLazy();
         }
 
         public static void BindService<TService>(this DiContainer container) where TService : ServiceBase

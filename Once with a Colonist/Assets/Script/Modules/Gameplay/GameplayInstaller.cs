@@ -45,6 +45,8 @@ namespace TendedTarsier.Script.Modules.Gameplay
 
         [Header("Panels")]
         [SerializeField]
+        private InputPanel _inputPanel;
+        [SerializeField]
         private HUDPanel _hudPanel;
         [SerializeField]
         private InventoryPanel _inventoryPanel;
@@ -76,6 +78,7 @@ namespace TendedTarsier.Script.Modules.Gameplay
 
         private void BindPanels()
         {
+            Container.BindPanel<InputPanel>(_inputPanel, _gameplayCanvas);
             Container.BindPanel<HUDPanel>(_hudPanel, _gameplayCanvas);
             Container.BindPanel<InventoryPanel>(_inventoryPanel, _gameplayCanvas);
         }

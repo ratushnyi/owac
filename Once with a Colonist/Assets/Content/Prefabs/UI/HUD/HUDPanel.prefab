@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a66d691cf0264a43ba93d2f2bd81fe8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShowInstantly: 1
+  _showInstantly: 1
   <MenuButton>k__BackingField: {fileID: 4518055977929651855}
   <SelectedItem>k__BackingField: {fileID: 6427739088105438441}
   <StatsBarContainer>k__BackingField: {fileID: 2325361783195584031}
