@@ -66,17 +66,17 @@ MonoBehaviour:
     - <NextLevelExperience>k__BackingField: 200
       <MaxValue>k__BackingField: 100
       <DefaultValue>k__BackingField: 100
-      <RecoveryRate>k__BackingField: 10
+      <RecoveryRate>k__BackingField: 5
       <RecoveryValue>k__BackingField: -1
     - <NextLevelExperience>k__BackingField: 400
       <MaxValue>k__BackingField: 100
       <DefaultValue>k__BackingField: 100
-      <RecoveryRate>k__BackingField: 12
+      <RecoveryRate>k__BackingField: 6
       <RecoveryValue>k__BackingField: -1
     - <NextLevelExperience>k__BackingField: 800
       <MaxValue>k__BackingField: 100
       <DefaultValue>k__BackingField: 100
-      <RecoveryRate>k__BackingField: 14
+      <RecoveryRate>k__BackingField: 7
       <RecoveryValue>k__BackingField: -1
   <StatsFeeConditionalList>k__BackingField:
   - <Type>k__BackingField: 2
