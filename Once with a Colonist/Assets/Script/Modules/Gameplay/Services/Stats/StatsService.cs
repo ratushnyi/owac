@@ -21,6 +21,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
         public float MovementSpeed => _gameplayConfig.MovementSpeed;
         public int DropDistance => _gameplayConfig.DropDistance;
         public Vector3 PlayerPosition => _statsProfile.PlayerPosition;
+        public bool IsFirstLoad => _statsProfile.StartDate == _statsProfile.LastSaveDate;
+        public int SoringLayerID => _statsProfile.SoringLayerID;
+        public int Layer => _statsProfile.Layer;
 
         private readonly Dictionary<StatType, IDisposable> _feeDisposables = new();
 
@@ -58,6 +61,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
                     });
                 }
             }
+            _statsProfile.Save();
         }
 
         private void InitializeStats()
@@ -76,6 +80,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
                     statProfileElement.Value.Value = levelEntity.DefaultValue;
                     statProfileElement.Range.Value = levelEntity.MaxValue;
                 }
+
+                _statsProfile.Save();
             }
 
             void observeStat(StatType statType)
@@ -161,9 +167,11 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
             _statsProfile.Save();
         }
 
-        public void OnSessionEnded(Vector2 position)
+        public void UpdateStatsProfile(Vector2 position, int soringLayerID, int layer)
         {
             _statsProfile.PlayerPosition = position;
+            _statsProfile.SoringLayerID = soringLayerID;
+            _statsProfile.Layer = layer;
             _statsProfile.LastSaveDate = DateTime.UtcNow;
             _statsProfile.Save();
         }

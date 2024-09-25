@@ -6,6 +6,12 @@ namespace TendedTarsier.Script.Modules.Gameplay.Configs.Gameplay
     public class GameplayConfig : ScriptableObject
     {
         [field: SerializeField]
+        public float CameraLerpSpeed { get; set; } = 2f;
+
+        [field: SerializeField]
+        public Vector2 CameraBuffer { get; set; } = new(8, 2);
+
+        [field: SerializeField]
         public float MovementSpeed { get; set; } = 2;
 
         [field: SerializeField]

@@ -113,7 +113,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
             }
         }
 
-        private Tilemap GetTilemap(Vector2Int tilePosition)
+        public Tilemap GetTilemap(Vector2Int tilePosition)
         {
             foreach (var tilemap in _tilemaps)
             {

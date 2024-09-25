@@ -1,10 +1,9 @@
-using UnityEngine;
-using Zenject;
 using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
-using TendedTarsier.Script.Modules.General.Profiles.Stats;
+using UnityEngine;
+using Zenject;
 
-namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
+namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Tools
 {
     [CreateAssetMenu(menuName = "Items/ToolBase", fileName = "ToolBase")]
     public class ToolBase : ScriptableObject

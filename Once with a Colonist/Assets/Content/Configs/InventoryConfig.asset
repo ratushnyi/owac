@@ -40,5 +40,5 @@ MonoBehaviour:
     <Tool>k__BackingField: {fileID: 11400000, guid: 20a712c97988b46a0b34057de4d4d76b,
       type: 2}
     <IsCountable>k__BackingField: 1
-  <MapItemPrefab>k__BackingField: {fileID: 3765728290932740887, guid: eafebc68ba360442fa71480a2eb4cff2,
+  <MapItemPrefab>k__BackingField: {fileID: 3765728290932740887, guid: 8e2434e0be2cd4d9db683ada4a2367cc,
     type: 3}

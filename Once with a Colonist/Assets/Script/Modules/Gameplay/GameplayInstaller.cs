@@ -11,6 +11,7 @@ using TendedTarsier.Script.Modules.Gameplay.Configs.Tilemap;
 using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
 using TendedTarsier.Script.Modules.Gameplay.Services.HUD;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
+using TendedTarsier.Script.Modules.Gameplay.Services.Map;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 
@@ -20,6 +21,10 @@ namespace TendedTarsier.Script.Modules.Gameplay
     {
         public const string GroundTilemapsListId = "ground_tilemaps_list";
         public const string MapItemsContainerTransformId = "map_items_container_transform";
+        public const string PlayerTag = "Player";
+        public const string GroundTag = "Ground";
+        public const string ItemTag =  "Item";
+        public const string UntaggedTag =  "Untagged";
 
         [Header("Configs")]
         [SerializeField]
@@ -41,6 +46,8 @@ namespace TendedTarsier.Script.Modules.Gameplay
 
         [Header("UI")]
         [SerializeField]
+        private Camera _gameplayCamera;
+        [SerializeField]
         private Canvas _gameplayCanvas;
 
         [Header("Panels")]
@@ -53,6 +60,7 @@ namespace TendedTarsier.Script.Modules.Gameplay
 
         public override void InstallBindings()
         {
+            BindSystem();
             BindConfigs();
             BindServices();
             BindPanels();
@@ -74,6 +82,12 @@ namespace TendedTarsier.Script.Modules.Gameplay
             Container.Bind<TilemapConfig>().FromScriptableObject(_tilemapConfig).AsSingle().NonLazy();
             Container.Bind<GameplayConfig>().FromScriptableObject(_gameplayConfig).AsSingle().NonLazy();
             Container.Bind<StatsConfig>().FromInstance(_statsConfig).AsSingle().NonLazy();
+        }
+
+        private void BindSystem()
+        {
+            Container.Bind<Canvas>().FromInstance(_gameplayCanvas).NonLazy();
+            Container.Bind<Camera>().FromInstance(_gameplayCamera).NonLazy();
         }
 
         private void BindPanels()

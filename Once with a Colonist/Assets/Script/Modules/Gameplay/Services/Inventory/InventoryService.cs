@@ -6,12 +6,14 @@ using JetBrains.Annotations;
 using TendedTarsier.Script.Modules.Gameplay.Configs.Inventory;
 using UniRx;
 using UnityEngine;
-using TendedTarsier.Script.Modules.Gameplay.Field;
 using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
+using TendedTarsier.Script.Modules.Gameplay.Services.Map;
+using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapItem;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General.Profiles.Inventory;
 using TendedTarsier.Script.Modules.General.Panels;
 using TendedTarsier.Script.Modules.General.Services;
+using ItemEntity = TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items.ItemEntity;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 {
@@ -135,18 +137,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             }
         }
 
-        public bool TryPut(MapItem item, Transform parent)
+        public bool TryPut(MapItem item)
         {
-            return item.Collider.enabled && TryPut(item.ItemEntity.Id, item.ItemEntity.Count, putObject);
-
-            async UniTask putObject()
-            {
-                _mapService.UnregisterMapItem(item);
-                item.Collider.enabled = false;
-                item.transform.parent = parent;
-                await item.transform.DOLocalMove(Vector3.zero, 0.5f).ToUniTask();
-                UnityEngine.Object.DestroyImmediate(item.gameObject);
-            }
+            return item.Collider.enabled && TryPut(item.ItemEntity.Id, item.ItemEntity.Count, () => _mapService.UnregisterMapItem(item));
         }
 
         public async UniTask Drop(string itemId)

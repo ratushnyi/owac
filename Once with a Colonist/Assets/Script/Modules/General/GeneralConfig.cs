@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using NaughtyAttributes;
+using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapItem;
 using UnityEngine;
-using TendedTarsier.Script.Modules.Gameplay.Field;
 
 namespace TendedTarsier.Script.Modules.General
 {

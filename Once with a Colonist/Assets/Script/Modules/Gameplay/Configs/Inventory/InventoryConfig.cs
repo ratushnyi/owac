@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using TendedTarsier.Script.Modules.Gameplay.Field;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
+using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapItem;
 using UnityEngine;
 using Zenject;
 using ItemModel = TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items.ItemModel;

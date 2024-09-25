@@ -25,6 +25,12 @@ namespace TendedTarsier.Script.Modules.General.Profiles.Stats
         public Vector2 PlayerPosition { get; set; }
 
         [MemoryPackOrder(3)]
+        public int SoringLayerID { get; set; }
+
+        [MemoryPackOrder(4)]
+        public int Layer { get; set; }
+
+        [MemoryPackOrder(5)]
         public Dictionary<StatType, StatProfileElement> StatsDictionary { get; [UsedImplicitly] set; } = new();
     }
 }

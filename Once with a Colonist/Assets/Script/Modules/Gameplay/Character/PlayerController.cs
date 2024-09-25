@@ -1,11 +1,14 @@
-﻿using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
-using TendedTarsier.Script.Modules.Gameplay.Field;
+﻿using System.Collections.Generic;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Gameplay;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Zenject;
 using TendedTarsier.Script.Modules.General.Services.Input;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
+using TendedTarsier.Script.Modules.Gameplay.Services.Map;
+using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapItem;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 
@@ -13,6 +16,13 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 {
     public class PlayerController : MonoBehaviour
     {
+        [SerializeField]
+        private Rigidbody2D _rigidbody2D;
+        [SerializeField]
+        private Animator _animator;
+        [SerializeField]
+        private List<SpriteRenderer> _spriteRenderers;
+
         public readonly ReactiveProperty<Vector3Int> TargetDirection = new();
         public readonly ReactiveProperty<Vector3Int> TargetPosition = new();
 
@@ -22,11 +32,11 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         private Vector3 _playerPosition;
         private Vector2 _moveDirection;
         private int _currentSpeed;
+        private int _soringLayerID;
         private float _runFeeDelay;
 
-        private Rigidbody2D _rigidbody2D;
-        private Animator _animator;
-
+        private Camera _gameplayCamera;
+        private GameplayConfig _gameplayConfig;
         private StatsConfig _statsConfig;
         private MapService _mapService;
         private StatsService _statsService;
@@ -38,6 +48,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
         [Inject]
         private void Construct(
+            Camera gameplayCamera,
+            GameplayConfig gameplayConfig,
             StatsConfig statsConfig,
             MapService mapService,
             StatsService statsService,
@@ -45,6 +57,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             InventoryService inventoryService,
             TilemapService tilemapService)
         {
+            _gameplayCamera = gameplayCamera;
+            _gameplayConfig = gameplayConfig;
             _statsConfig = statsConfig;
             _mapService = mapService;
             _statsService = statsService;
@@ -55,14 +69,20 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
         private void Start()
         {
-            _rigidbody2D = GetComponent<Rigidbody2D>();
-            _animator = GetComponent<Animator>();
-
             _inventoryService.GetTargetPosition = () => TargetPosition.Value;
             _mapService.GetTargetDirection = () => TargetDirection.Value;
-            _mapService.GetCharacterPosition = () => transform.position;
+            _mapService.GetPlayerTransform = () => transform;
+            _mapService.GetPlayerSortingLayerID = () => _soringLayerID;
 
-            transform.SetLocalPositionAndRotation(_statsService.PlayerPosition, Quaternion.identity);
+            if (!_statsService.IsFirstLoad)
+            {
+                transform.SetLocalPositionAndRotation(_statsService.PlayerPosition, Quaternion.identity);
+                ApplyLayer(_statsService.Layer, _statsService.SoringLayerID);
+            }
+            else
+            {
+                _soringLayerID = _spriteRenderers[0].sortingLayerID;
+            }
 
             _currentSpeed = _statsConfig.WalkSpeed;
 
@@ -70,6 +90,23 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         }
 
         private void Update()
+        {
+            UpdatePlayerPosition();
+            UpdateCameraPosition();
+        }
+
+        private void UpdateCameraPosition()
+        {
+            var difference = transform.position - _gameplayCamera.transform.position;
+            if (Mathf.Abs(difference.x) < _gameplayConfig.CameraBuffer.x && Mathf.Abs(difference.y) < _gameplayConfig.CameraBuffer.y)
+            {
+                return;
+            }
+
+            _gameplayCamera.transform.position = Vector3.Lerp(_gameplayCamera.transform.position, transform.position, _gameplayConfig.CameraLerpSpeed * Time.deltaTime);
+        }
+
+        private void UpdatePlayerPosition()
         {
             if (_playerPosition == transform.position)
             {
@@ -132,13 +169,13 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         {
             switch (other.tag)
             {
-                case "Ground":
+                case GameplayInstaller.GroundTag:
                     var tilemap = other.GetComponent<Tilemap>();
                     _tilemapService.OnGroundEnter(tilemap);
                     break;
-                case "Item":
+                case GameplayInstaller.ItemTag:
                     var mapItem = other.GetComponent<MapItem>();
-                    _inventoryService.TryPut(mapItem, transform);
+                    _inventoryService.TryPut(mapItem);
                     break;
             }
         }
@@ -147,11 +184,26 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         {
             switch (other.tag)
             {
-                case "Ground":
+                case GameplayInstaller.GroundTag:
                     var tilemap = other.GetComponent<Tilemap>();
                     _tilemapService.OnGroundExit(tilemap);
                     break;
             }
+        }
+
+        private void OnCollisionEnter2D(Collision2D _)
+        {
+            UpdateVelocity();
+        }
+
+        private void OnCollisionStay2D(Collision2D _)
+        {
+            UpdateVelocity();
+        }
+
+        private void OnCollisionExit2D(Collision2D _)
+        {
+            UpdateVelocity();
         }
 
         private void OnSpeedChanged(bool isRunning)
@@ -218,9 +270,27 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             return direction;
         }
 
+        public void ApplyLayer(string layer, string sortingLayer)
+        {
+            ApplyLayer(LayerMask.NameToLayer(layer), SortingLayer.NameToID(sortingLayer));
+        }
+
+        private void ApplyLayer(int layer, int sortingLayer)
+        {
+            gameObject.layer = layer;
+            _soringLayerID = sortingLayer;
+
+            foreach (var spriteRenderer in _spriteRenderers)
+            {
+                spriteRenderer.sortingLayerID = _soringLayerID;
+            }
+
+            _statsService.UpdateStatsProfile(transform.position, _soringLayerID, gameObject.layer);
+        }
+
         private void OnDestroy()
         {
-            _statsService.OnSessionEnded(transform.position);
+            _statsService.UpdateStatsProfile(transform.position, _soringLayerID, gameObject.layer);
             _compositeDisposable.Dispose();
         }
     }

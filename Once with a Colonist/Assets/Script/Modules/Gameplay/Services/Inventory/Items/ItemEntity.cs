@@ -2,7 +2,7 @@ using System;
 using MemoryPack;
 using UnityEngine;
 
-namespace TendedTarsier.Script.Modules.Gameplay.Field
+namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
 {
     [Serializable, MemoryPackable]
     public partial class ItemEntity : IEquatable<ItemEntity>

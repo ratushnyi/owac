@@ -1,9 +1,8 @@
-using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using UnityEngine;
 using Zenject;
 
-namespace TendedTarsier.Script.Modules.Gameplay.Tools
+namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Tools
 {
     [CreateAssetMenu(menuName = "Items/ToolTilemap", fileName = "ToolTilemap")]
     public class ToolTilemap : ToolBase

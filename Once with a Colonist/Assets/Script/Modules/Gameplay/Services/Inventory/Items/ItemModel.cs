@@ -1,4 +1,5 @@
 using System;
+using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Tools;
 using UnityEngine;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
