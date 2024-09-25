@@ -35,7 +35,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             _model = model;
             _image.sprite = _model.Sprite;
             _image.enabled = true;
-            _countTMP.enabled = true;
+            _countTMP.enabled = model.IsCountable;
         }
 
         public bool IsEmpty()

@@ -2,24 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Configs.Stats
 {
     [Serializable]
     public class StatModel
     {
-        public StatType StatType;
-        public Sprite Sprite;
-        public bool StatBar;
-        public bool Observable;
+        public StatLevelModel this[int level] => _levels.Count > level ? _levels[level] : _levels.Last();
+
+        [field: SerializeField]
+        public StatType StatType { get; private set; }
+
+        [field: SerializeField]
+        public Sprite Sprite { get; private set; }
+
+        [field: SerializeField]
+        public bool StatBar { get; private set; }
+
+        [field: SerializeField]
+        public bool Observable { get; private set; }
 
         [SerializeField]
-        private List<StatLevelModel> Levels;
-
-        public StatLevelModel GetLevel(int level)
-        {
-            return Levels.Count > level ? Levels[level] : Levels.Last();
-        }
+        private List<StatLevelModel> _levels;
     }
 }

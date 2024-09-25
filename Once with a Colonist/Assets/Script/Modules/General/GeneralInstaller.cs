@@ -41,7 +41,7 @@ namespace TendedTarsier.Script.Modules.General
         private void BindProfiles()
         {
             Container.BindProfile<StatsProfile>();
-            Container.BindProfile<TilemapProfile>();
+            Container.BindProfile<MapProfile>();
             Container.BindProfile<InventoryProfile>();
         }
 

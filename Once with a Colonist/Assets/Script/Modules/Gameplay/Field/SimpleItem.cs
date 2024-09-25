@@ -1,6 +1,6 @@
 namespace TendedTarsier.Script.Modules.Gameplay.Field
 {
-    public class SimpleItem : MapItemBase
+    public class SimpleItem : MapItem
     {
     }
 }

@@ -2,13 +2,10 @@ using UnityEngine;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Field
 {
-    public abstract class MapItemBase : MonoBehaviour
+    public class MapItem : MonoBehaviour
     {
         [field: SerializeField]
-        public string Id { get; set; }
-
-        [field: SerializeField]
-        public int Count { get; set; }
+        public ItemEntity ItemEntity { get; set; }
         
         [field: SerializeField]
         public Collider2D Collider { get; set; }

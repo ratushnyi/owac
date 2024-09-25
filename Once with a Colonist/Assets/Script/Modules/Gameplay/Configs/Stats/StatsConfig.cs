@@ -8,6 +8,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Configs.Stats
     [CreateAssetMenu(menuName = "Config/StatsConfig", fileName = "StatsConfig")]
     public class StatsConfig : ScriptableObject
     {
+        public StatModel this[StatType type] => StatsList.FirstOrDefault(t => t.StatType == type);
+
         [field: SerializeField]
         public StatBarView StatBarView { get; set; }
 
@@ -15,7 +17,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Configs.Stats
         public List<StatModel> StatsList { get; set; }
 
         [field: SerializeField]
-        public List<StatFeeConditionalModel> StatsFeeConditionalList { get; set; }
+        public List<StatFeeConditionModel> StatsFeeConditionalList { get; set; }
 
         [field: SerializeField]
         public StatFeeModel RunFee { get; set; }
@@ -25,10 +27,5 @@ namespace TendedTarsier.Script.Modules.Gameplay.Configs.Stats
 
         [field: SerializeField]
         public int RunSpeed { get; set; } = 2;
-
-        public StatModel GetStatsModel(StatType statType)
-        {
-            return StatsList.FirstOrDefault(t => t.StatType == statType);
-        }
     }
 }

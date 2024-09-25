@@ -2,15 +2,17 @@ using System.Collections.Generic;
 using System.Linq;
 using TendedTarsier.Script.Modules.Gameplay.Field;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
-using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 using UnityEngine;
 using Zenject;
+using ItemModel = TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items.ItemModel;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Configs.Inventory
 {
     [CreateAssetMenu(menuName = "Config/InventoryConfig", fileName = "InventoryConfig")]
     public class InventoryConfig : ScriptableObject
     {
+        public ItemModel this[string id] => InventoryItems.FirstOrDefault(t => t.Id == id);
+
         [field: SerializeField]
         public InventoryCellView InventoryCellView { get; set; }
 
@@ -21,9 +23,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Configs.Inventory
         private List<ItemModel> InventoryItems { get; set; }
 
         [field: SerializeField]
-        public MapItemBase MapItemPrefab { get; set; }
-
-        public ItemModel this[string id] => InventoryItems.FirstOrDefault(t => t.Id == id);
+        public MapItem MapItemPrefab { get; set; }
 
         [Inject]
         public void Construct(DiContainer diContainer)

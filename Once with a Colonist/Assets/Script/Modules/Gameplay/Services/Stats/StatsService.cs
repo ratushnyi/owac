@@ -50,11 +50,11 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
             {
                 if (!_statsProfile.StatsDictionary.ContainsKey(statEntity.StatType))
                 {
-                    var levelEntity = statEntity.GetLevel(0);
+                    var levelEntity = statEntity[0];
                     _statsProfile.StatsDictionary.Add(statEntity.StatType, new StatProfileElement
                     {
                         Value = new ReactiveProperty<int>(levelEntity.DefaultValue),
-                        Range = new ReactiveProperty<int>(levelEntity.Range)
+                        Range = new ReactiveProperty<int>(levelEntity.MaxValue)
                     });
                 }
             }
@@ -64,31 +64,31 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
         {
             void onExperienceValueChanged(StatType statType, StatProfileElement statProfileElement)
             {
-                var statsModel = _statsConfig.GetStatsModel(statType);
+                var statsModel = _statsConfig[statType];
 
-                var extraExperience = statProfileElement.Experience.Value - statsModel.GetLevel(statProfileElement.Level.Value).BorderValue;
+                var extraExperience = statProfileElement.Experience.Value - statsModel[statProfileElement.Level.Value].NextLevelExperience;
                 if (extraExperience >= 0)
                 {
                     statProfileElement.Experience.Value = extraExperience;
                     statProfileElement.Level.Value++;
 
-                    var levelEntity = statsModel.GetLevel(statProfileElement.Level.Value);
+                    var levelEntity = statsModel[statProfileElement.Level.Value];
                     statProfileElement.Value.Value = levelEntity.DefaultValue;
-                    statProfileElement.Range.Value = levelEntity.Range;
+                    statProfileElement.Range.Value = levelEntity.MaxValue;
                 }
             }
 
             void observeStat(StatType statType)
             {
                 var profileElement = _statsProfile.StatsDictionary[statType];
-                var levelModel = _statsConfig.GetStatsModel(statType).GetLevel(profileElement.Level.Value);
+                var levelModel = _statsConfig[statType][profileElement.Level.Value];
 
                 StartApplyValueAutoApplyValue(statType, levelModel.RecoveryRate, levelModel.RecoveryValue);
             }
 
             foreach (var stat in _statsProfile.StatsDictionary)
             {
-                var statsModel = _statsConfig.GetStatsModel(stat.Key);
+                var statsModel = _statsConfig[stat.Key];
 
                 stat.Value.Experience
                     .Subscribe(_ => onExperienceValueChanged(stat.Key, stat.Value))
@@ -113,13 +113,13 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
                 profileElement.Value.Subscribe(t => onFeeStatChanged(stat, profileElement, t)).AddTo(CompositeDisposable);
             }
 
-            void onFeeStatChanged(StatFeeConditionalModel condition, StatProfileElement statProfileElement, int currentValue)
+            void onFeeStatChanged(StatFeeConditionModel condition, StatProfileElement statProfileElement, int currentValue)
             {
                 switch (condition.Condition)
                 {
-                    case StatFeeConditionalModel.FeeConditionType.MaxValue:
-                        var levelModel = _statsConfig.GetStatsModel(condition.Type).GetLevel(statProfileElement.Level.Value);
-                        if (currentValue == levelModel.Range)
+                    case StatFeeConditionModel.FeeConditionType.MaxValue:
+                        var levelModel = _statsConfig[condition.Type][statProfileElement.Level.Value];
+                        if (currentValue == levelModel.MaxValue)
                         {
                             var disposable = StartApplyValueAutoApplyValue(condition.FeeModel.Type, condition.FeeModel.Rate, condition.FeeModel.Value);
 
@@ -134,7 +134,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
                             }
                         }
                         break;
-                    case StatFeeConditionalModel.FeeConditionType.MinValue:
+                    case StatFeeConditionModel.FeeConditionType.MinValue:
                         if (currentValue == 0)
                         {
                             var disposable = StartApplyValueAutoApplyValue(condition.FeeModel.Type, condition.FeeModel.Rate, condition.FeeModel.Value);
@@ -171,9 +171,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
         public bool IsSuitable(StatType statType, int value)
         {
             var profileElement = _statsProfile.StatsDictionary[statType];
-            var levelModel = _statsConfig.GetStatsModel(statType).GetLevel(profileElement.Level.Value);
+            var levelModel = _statsConfig[statType][profileElement.Level.Value];
             var hypotheticalValue = profileElement.Value.Value + value;
-            var newValue = Math.Min(levelModel.Range, profileElement.Value.Value + value);
+            var newValue = Math.Min(levelModel.MaxValue, profileElement.Value.Value + value);
             newValue = Math.Max(0, newValue);
 
             return hypotheticalValue == newValue;
@@ -182,8 +182,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
         public bool ApplyValue(StatType statType, int value)
         {
             var profileElement = _statsProfile.StatsDictionary[statType];
-            var levelModel = _statsConfig.GetStatsModel(statType).GetLevel(profileElement.Level.Value);
-            var newValue = Math.Min(levelModel.Range, profileElement.Value.Value + value);
+            var levelModel = _statsConfig[statType][profileElement.Level.Value];
+            var newValue = Math.Min(levelModel.MaxValue, profileElement.Value.Value + value);
             newValue = Math.Max(0, newValue);
 
             if (profileElement.Value.Value == newValue)
@@ -194,6 +194,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
             var experience = newValue - profileElement.Value.Value;
             profileElement.Value.Value = newValue;
             profileElement.Experience.Value += experience;
+
+            _statsProfile.Save();
 
             return true;
         }

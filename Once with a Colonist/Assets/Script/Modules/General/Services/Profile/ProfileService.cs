@@ -7,6 +7,7 @@ using UniRx;
 using UnityEngine;
 using TendedTarsier.Script.Modules.General.Profile;
 using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
+using TendedTarsier.Script.Modules.Gameplay.Field;
 using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using TendedTarsier.Script.Utilities.MemoryPack.FormatterProviders;
 
@@ -89,6 +90,14 @@ namespace TendedTarsier.Script.Modules.General.Services.Profile
             profile.Init(this);
         }
 
+        public void SaveAll()
+        {
+            foreach (var profile in _profiles)
+            {
+                Save(profile);
+            }
+        }
+
         public void Save(IProfile profile)
         {
             try
@@ -123,6 +132,12 @@ namespace TendedTarsier.Script.Modules.General.Services.Profile
         {
             var fileName = name + ".json";
             return Path.Combine(ProfilesDirectory, fileName);
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            SaveAll();
         }
     }
 }

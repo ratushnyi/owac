@@ -15,76 +15,79 @@ MonoBehaviour:
   <StatBarView>k__BackingField: {fileID: 938961447773219070, guid: 0e7724fc4e3e8479f9d48c1e87873c25,
     type: 3}
   <StatsList>k__BackingField:
-  - StatType: 1
-    Sprite: {fileID: 21300000, guid: 427cfa16a8bc9423ebdbd00b3a8777ff, type: 3}
-    StatBar: 1
-    Observable: 0
-    Levels:
-    - BorderValue: 200
-      Range: 100
-      DefaultValue: 100
-      RecoveryRate: 20
-      RecoveryValue: 1
-    - BorderValue: 400
-      Range: 110
-      DefaultValue: 110
-      RecoveryRate: 18
-      RecoveryValue: 1
-    - BorderValue: 800
-      Range: 120
-      DefaultValue: 120
-      RecoveryRate: 16
-      RecoveryValue: 1
-  - StatType: 0
-    Sprite: {fileID: 21300000, guid: d12298e6fed6b4ff892d6b9877a0e15c, type: 3}
-    StatBar: 1
-    Observable: 0
-    Levels:
-    - BorderValue: 500
-      Range: 100
-      DefaultValue: 100
-      RecoveryRate: 5
-      RecoveryValue: 1
-    - BorderValue: 1000
-      Range: 110
-      DefaultValue: 110
-      RecoveryRate: 4
-      RecoveryValue: 1
-    - BorderValue: 2000
-      Range: 120
-      DefaultValue: 120
-      RecoveryRate: 3
-      RecoveryValue: 1
-  - StatType: 2
-    Sprite: {fileID: 21300000, guid: 5b94d485335dc4707968d788f8765c74, type: 3}
-    StatBar: 1
-    Observable: 1
-    Levels:
-    - BorderValue: 200
-      Range: 100
-      DefaultValue: 100
-      RecoveryRate: 10
-      RecoveryValue: -1
-    - BorderValue: 200
-      Range: 110
-      DefaultValue: 110
-      RecoveryRate: 12
-      RecoveryValue: -1
-    - BorderValue: 800
-      Range: 120
-      DefaultValue: 120
-      RecoveryRate: 14
-      RecoveryValue: -1
+  - <StatType>k__BackingField: 1
+    <Sprite>k__BackingField: {fileID: 21300000, guid: 427cfa16a8bc9423ebdbd00b3a8777ff,
+      type: 3}
+    <StatBar>k__BackingField: 1
+    <Observable>k__BackingField: 0
+    _levels:
+    - <NextLevelExperience>k__BackingField: 100
+      <MaxValue>k__BackingField: 100
+      <DefaultValue>k__BackingField: 100
+      <RecoveryRate>k__BackingField: 0
+      <RecoveryValue>k__BackingField: 0
+    - <NextLevelExperience>k__BackingField: 300
+      <MaxValue>k__BackingField: 110
+      <DefaultValue>k__BackingField: 110
+      <RecoveryRate>k__BackingField: 0
+      <RecoveryValue>k__BackingField: 0
+    - <NextLevelExperience>k__BackingField: 900
+      <MaxValue>k__BackingField: 120
+      <DefaultValue>k__BackingField: 120
+      <RecoveryRate>k__BackingField: 0
+      <RecoveryValue>k__BackingField: 0
+  - <StatType>k__BackingField: 0
+    <Sprite>k__BackingField: {fileID: 21300000, guid: d12298e6fed6b4ff892d6b9877a0e15c,
+      type: 3}
+    <StatBar>k__BackingField: 1
+    <Observable>k__BackingField: 0
+    _levels:
+    - <NextLevelExperience>k__BackingField: 200
+      <MaxValue>k__BackingField: 100
+      <DefaultValue>k__BackingField: 100
+      <RecoveryRate>k__BackingField: 0
+      <RecoveryValue>k__BackingField: 0
+    - <NextLevelExperience>k__BackingField: 400
+      <MaxValue>k__BackingField: 110
+      <DefaultValue>k__BackingField: 110
+      <RecoveryRate>k__BackingField: 0
+      <RecoveryValue>k__BackingField: 0
+    - <NextLevelExperience>k__BackingField: 800
+      <MaxValue>k__BackingField: 120
+      <DefaultValue>k__BackingField: 120
+      <RecoveryRate>k__BackingField: 0
+      <RecoveryValue>k__BackingField: 0
+  - <StatType>k__BackingField: 2
+    <Sprite>k__BackingField: {fileID: 21300000, guid: 5b94d485335dc4707968d788f8765c74,
+      type: 3}
+    <StatBar>k__BackingField: 1
+    <Observable>k__BackingField: 1
+    _levels:
+    - <NextLevelExperience>k__BackingField: 200
+      <MaxValue>k__BackingField: 100
+      <DefaultValue>k__BackingField: 100
+      <RecoveryRate>k__BackingField: 10
+      <RecoveryValue>k__BackingField: -1
+    - <NextLevelExperience>k__BackingField: 400
+      <MaxValue>k__BackingField: 100
+      <DefaultValue>k__BackingField: 100
+      <RecoveryRate>k__BackingField: 12
+      <RecoveryValue>k__BackingField: -1
+    - <NextLevelExperience>k__BackingField: 800
+      <MaxValue>k__BackingField: 100
+      <DefaultValue>k__BackingField: 100
+      <RecoveryRate>k__BackingField: 14
+      <RecoveryValue>k__BackingField: -1
   <StatsFeeConditionalList>k__BackingField:
-  - Type: 2
-    Condition: 0
-    FeeModel:
-      Type: 1
-      Rate: 1
-      Value: -1
+  - <Type>k__BackingField: 2
+    <Condition>k__BackingField: 0
+    <FeeModel>k__BackingField:
+      <Type>k__BackingField: 1
+      <Rate>k__BackingField: 1
+      <Value>k__BackingField: -1
   <RunFee>k__BackingField:
-    Type: 0
-    Rate: 1
-    Value: -5
+    <Type>k__BackingField: 0
+    <Rate>k__BackingField: 1
+    <Value>k__BackingField: -5
   <WalkSpeed>k__BackingField: 1
   <RunSpeed>k__BackingField: 2

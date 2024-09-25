@@ -30,12 +30,13 @@ namespace TendedTarsier.Script.Modules.Gameplay.Tools
                 return false;
             }
 
-            if (UseResources())
+            if (!UseResources())
             {
-                _tilemapService.ChangedTile(targetPosition, _tileType);
+                return false;
             }
 
-            return false;
+            _tilemapService.ChangedTile(targetPosition, _tileType);
+            return true;
         }
     }
 }

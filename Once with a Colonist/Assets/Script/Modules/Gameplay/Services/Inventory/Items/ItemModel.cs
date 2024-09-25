@@ -15,6 +15,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
         [field: SerializeField]
         public ToolBase Tool { get; set; }
 
+        [field: SerializeField]
+        public bool IsCountable { get; set; }
+
         public bool Perform(Vector3Int targetPosition)
         {
             return Tool != null && Tool.Perform(targetPosition);

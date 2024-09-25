@@ -6,10 +6,9 @@ using JetBrains.Annotations;
 using TendedTarsier.Script.Modules.Gameplay.Configs.Inventory;
 using UniRx;
 using UnityEngine;
-using Zenject;
 using TendedTarsier.Script.Modules.Gameplay.Field;
 using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
-using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
+using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General.Profiles.Inventory;
 using TendedTarsier.Script.Modules.General.Panels;
 using TendedTarsier.Script.Modules.General.Services;
@@ -20,26 +19,21 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
     public class InventoryService : ServiceBase
     {
         private readonly PanelLoader<HUDPanel> _hudPanel;
-        private readonly StatsService _statsService;
+        private readonly MapService _mapService;
         private readonly InventoryConfig _inventoryConfig;
         private readonly InventoryProfile _inventoryProfile;
-        private readonly Transform _propsLayerTransform;
 
-        public Func<Vector3Int> GetTargetDirection;
         public Func<Vector3Int> GetTargetPosition;
-        public Func<Vector3> GetCharacterPosition;
 
         private InventoryService(
-            [Inject(Id = GameplayInstaller.PropsTransformId)] Transform propsLayerTransform,
             InventoryProfile inventoryProfile,
             InventoryConfig inventoryConfig,
-            StatsService statsService,
+            MapService mapService,
             PanelLoader<HUDPanel> hudPanel)
         {
-            _propsLayerTransform = propsLayerTransform;
             _inventoryProfile = inventoryProfile;
             _inventoryConfig = inventoryConfig;
-            _statsService = statsService;
+            _mapService = mapService;
             _hudPanel = hudPanel;
         }
 
@@ -141,12 +135,13 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             }
         }
 
-        public bool TryPut(MapItemBase item, Transform parent)
+        public bool TryPut(MapItem item, Transform parent)
         {
-            return item.Collider.enabled && TryPut(item.Id, item.Count, putObject);
+            return item.Collider.enabled && TryPut(item.ItemEntity.Id, item.ItemEntity.Count, putObject);
 
             async UniTask putObject()
             {
+                _mapService.UnregisterMapItem(item);
                 item.Collider.enabled = false;
                 item.transform.parent = parent;
                 await item.transform.DOLocalMove(Vector3.zero, 0.5f).ToUniTask();
@@ -156,23 +151,13 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 
         public async UniTask Drop(string itemId)
         {
-            if (string.IsNullOrEmpty(itemId) || GetCharacterPosition == null || GetTargetDirection == null)
+            if (string.IsNullOrEmpty(itemId))
             {
                 return;
             }
 
-            var characterPosition = GetCharacterPosition.Invoke();
-            var targetDirection = GetTargetDirection.Invoke();
-            var item = UnityEngine.Object.Instantiate(_inventoryConfig.MapItemPrefab, _propsLayerTransform);
-            item.Count = 1;
-            item.Collider.enabled = false;
-            item.Id = itemId;
-            item.SpriteRenderer.sprite = _inventoryConfig[item.Id].Sprite;
-            _inventoryProfile.InventoryItems[item.Id].Value--;
-            item.transform.position = characterPosition;
-
-            await item.transform.DOMove(characterPosition + targetDirection * _statsService.DropDistance, 0.5f).SetEase(Ease.OutQuad).ToUniTask();
-            item.Collider.enabled = true;
+            _inventoryProfile.InventoryItems[itemId].Value--;
+            await _mapService.RegisterMapItem(new ItemEntity { Id = itemId, Count = 1 });
         }
 
         public bool Perform()
@@ -187,9 +172,10 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             var item = _inventoryProfile.SelectedItem.Value;
             if (!string.IsNullOrEmpty(item))
             {
-                result = _inventoryConfig[item].Perform(targetPosition);
+                var itemModel = _inventoryConfig[item];
+                result = itemModel.Perform(targetPosition);
 
-                if (result)
+                if (itemModel.IsCountable && result)
                 {
                     _inventoryProfile.InventoryItems[item].Value--;
                 }

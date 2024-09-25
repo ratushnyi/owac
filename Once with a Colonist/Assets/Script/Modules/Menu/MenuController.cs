@@ -8,10 +8,10 @@ using TendedTarsier.Script.Modules.Gameplay.Character;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General;
+using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
 using UnityEngine.EventSystems;
 using InventoryProfile = TendedTarsier.Script.Modules.General.Profiles.Inventory.InventoryProfile;
 using StatsProfile = TendedTarsier.Script.Modules.General.Profiles.Stats.StatsProfile;
-using TilemapProfile = TendedTarsier.Script.Modules.General.Profiles.Tilemap.TilemapProfile;
 
 namespace TendedTarsier.Script.Modules.Menu
 {
@@ -32,7 +32,7 @@ namespace TendedTarsier.Script.Modules.Menu
         private Button _exitButton;
 
         private StatsProfile _statsProfile;
-        private TilemapProfile _tilemapProfile;
+        private MapProfile _mapProfile;
         private InventoryProfile _inventoryProfile;
         private MenuConfig _menuConfig;
         private GeneralConfig _generalConfig;
@@ -40,14 +40,14 @@ namespace TendedTarsier.Script.Modules.Menu
 
         [Inject]
         private void Construct(StatsProfile statsProfile,
-            TilemapProfile tilemapProfile,
+            MapProfile mapProfile,
             InventoryProfile inventoryProfile,
             MenuConfig menuConfig,
             GeneralConfig generalConfig,
             EventSystem eventSystem)
         {
             _statsProfile = statsProfile;
-            _tilemapProfile = tilemapProfile;
+            _mapProfile = mapProfile;
             _inventoryProfile = inventoryProfile;
             _menuConfig = menuConfig;
             _generalConfig = generalConfig;
@@ -94,7 +94,7 @@ namespace TendedTarsier.Script.Modules.Menu
         private void OnNewGameButtonClick(Unit _)
         {
             _statsProfile.Clear();
-            _tilemapProfile.Clear();
+            _mapProfile.Clear();
             _inventoryProfile.Clear();
             SceneManager.LoadScene(_generalConfig.GameplayScene);
         }

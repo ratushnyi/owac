@@ -11,6 +11,7 @@ using TendedTarsier.Script.Modules.General.Services.Input;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.General;
 using TendedTarsier.Script.Modules.General.Profiles.Stats;
+using TendedTarsier.Script.Modules.General.Services.Profile;
 using UnityEngine.EventSystems;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
@@ -19,6 +20,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
     public class HUDService : ServiceBase
     {
         private readonly EventSystem _eventSystem;
+        private readonly ProfileService _profileService;
         private readonly InputService _inputService;
         private readonly GeneralConfig _generalConfig;
         private readonly PanelLoader<HUDPanel> _hudPanel;
@@ -26,6 +28,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
 
         public HUDService(
             EventSystem eventSystem,
+            ProfileService profileService,
             InputService inputService,
             GeneralConfig generalConfig,
             PanelLoader<InventoryPanel> inventoryPanel,
@@ -35,6 +38,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
             _hudPanel = hudPanel;
             _generalConfig = generalConfig;
             _inputService = inputService;
+            _profileService = profileService;
             _eventSystem = eventSystem;
         }
 
@@ -79,6 +83,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
 
         private void OnMenuButtonClick(Unit _)
         {
+            _profileService.SaveAll();
             SceneManager.LoadScene(_generalConfig.MenuScene);
         }
 

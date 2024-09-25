@@ -28,6 +28,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         private Animator _animator;
 
         private StatsConfig _statsConfig;
+        private MapService _mapService;
         private StatsService _statsService;
         private InputService _inputService;
         private InventoryService _inventoryService;
@@ -38,12 +39,14 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         [Inject]
         private void Construct(
             StatsConfig statsConfig,
+            MapService mapService,
             StatsService statsService,
             InputService inputService,
             InventoryService inventoryService,
             TilemapService tilemapService)
         {
             _statsConfig = statsConfig;
+            _mapService = mapService;
             _statsService = statsService;
             _inputService = inputService;
             _inventoryService = inventoryService;
@@ -56,8 +59,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             _animator = GetComponent<Animator>();
 
             _inventoryService.GetTargetPosition = () => TargetPosition.Value;
-            _inventoryService.GetTargetDirection = () => TargetDirection.Value;
-            _inventoryService.GetCharacterPosition = () => transform.position;
+            _mapService.GetTargetDirection = () => TargetDirection.Value;
+            _mapService.GetCharacterPosition = () => transform.position;
 
             transform.SetLocalPositionAndRotation(_statsService.PlayerPosition, Quaternion.identity);
 
@@ -134,7 +137,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
                     _tilemapService.OnGroundEnter(tilemap);
                     break;
                 case "Item":
-                    var mapItem = other.GetComponent<MapItemBase>();
+                    var mapItem = other.GetComponent<MapItem>();
                     _inventoryService.TryPut(mapItem, transform);
                     break;
             }

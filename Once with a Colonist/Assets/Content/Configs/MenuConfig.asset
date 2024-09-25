@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8ff6e940dc7e43bf9c28db23ae22212, type: 3}
   m_Name: MenuConfig
   m_EditorClassIdentifier: 
-  <GameplayScene>k__BackingField: Gameplay
-  <BackgroundFadeOutDuration>k__BackingField: 3
-  <BackgroundFadeOutColor>k__BackingField: {r: 0.39215687, g: 0.39215687, b: 0.39215687,
-    a: 1}
-  <BackgroundFadeOutCurve>k__BackingField: 4
+  <BackgroundFadeOutDuration>k__BackingField: 2
+  <BackgroundFadeOutColor>k__BackingField: {r: 0, g: 0.48317003, b: 1, a: 1}
+  <BackgroundFadeOutCurve>k__BackingField: 35

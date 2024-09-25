@@ -13,14 +13,13 @@ using TendedTarsier.Script.Modules.Gameplay.Services.HUD;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
-using UnityEngine.Serialization;
 
 namespace TendedTarsier.Script.Modules.Gameplay
 {
     public class GameplayInstaller : MonoInstaller
     {
-        public const string PropsTransformId = "props_transform";
-        public const string GroundTilemapsId = "ground_tilemaps";
+        public const string GroundTilemapsListId = "ground_tilemaps_list";
+        public const string MapItemsContainerTransformId = "map_items_container_transform";
 
         [Header("Configs")]
         [SerializeField]
@@ -34,17 +33,16 @@ namespace TendedTarsier.Script.Modules.Gameplay
 
         [Header("Common")]
         [SerializeField]
-        private List<Tilemap> _groundTilemaps;
-        [SerializeField]
-        private Transform _propsLayerTransform;
-        [SerializeField]
         private PlayerController _playerController;
+        [SerializeField]
+        private Transform _mapItemsContainerTransform;
+        [SerializeField]
+        private List<Tilemap> _groundTilemapsList;
 
         [Header("UI")]
         [SerializeField]
         private Canvas _gameplayCanvas;
 
-        [FormerlySerializedAs("_toolBarPanel")]
         [Header("Panels")]
         [SerializeField]
         private HUDPanel _hudPanel;
@@ -65,6 +63,7 @@ namespace TendedTarsier.Script.Modules.Gameplay
             Container.BindService<InventoryService>();
             Container.BindService<HUDService>();
             Container.BindService<StatsService>();
+            Container.BindService<MapService>();
         }
 
         private void BindConfigs()
@@ -84,8 +83,8 @@ namespace TendedTarsier.Script.Modules.Gameplay
         private void BindSceneObjects()
         {
             Container.Bind<PlayerController>().FromInstance(_playerController).AsSingle();
-            Container.Bind<List<Tilemap>>().WithId(GroundTilemapsId).FromInstance(_groundTilemaps);
-            Container.Bind<Transform>().WithId(PropsTransformId).FromInstance(_propsLayerTransform);
+            Container.Bind<List<Tilemap>>().WithId(GroundTilemapsListId).FromInstance(_groundTilemapsList);
+            Container.Bind<Transform>().WithId(MapItemsContainerTransformId).FromInstance(_mapItemsContainerTransform);
         }
     }
 }

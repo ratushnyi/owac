@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Tilemap;
-using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
-using TendedTarsier.Script.Modules.General.Services;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using TendedTarsier.Script.Modules.General.Services;
+using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Tilemap;
+using Zenject;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
 {
@@ -16,17 +17,21 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
         public IReadOnlyReactiveProperty<Tilemap> CurrentTilemap => _currentTilemap;
 
         private readonly ReactiveProperty<Tilemap> _currentTilemap = new();
-        private readonly TilemapProfile _tilemapProfile;
+        private readonly MapProfile _mapProfile;
         private readonly TilemapConfig _tilemapConfig;
         private readonly List<Tilemap> _tilemaps;
 
         private Vector3Int _lastTarget;
 
-        private TilemapService(TilemapProfile tilemapProfile, TilemapConfig tilemapConfig, List<Tilemap> tilemaps)
+        private TilemapService(
+            [Inject(Id = GameplayInstaller.GroundTilemapsListId)]
+            List<Tilemap> tilemaps,
+            MapProfile mapProfile, 
+            TilemapConfig tilemapConfig)
         {
             _tilemaps = tilemaps;
             _tilemapConfig = tilemapConfig;
-            _tilemapProfile = tilemapProfile;
+            _mapProfile = mapProfile;
         }
 
         protected override void Initialize()
@@ -38,7 +43,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
 
         private void LoadTileMap()
         {
-            foreach (var changedTile in _tilemapProfile.ChangedTiles)
+            foreach (var changedTile in _mapProfile.ChangedTiles)
             {
                 var tilemap = GetTilemap(changedTile.Key);
                 if (tilemap != null)
@@ -71,8 +76,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
             }
 
             _currentTilemap.Value.SetTile(chords, tile);
-            _tilemapProfile.ChangedTiles[(Vector2Int)chords] = type;
-            _tilemapProfile.Save();
+            _mapProfile.ChangedTiles[(Vector2Int)chords] = type;
+            _mapProfile.Save();
         }
 
         public TileModel.TileType GetTile(Vector3Int chords)
@@ -83,7 +88,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
             }
             
             var tile = _currentTilemap.Value.GetTile(chords);
-            var model = _tilemapConfig.TilesModels.FirstOrDefault(t => t.Tile == tile);
+            var model = _tilemapConfig.TileModelsList.FirstOrDefault(t => t.Tile == tile);
 
             return model?.Type ?? TileModel.TileType.None;
         }

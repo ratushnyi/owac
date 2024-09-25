@@ -42,6 +42,7 @@ namespace TendedTarsier.Script.Modules.General.Services.Profile
 
         public virtual void Dispose()
         {
+            Save();
             CompositeDisposable.Dispose();
         }
     }
