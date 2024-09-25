@@ -80,7 +80,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
             await item.transform.DOMove(targetPosition, 0.5f).SetEase(Ease.OutQuad).ToUniTask();
             item.SpriteRenderer.sortingLayerID = sortingLayerID;
             item.gameObject.layer = tilemap.gameObject.layer;
-            item.Collider.enabled = false;
+            item.Collider.enabled = true;
             _mapProfile.MapItemsList.Add(new MapItemModel
             {
                 Position = item.transform.position,
