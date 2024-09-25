@@ -10,8 +10,21 @@ namespace TendedTarsier.Script.Modules.Gameplay.Configs.Stats
     {
         [field: SerializeField]
         public StatBarView StatBarView { get; set; }
+
         [field: SerializeField]
         public List<StatModel> StatsList { get; set; }
+
+        [field: SerializeField]
+        public List<StatFeeConditionalModel> StatsFeeConditionalList { get; set; }
+
+        [field: SerializeField]
+        public StatFeeModel RunFee { get; set; }
+
+        [field: SerializeField]
+        public int WalkSpeed { get; set; } = 1;
+
+        [field: SerializeField]
+        public int RunSpeed { get; set; } = 2;
 
         public StatModel GetStatsModel(StatType statType)
         {

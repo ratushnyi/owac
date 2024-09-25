@@ -10,7 +10,6 @@ using Zenject;
 using TendedTarsier.Script.Modules.Gameplay.Field;
 using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
-using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General.Profiles.Inventory;
 using TendedTarsier.Script.Modules.General.Panels;
 using TendedTarsier.Script.Modules.General.Services;
@@ -22,7 +21,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
     {
         private readonly PanelLoader<HUDPanel> _hudPanel;
         private readonly StatsService _statsService;
-        private readonly TilemapService _tilemapService;
         private readonly InventoryConfig _inventoryConfig;
         private readonly InventoryProfile _inventoryProfile;
         private readonly Transform _propsLayerTransform;
@@ -35,14 +33,12 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             [Inject(Id = GameplayInstaller.PropsTransformId)] Transform propsLayerTransform,
             InventoryProfile inventoryProfile,
             InventoryConfig inventoryConfig,
-            TilemapService tilemapService,
             StatsService statsService,
             PanelLoader<HUDPanel> hudPanel)
         {
             _propsLayerTransform = propsLayerTransform;
             _inventoryProfile = inventoryProfile;
             _inventoryConfig = inventoryConfig;
-            _tilemapService = tilemapService;
             _statsService = statsService;
             _hudPanel = hudPanel;
         }
@@ -191,7 +187,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             var item = _inventoryProfile.SelectedItem.Value;
             if (!string.IsNullOrEmpty(item))
             {
-                result = _inventoryConfig[item].Perform(_tilemapService.CurrentTilemap.Value, targetPosition);
+                result = _inventoryConfig[item].Perform(targetPosition);
 
                 if (result)
                 {

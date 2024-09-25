@@ -59,9 +59,12 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
                 var statsModel = _statsConfig.GetStatsModel(stat.Key);
                 stat.Value.Experience.Subscribe(_ => OnExperienceChanged(stat.Key, stat.Value)).AddTo(CompositeDisposable);
 
-                if (statsModel.Observable)
+                if (statsModel.StatBar)
                 {
                     _hudService.ShowStatBar(stat.Key, stat.Value.Value, stat.Value.Range);
+                }
+                if (statsModel.Observable)
+                {
                     ObserveStat(stat.Key);
                 }
             }
@@ -89,7 +92,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
             var levelModel = _statsConfig.GetStatsModel(statType).GetLevel(profileElement.Level.Value);
 
             Observable.Timer(TimeSpan.FromSeconds(levelModel.RecoveryRate)).Repeat()
-                .Subscribe(_ => ApplyValue(statType, 1))
+                .Subscribe(_ => ApplyValue(statType, levelModel.RecoveryValue))
                 .AddTo(CompositeDisposable);
         }
 

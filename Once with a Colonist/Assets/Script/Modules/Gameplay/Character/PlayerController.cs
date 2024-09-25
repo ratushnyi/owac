@@ -21,29 +21,32 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
         private Vector3 _playerPosition;
         private Vector2 _moveDirection;
-        private int _speedModifier = 1;
-        private float _runFeeDelay = 1;
+        private int _currentSpeed;
+        private float _runFeeDelay;
 
         private Rigidbody2D _rigidbody2D;
         private Animator _animator;
 
+        private StatsConfig _statsConfig;
+        private StatsService _statsService;
         private InputService _inputService;
         private InventoryService _inventoryService;
-        private StatsService _statsService;
         private TilemapService _tilemapService;
 
         private readonly CompositeDisposable _compositeDisposable = new();
 
         [Inject]
         private void Construct(
+            StatsConfig statsConfig,
+            StatsService statsService,
             InputService inputService,
             InventoryService inventoryService,
-            StatsService statsService,
             TilemapService tilemapService)
         {
+            _statsConfig = statsConfig;
+            _statsService = statsService;
             _inputService = inputService;
             _inventoryService = inventoryService;
-            _statsService = statsService;
             _tilemapService = tilemapService;
         }
 
@@ -57,6 +60,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             _inventoryService.GetCharacterPosition = () => transform.position;
 
             transform.SetLocalPositionAndRotation(_statsService.PlayerPosition, Quaternion.identity);
+
+            _currentSpeed = _statsConfig.WalkSpeed;
 
             SubscribeOnInput();
         }
@@ -76,24 +81,19 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             }
 
             TargetPosition.Value = new Vector3Int(Mathf.FloorToInt(_playerPosition.x), Mathf.RoundToInt(_playerPosition.y)) + TargetDirection.Value;
-            _tilemapService.ProcessTiles(_tilemapService.CurrentTilemap.Value, TargetPosition.Value);
+            _tilemapService.ProcessTiles(TargetPosition.Value);
 
-            if (_speedModifier == 2)
+            if (_currentSpeed == _statsConfig.RunSpeed)
             {
-                if (!_statsService.IsSuitable(StatType.Energy, -1))
-                {
-                    _speedModifier = 1;
-                    _runFeeDelay = 1;
-                    return;
-                }
-                
                 _runFeeDelay -= Time.deltaTime;
 
                 if (_runFeeDelay <= 0)
                 {
-                    _statsService.ApplyValue(StatType.Energy, -1);
-                    
-                    _runFeeDelay = 1;
+                    _statsService.ApplyValue(_statsConfig.RunFee.Type, _statsConfig.RunFee.Value);
+
+                    _runFeeDelay = _statsConfig.RunFee.Rate;
+
+                    OnSpeedChanged(true);
                 }
             }
         }
@@ -153,7 +153,18 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
         private void OnSpeedChanged(bool isRunning)
         {
-            _speedModifier = isRunning ? 2 : 1;
+            var newSpeedValue = _statsConfig.WalkSpeed;
+            if (isRunning && _statsService.IsSuitable(_statsConfig.RunFee.Type, _statsConfig.RunFee.Value))
+            {
+                newSpeedValue = _statsConfig.RunSpeed;
+            }
+
+            if (_currentSpeed == newSpeedValue)
+            {
+                return;
+            }
+
+            _currentSpeed = newSpeedValue;
             UpdateVelocity();
         }
 
@@ -166,7 +177,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
         private void UpdateVelocity()
         {
-            _rigidbody2D.velocity = _statsService.MovementSpeed * _speedModifier * _moveDirection;
+            _rigidbody2D.velocity = _statsService.MovementSpeed * _currentSpeed * _moveDirection;
         }
 
         private Vector2 OnMove(Vector2 direction)

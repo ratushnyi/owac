@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
 {
@@ -14,11 +13,11 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
         public Sprite Sprite { get; set; }
 
         [field: SerializeField]
-        public ToolEntityBase ToolEntity { get; set; }
+        public ToolBase Tool { get; set; }
 
-        public bool Perform(Tilemap tilemap, Vector3Int targetPosition)
+        public bool Perform(Vector3Int targetPosition)
         {
-            return ToolEntity != null && ToolEntity.Perform(tilemap, targetPosition);
+            return Tool != null && Tool.Perform(targetPosition);
         }
     }
 }

@@ -15,17 +15,69 @@ MonoBehaviour:
   <StatBarView>k__BackingField: {fileID: 938961447773219070, guid: 0e7724fc4e3e8479f9d48c1e87873c25,
     type: 3}
   <StatsList>k__BackingField:
-  - Levels:
-    - BorderValue: 10
+  - Observable: 0
+    Levels:
+    - BorderValue: 500
       Range: 100
       DefaultValue: 100
       RecoveryRate: 5
-    - BorderValue: 20
+      RecoveryValue: 1
+    - BorderValue: 1000
       Range: 110
       DefaultValue: 110
       RecoveryRate: 4
-    - BorderValue: 30
+      RecoveryValue: 1
+    - BorderValue: 2000
       Range: 120
       DefaultValue: 120
       RecoveryRate: 3
+      RecoveryValue: 1
     StatType: 0
+  - Observable: 0
+    Levels:
+    - BorderValue: 200
+      Range: 100
+      DefaultValue: 100
+      RecoveryRate: 20
+      RecoveryValue: 1
+    - BorderValue: 400
+      Range: 110
+      DefaultValue: 110
+      RecoveryRate: 18
+      RecoveryValue: 1
+    - BorderValue: 800
+      Range: 120
+      DefaultValue: 120
+      RecoveryRate: 16
+      RecoveryValue: 1
+    StatType: 1
+  - Observable: 1
+    Levels:
+    - BorderValue: 200
+      Range: 100
+      DefaultValue: 100
+      RecoveryRate: 10
+      RecoveryValue: -1
+    - BorderValue: 200
+      Range: 110
+      DefaultValue: 110
+      RecoveryRate: 12
+      RecoveryValue: -1
+    - BorderValue: 800
+      Range: 120
+      DefaultValue: 120
+      RecoveryRate: 14
+      RecoveryValue: -1
+    StatType: 2
+  <StatsFeeConditionalList>k__BackingField:
+  - Type: 2
+    Rate: 0
+    FeeModel:
+      Type: 1
+      Rate: 1
+      Value: 1
+  <RunFee>k__BackingField:
+    Type: 0
+    Rate: 1
+    Value: 5
+  <RunModifier>k__BackingField: 2

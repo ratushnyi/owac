@@ -61,7 +61,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
             }
         }
 
-        public void ChangedTile(Tilemap tilemap, Vector3Int chords, TileModel.TileType type)
+        public void ChangedTile(Vector3Int chords, TileModel.TileType type)
         {
             var tile = _tilemapConfig[type];
             if (tile == null)
@@ -70,40 +70,45 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
                 return;
             }
 
-            tilemap.SetTile(chords, tile);
+            _currentTilemap.Value.SetTile(chords, tile);
             _tilemapProfile.ChangedTiles[(Vector2Int)chords] = type;
             _tilemapProfile.Save();
         }
 
-        public TileModel.TileType GetTile(Tilemap tilemap, Vector3Int chords)
+        public TileModel.TileType GetTile(Vector3Int chords)
         {
-            var tile = tilemap.GetTile(chords);
+            if (_currentTilemap.Value == null)
+            {
+                return TileModel.TileType.None;
+            }
+            
+            var tile = _currentTilemap.Value.GetTile(chords);
             var model = _tilemapConfig.TilesModels.FirstOrDefault(t => t.Tile == tile);
 
-            return model?.Type ?? TileModel.TileType.Default;
+            return model?.Type ?? TileModel.TileType.None;
         }
 
-        public void ProcessTiles(Tilemap tilemap, Vector3Int? targetPosition)
+        public void ProcessTiles(Vector3Int? targetPosition)
         {
-            if (tilemap != null && targetPosition != null)
+            if (_currentTilemap.Value != null && targetPosition != null)
             {
-                var currentPosition = tilemap.WorldToCell(targetPosition.Value);
+                var currentPosition = _currentTilemap.Value.WorldToCell(targetPosition.Value);
 
                 if (currentPosition != _lastTarget)
                 {
-                    tilemap.SetColor(_lastTarget, Color.white);
+                    _currentTilemap.Value.SetColor(_lastTarget, Color.white);
 
-                    var tile = tilemap.GetTile(currentPosition);
+                    var tile = _currentTilemap.Value.GetTile(currentPosition);
                     if (tile != null)
                     {
-                        tilemap.SetColor(currentPosition, Color.red);
+                        _currentTilemap.Value.SetColor(currentPosition, Color.red);
                     }
                     _lastTarget = currentPosition;
                 }
             }
         }
 
-        public Tilemap GetTilemap(Vector2Int tilePosition)
+        private Tilemap GetTilemap(Vector2Int tilePosition)
         {
             foreach (var tilemap in _tilemaps)
             {

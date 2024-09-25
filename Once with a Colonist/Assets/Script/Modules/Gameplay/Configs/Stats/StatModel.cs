@@ -1,24 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NaughtyAttributes;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Configs.Stats
 {
     [Serializable]
     public class StatModel
     {
+        [FormerlySerializedAs("TabBar")]
+        public bool StatBar;
         public bool Observable;
-        [Serializable]
-        public class StatLevelModel
-        {
-            public int BorderValue;
-            public int Range;
-            public int DefaultValue;
-            [ShowIf("Observable")]
-            public int RecoveryRate;
-        }
 
         [SerializeField]
         private List<StatLevelModel> Levels;

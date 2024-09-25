@@ -10,7 +10,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
         [Serializable]
         public enum TileType
         {
-            Default,
+            None,
             Stone,
             Grass,
             Sett

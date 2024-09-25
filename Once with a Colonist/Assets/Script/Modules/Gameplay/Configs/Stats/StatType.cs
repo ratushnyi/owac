@@ -5,8 +5,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Configs.Stats
     [Serializable]
     public enum StatType
     {
-        Energy,
-        Health,
-        Strange
+        Energy = 0,
+        Health = 1,
+        Hunger = 2
     }
 }

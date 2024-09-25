@@ -28,7 +28,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Configs.Inventory
         [Inject]
         public void Construct(DiContainer diContainer)
         {
-            InventoryItems.ForEach(t => diContainer.Inject(t.ToolEntity));
+            InventoryItems.ForEach(t => diContainer.Inject(t.Tool));
         }
     }
 }
