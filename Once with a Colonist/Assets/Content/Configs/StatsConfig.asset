@@ -15,25 +15,10 @@ MonoBehaviour:
   <StatBarView>k__BackingField: {fileID: 938961447773219070, guid: 0e7724fc4e3e8479f9d48c1e87873c25,
     type: 3}
   <StatsList>k__BackingField:
-  - Observable: 0
-    Levels:
-    - BorderValue: 500
-      Range: 100
-      DefaultValue: 100
-      RecoveryRate: 5
-      RecoveryValue: 1
-    - BorderValue: 1000
-      Range: 110
-      DefaultValue: 110
-      RecoveryRate: 4
-      RecoveryValue: 1
-    - BorderValue: 2000
-      Range: 120
-      DefaultValue: 120
-      RecoveryRate: 3
-      RecoveryValue: 1
-    StatType: 0
-  - Observable: 0
+  - StatType: 1
+    Sprite: {fileID: 21300000, guid: 427cfa16a8bc9423ebdbd00b3a8777ff, type: 3}
+    StatBar: 1
+    Observable: 0
     Levels:
     - BorderValue: 200
       Range: 100
@@ -50,8 +35,30 @@ MonoBehaviour:
       DefaultValue: 120
       RecoveryRate: 16
       RecoveryValue: 1
-    StatType: 1
-  - Observable: 1
+  - StatType: 0
+    Sprite: {fileID: 21300000, guid: d12298e6fed6b4ff892d6b9877a0e15c, type: 3}
+    StatBar: 1
+    Observable: 0
+    Levels:
+    - BorderValue: 500
+      Range: 100
+      DefaultValue: 100
+      RecoveryRate: 5
+      RecoveryValue: 1
+    - BorderValue: 1000
+      Range: 110
+      DefaultValue: 110
+      RecoveryRate: 4
+      RecoveryValue: 1
+    - BorderValue: 2000
+      Range: 120
+      DefaultValue: 120
+      RecoveryRate: 3
+      RecoveryValue: 1
+  - StatType: 2
+    Sprite: {fileID: 21300000, guid: 5b94d485335dc4707968d788f8765c74, type: 3}
+    StatBar: 1
+    Observable: 1
     Levels:
     - BorderValue: 200
       Range: 100
@@ -68,16 +75,16 @@ MonoBehaviour:
       DefaultValue: 120
       RecoveryRate: 14
       RecoveryValue: -1
-    StatType: 2
   <StatsFeeConditionalList>k__BackingField:
   - Type: 2
-    Rate: 0
+    Condition: 0
     FeeModel:
       Type: 1
       Rate: 1
-      Value: 1
+      Value: -1
   <RunFee>k__BackingField:
     Type: 0
     Rate: 1
-    Value: 5
-  <RunModifier>k__BackingField: 2
+    Value: -5
+  <WalkSpeed>k__BackingField: 1
+  <RunSpeed>k__BackingField: 2

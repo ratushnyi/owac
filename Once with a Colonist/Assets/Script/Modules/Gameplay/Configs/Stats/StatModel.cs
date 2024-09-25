@@ -9,13 +9,13 @@ namespace TendedTarsier.Script.Modules.Gameplay.Configs.Stats
     [Serializable]
     public class StatModel
     {
-        [FormerlySerializedAs("TabBar")]
+        public StatType StatType;
+        public Sprite Sprite;
         public bool StatBar;
         public bool Observable;
 
         [SerializeField]
         private List<StatLevelModel> Levels;
-        public StatType StatType;
 
         public StatLevelModel GetLevel(int level)
         {

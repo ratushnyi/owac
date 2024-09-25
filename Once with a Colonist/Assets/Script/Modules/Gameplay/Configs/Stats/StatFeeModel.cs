@@ -13,14 +13,14 @@ namespace TendedTarsier.Script.Modules.Gameplay.Configs.Stats
     [Serializable]
     public class StatFeeConditionalModel
     {
-        public enum FeeConditionalType
+        public enum FeeConditionType
         {
             MinValue = 0,
             MaxValue = 1,
         }
 
         public StatType Type;
-        public FeeConditionalType Rate;
+        public FeeConditionType Condition;
         public StatFeeModel FeeModel;
     }
 }

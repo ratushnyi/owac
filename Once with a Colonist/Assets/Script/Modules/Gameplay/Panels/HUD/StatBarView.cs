@@ -7,6 +7,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Panels.HUD
     public class StatBarView : MonoBehaviour
     {
         [SerializeField]
+        private Image _image;
+        [SerializeField]
         private TMP_Text _valueTMP;
         [SerializeField]
         private Slider _slider;
@@ -31,6 +33,11 @@ namespace TendedTarsier.Script.Modules.Gameplay.Panels.HUD
 
             _valueTMP.SetText($"{_value} / {_range}");
             _slider.value = (float)_value / _range;
+        }
+
+        public void SetSprite(Sprite sprite)
+        {
+            _image.sprite = sprite;
         }
     }
 }

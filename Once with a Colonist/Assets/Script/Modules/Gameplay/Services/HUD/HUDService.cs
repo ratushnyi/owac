@@ -10,6 +10,7 @@ using TendedTarsier.Script.Modules.General.Services;
 using TendedTarsier.Script.Modules.General.Services.Input;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.General;
+using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using UnityEngine.EventSystems;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
@@ -81,13 +82,14 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
             SceneManager.LoadScene(_generalConfig.MenuScene);
         }
 
-        public void ShowStatBar(StatType statType, ReactiveProperty<int> value, ReactiveProperty<int> range)
+        public void ShowStatBar(StatType statType, StatModel statModel, StatProfileElement statProfile)
         {
             var statBar = _hudPanel.Instance.GetStatBar(statType);
 
-            statBar.Setup(value.Value, range.Value);
-            value.SkipLatestValueOnSubscribe().Subscribe(t => statBar.UpdateValue(t)).AddTo(CompositeDisposable);
-            range.SkipLatestValueOnSubscribe().Subscribe(t => statBar.UpdateRange(t)).AddTo(CompositeDisposable);
+            statBar.Setup(statProfile.Value.Value, statProfile.Range.Value);
+            statBar.SetSprite(statModel.Sprite);
+            statProfile.Value.SkipLatestValueOnSubscribe().Subscribe(t => statBar.UpdateValue(t)).AddTo(CompositeDisposable);
+            statProfile.Range.SkipLatestValueOnSubscribe().Subscribe(t => statBar.UpdateRange(t)).AddTo(CompositeDisposable);
         }
     }
 }

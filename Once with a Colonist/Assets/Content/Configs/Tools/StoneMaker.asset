@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: StoneMaker
   m_EditorClassIdentifier: 
   _statType: 0
-  _value: 5
-  _tileType: 0
+  _value: -5
+  _tileType: 1

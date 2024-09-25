@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using UniRx;
 using UnityEngine;
@@ -21,6 +22,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
         public int DropDistance => _gameplayConfig.DropDistance;
         public Vector3 PlayerPosition => _statsProfile.PlayerPosition;
 
+        private readonly Dictionary<StatType, IDisposable> _feeDisposables = new();
+
         public StatsService(
             HUDService hudService,
             GameplayConfig gameplayConfig,
@@ -37,6 +40,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
         {
             base.Initialize();
             InitializeProfile();
+            InitializeStats();
+            InitializeFees();
         }
 
         private void InitializeProfile()
@@ -53,47 +58,100 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
                     });
                 }
             }
+        }
+
+        private void InitializeStats()
+        {
+            void onExperienceValueChanged(StatType statType, StatProfileElement statProfileElement)
+            {
+                var statsModel = _statsConfig.GetStatsModel(statType);
+
+                var extraExperience = statProfileElement.Experience.Value - statsModel.GetLevel(statProfileElement.Level.Value).BorderValue;
+                if (extraExperience >= 0)
+                {
+                    statProfileElement.Experience.Value = extraExperience;
+                    statProfileElement.Level.Value++;
+
+                    var levelEntity = statsModel.GetLevel(statProfileElement.Level.Value);
+                    statProfileElement.Value.Value = levelEntity.DefaultValue;
+                    statProfileElement.Range.Value = levelEntity.Range;
+                }
+            }
+
+            void observeStat(StatType statType)
+            {
+                var profileElement = _statsProfile.StatsDictionary[statType];
+                var levelModel = _statsConfig.GetStatsModel(statType).GetLevel(profileElement.Level.Value);
+
+                StartApplyValueAutoApplyValue(statType, levelModel.RecoveryRate, levelModel.RecoveryValue);
+            }
 
             foreach (var stat in _statsProfile.StatsDictionary)
             {
                 var statsModel = _statsConfig.GetStatsModel(stat.Key);
-                stat.Value.Experience.Subscribe(_ => OnExperienceChanged(stat.Key, stat.Value)).AddTo(CompositeDisposable);
+
+                stat.Value.Experience
+                    .Subscribe(_ => onExperienceValueChanged(stat.Key, stat.Value))
+                    .AddTo(CompositeDisposable);
 
                 if (statsModel.StatBar)
                 {
-                    _hudService.ShowStatBar(stat.Key, stat.Value.Value, stat.Value.Range);
+                    _hudService.ShowStatBar(stat.Key, statsModel, stat.Value);
                 }
                 if (statsModel.Observable)
                 {
-                    ObserveStat(stat.Key);
+                    observeStat(stat.Key);
                 }
             }
         }
 
-        private void OnExperienceChanged(StatType statType, StatProfileElement statProfileElement)
+        private void InitializeFees()
         {
-            var statsModel = _statsConfig.GetStatsModel(statType);
-
-            var extraExperience = statProfileElement.Experience.Value - statsModel.GetLevel(statProfileElement.Level.Value).BorderValue;
-            if (extraExperience >= 0)
+            foreach (var stat in _statsConfig.StatsFeeConditionalList)
             {
-                statProfileElement.Experience.Value = extraExperience;
-                statProfileElement.Level.Value++;
-
-                var levelEntity = statsModel.GetLevel(statProfileElement.Level.Value);
-                statProfileElement.Value.Value = levelEntity.DefaultValue;
-                statProfileElement.Range.Value = levelEntity.Range;
+                var profileElement = _statsProfile.StatsDictionary[stat.Type];
+                profileElement.Value.Subscribe(t => onFeeStatChanged(stat, profileElement, t)).AddTo(CompositeDisposable);
             }
-        }
 
-        private void ObserveStat(StatType statType)
-        {
-            var profileElement = _statsProfile.StatsDictionary[statType];
-            var levelModel = _statsConfig.GetStatsModel(statType).GetLevel(profileElement.Level.Value);
+            void onFeeStatChanged(StatFeeConditionalModel condition, StatProfileElement statProfileElement, int currentValue)
+            {
+                switch (condition.Condition)
+                {
+                    case StatFeeConditionalModel.FeeConditionType.MaxValue:
+                        var levelModel = _statsConfig.GetStatsModel(condition.Type).GetLevel(statProfileElement.Level.Value);
+                        if (currentValue == levelModel.Range)
+                        {
+                            var disposable = StartApplyValueAutoApplyValue(condition.FeeModel.Type, condition.FeeModel.Rate, condition.FeeModel.Value);
 
-            Observable.Timer(TimeSpan.FromSeconds(levelModel.RecoveryRate)).Repeat()
-                .Subscribe(_ => ApplyValue(statType, levelModel.RecoveryValue))
-                .AddTo(CompositeDisposable);
+                            _feeDisposables.Add(condition.Type, disposable);
+                        }
+                        else
+                        {
+                            if (_feeDisposables.TryGetValue(condition.Type, out var disposable))
+                            {
+                                disposable.Dispose();
+                                _feeDisposables.Remove(condition.Type);
+                            }
+                        }
+                        break;
+                    case StatFeeConditionalModel.FeeConditionType.MinValue:
+                        if (currentValue == 0)
+                        {
+                            var disposable = StartApplyValueAutoApplyValue(condition.FeeModel.Type, condition.FeeModel.Rate, condition.FeeModel.Value);
+
+                            _feeDisposables.Add(condition.Type, disposable);
+                        }
+                        else
+                        {
+                            if (_feeDisposables.TryGetValue(condition.Type, out var disposable))
+                            {
+                                disposable.Dispose();
+                                _feeDisposables.Remove(condition.Type);
+                            }
+                        }
+                        break;
+                }
+            }
         }
 
         public void OnSessionStarted()
@@ -138,6 +196,13 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
             profileElement.Experience.Value += experience;
 
             return true;
+        }
+
+        private IDisposable StartApplyValueAutoApplyValue(StatType type, int rate, int value)
+        {
+            return Observable.Timer(TimeSpan.FromSeconds(rate)).Repeat()
+                .Subscribe(_ => ApplyValue(type, value))
+                .AddTo(CompositeDisposable);
         }
     }
 }
