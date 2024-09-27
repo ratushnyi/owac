@@ -1,7 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-namespace TendedTarsier.Script.Modules.Menu
+namespace TendedTarsier.Script.Modules.General.Configs
 {
     [CreateAssetMenu(menuName = "Config/MenuConfig", fileName = "MenuConfig")]
     public class MenuConfig : ScriptableObject

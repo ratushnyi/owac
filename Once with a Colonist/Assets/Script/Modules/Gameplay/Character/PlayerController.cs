@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -7,10 +6,11 @@ using Zenject;
 using TendedTarsier.Script.Modules.General.Services.Input;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Map;
-using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapItem;
+using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General;
+using TendedTarsier.Script.Modules.General.Configs.Stats;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Character
 {
@@ -160,7 +160,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
                     _tilemapService.OnGroundEnter(tilemap);
                     break;
                 case GeneralConstants.ItemTag:
-                    var mapItem = other.GetComponent<MapItem>();
+                    var mapItem = other.GetComponent<ItemMapObject>();
                     _inventoryService.TryPut(mapItem);
                     break;
             }

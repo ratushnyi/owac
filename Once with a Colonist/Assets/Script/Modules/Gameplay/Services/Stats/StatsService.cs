@@ -4,9 +4,9 @@ using JetBrains.Annotations;
 using UniRx;
 using UnityEngine;
 using TendedTarsier.Script.Modules.General.Profiles.Stats;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Gameplay;
 using TendedTarsier.Script.Modules.Gameplay.Services.HUD;
+using TendedTarsier.Script.Modules.General.Configs;
+using TendedTarsier.Script.Modules.General.Configs.Stats;
 using TendedTarsier.Script.Modules.General.Services;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats

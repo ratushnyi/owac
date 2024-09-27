@@ -5,13 +5,14 @@ using UnityEngine;
 using Zenject;
 using TendedTarsier.Script.Modules.General.Services.Profile;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using TendedTarsier.Script.Modules.General.Configs;
 
 namespace TendedTarsier.Script.Modules.General.Profiles.Tilemap
 {
     [MemoryPackable(GenerateType.VersionTolerant)]
     public partial class MapProfile : ProfileBase
     {
-        private GeneralConfig _generalConfig;
+        private MapConfig _mapConfig;
         public override string Name => "Map";
 
         [MemoryPackOrder(0)]
@@ -21,14 +22,14 @@ namespace TendedTarsier.Script.Modules.General.Profiles.Tilemap
         public Dictionary<Vector2Int, TileModel.TileType> ChangedTiles { get; [UsedImplicitly] set; } = new();
 
         [Inject]
-        public void Construct(GeneralConfig generalConfig)
+        public void Construct(MapConfig mapConfig)
         {
-            _generalConfig = generalConfig;
+            _mapConfig = mapConfig;
         }
 
         public override void OnSectionCreated()
         {
-            foreach (var mapItem in _generalConfig.MapItemsPreconditionList)
+            foreach (var mapItem in _mapConfig.ItemMapObjectsPreconditionList)
             {
                 MapItemsList.Add(new MapItemModel { Position = mapItem.transform.position, ItemEntity = mapItem.ItemEntity, SortingLayerID = mapItem.SpriteRenderer.sortingLayerID, LayerID = mapItem.gameObject.layer });
             }

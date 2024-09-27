@@ -7,9 +7,10 @@ using Zenject;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Inventory;
+using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject;
 using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
 using TendedTarsier.Script.Modules.General.Services;
+using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
@@ -22,21 +23,23 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
         public Func<int> GetPlayerSortingLayerID;
 
         private readonly StatsService _statsService;
-        private readonly MapProfile _mapProfile;
         private readonly TilemapService _tilemapService;
+        private readonly MapProfile _mapProfile;
+        private readonly MapConfig _mapConfig;
         private readonly InventoryConfig _inventoryConfig;
         private readonly Transform _propsLayerTransform;
 
         private MapService(
-            [Inject(Id = GeneralConstants.MapItemsContainerTransformId)] 
-            Transform propsLayerTransform,
+            [Inject(Id = GeneralConstants.MapItemsContainerTransformId)] Transform propsLayerTransform,
             InventoryConfig inventoryConfig,
+            MapConfig mapConfig,
             MapProfile mapProfile,
             TilemapService tilemapService,
             StatsService statsService)
         {
             _propsLayerTransform = propsLayerTransform;
             _inventoryConfig = inventoryConfig;
+            _mapConfig = mapConfig;
             _mapProfile = mapProfile;
             _tilemapService = tilemapService;
             _statsService = statsService;
@@ -53,7 +56,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
         {
             foreach (var mapItem in _mapProfile.MapItemsList)
             {
-                var item = UnityEngine.Object.Instantiate(_inventoryConfig.MapItemPrefab, _propsLayerTransform);
+                var item = UnityEngine.Object.Instantiate(_mapConfig.ItemMapObjectPrefab, _propsLayerTransform);
                 item.ItemEntity = mapItem.ItemEntity;
                 item.SpriteRenderer.sprite = _inventoryConfig[mapItem.ItemEntity.Id].Sprite;
                 item.SpriteRenderer.sortingLayerID = mapItem.SortingLayerID;
@@ -68,7 +71,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
             var targetDirection = GetTargetDirection.Invoke();
             var playerSortingLayer = GetPlayerSortingLayerID.Invoke();
 
-            var item = UnityEngine.Object.Instantiate(_inventoryConfig.MapItemPrefab, _propsLayerTransform);
+            var item = UnityEngine.Object.Instantiate(_mapConfig.ItemMapObjectPrefab, _propsLayerTransform);
             item.ItemEntity.Count = 1;
             item.Collider.enabled = false;
             item.ItemEntity = itemEntity;
@@ -91,24 +94,24 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
             _mapProfile.Save();
         }
 
-        public async UniTask UnregisterMapItem(MapItem.MapItem item)
+        public async UniTask UnregisterMapItem(ItemMapObject objectBase)
         {
-            var index = _mapProfile.MapItemsList.FindIndex(t => t.ItemEntity.Equals(item.ItemEntity) && t.Position == item.transform.position);
+            var index = _mapProfile.MapItemsList.FindIndex(t => t.ItemEntity.Equals(objectBase.ItemEntity) && t.Position == objectBase.transform.position);
 
             if (index == -1)
             {
-                Debug.LogError($"{nameof(UnregisterMapItem)} failed. Item with ID {item.ItemEntity.Id} in position {item.transform.position} not found.");
+                Debug.LogError($"{nameof(UnregisterMapItem)} failed. Item with ID {objectBase.ItemEntity.Id} in position {objectBase.transform.position} not found.");
                 return;
             }
 
             _mapProfile.MapItemsList.RemoveAt(index);
             _mapProfile.Save();
 
-            item.Collider.enabled = false;
-            item.transform.parent = GetPlayerTransform.Invoke();
-            item.SpriteRenderer.sortingLayerID = GetPlayerSortingLayerID.Invoke();
-            await item.transform.DOLocalMove(Vector3.zero, 0.5f).ToUniTask();
-            UnityEngine.Object.DestroyImmediate(item.gameObject);
+            objectBase.Collider.enabled = false;
+            objectBase.transform.parent = GetPlayerTransform.Invoke();
+            objectBase.SpriteRenderer.sortingLayerID = GetPlayerSortingLayerID.Invoke();
+            await objectBase.transform.DOLocalMove(Vector3.zero, 0.5f).ToUniTask();
+            UnityEngine.Object.DestroyImmediate(objectBase.gameObject);
         }
     }
 }

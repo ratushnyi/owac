@@ -6,8 +6,8 @@ using Zenject;
 using TendedTarsier.Script.Modules.General.Panels;
 using TendedTarsier.Script.Modules.General.Profiles.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Inventory;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
+using TendedTarsier.Script.Modules.General.Configs;
+using TendedTarsier.Script.Modules.General.Configs.Stats;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Panels.HUD
 {

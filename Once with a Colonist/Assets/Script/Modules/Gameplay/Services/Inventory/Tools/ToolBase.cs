@@ -1,5 +1,5 @@
-using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
+using TendedTarsier.Script.Modules.General.Configs.Stats;
 using UnityEngine;
 using Zenject;
 

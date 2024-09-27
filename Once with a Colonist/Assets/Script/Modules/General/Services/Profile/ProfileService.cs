@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
 using MemoryPack;
+using TendedTarsier.Script.Modules.General.Configs.Stats;
 using UniRx;
 using UnityEngine;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
 using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using TendedTarsier.Script.Utilities.MemoryPack.FormatterProviders;
 

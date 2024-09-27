@@ -1,15 +1,13 @@
 using System;
 using System.Linq;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using JetBrains.Annotations;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Inventory;
 using UniRx;
 using UnityEngine;
 using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
 using TendedTarsier.Script.Modules.Gameplay.Services.Map;
-using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapItem;
-using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject;
+using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Profiles.Inventory;
 using TendedTarsier.Script.Modules.General.Panels;
 using TendedTarsier.Script.Modules.General.Services;
@@ -137,7 +135,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             }
         }
 
-        public bool TryPut(MapItem item)
+        public bool TryPut(ItemMapObject item)
         {
             return item.Collider.enabled && TryPut(item.ItemEntity.Id, item.ItemEntity.Count, () => _mapService.UnregisterMapItem(item));
         }

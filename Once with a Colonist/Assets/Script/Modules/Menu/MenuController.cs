@@ -8,6 +8,7 @@ using TendedTarsier.Script.Modules.Gameplay.Character;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General;
+using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
 using UnityEngine.EventSystems;
 using InventoryProfile = TendedTarsier.Script.Modules.General.Profiles.Inventory.InventoryProfile;

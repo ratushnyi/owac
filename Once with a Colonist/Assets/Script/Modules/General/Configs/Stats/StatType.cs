@@ -1,6 +1,6 @@
 using System;
 
-namespace TendedTarsier.Script.Modules.Gameplay.Configs.Stats
+namespace TendedTarsier.Script.Modules.General.Configs.Stats
 {
     [Serializable]
     public enum StatType

@@ -3,7 +3,7 @@ using System.Linq;
 using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
 using UnityEngine;
 
-namespace TendedTarsier.Script.Modules.Gameplay.Configs.Stats
+namespace TendedTarsier.Script.Modules.General.Configs.Stats
 {
     [CreateAssetMenu(menuName = "Config/StatsConfig", fileName = "StatsConfig")]
     public class StatsConfig : ScriptableObject
