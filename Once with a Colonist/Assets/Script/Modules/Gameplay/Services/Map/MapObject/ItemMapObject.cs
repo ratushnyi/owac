@@ -5,7 +5,7 @@ using UniRx;
 using UnityEngine;
 using TendedTarsier.Script.Modules.General;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
-using MapItemModel = TendedTarsier.Script.Modules.General.Profiles.Map.MapItemModel;
+using TendedTarsier.Script.Modules.General.Profiles.Map;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
 {
@@ -22,12 +22,12 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
             Collider.enabled = false;
         }
 
-        public void Setup(ItemModel itemModel, MapItemModel mapItemModel, Vector3 position)
+        public void Setup(ItemModel itemModel, ItemMapModel itemMapModel, Vector3 position)
         {
             _itemModel = itemModel;
-            ItemEntity = mapItemModel.ItemEntity;
+            ItemEntity = itemMapModel.ItemEntity;
             SpriteRenderer.sprite = _itemModel.Sprite;
-            SpriteRenderer.sortingLayerID = mapItemModel.SortingLayerID;
+            SpriteRenderer.sortingLayerID = itemMapModel.SortingLayerID;
             transform.position = position;
         }
 

@@ -1,3 +1,4 @@
+using TendedTarsier.Script.Modules.Gameplay.Character;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using UnityEngine;
 using Zenject;
@@ -7,24 +8,27 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Tools
     [CreateAssetMenu(menuName = "Items/ToolTilemap", fileName = "ToolTilemap")]
     public class ToolTilemap : ToolBase
     {
+        private TilemapService _tilemapService;
+        private PlayerController _playerController;
+
         [SerializeField]
         private TileModel.TileType _tileType;
-        private TilemapService _tilemapService;
 
         [Inject]
-        public void Construct(TilemapService tilemapService)
+        public void Construct(TilemapService tilemapService, PlayerController playerController)
         {
             _tilemapService = tilemapService;
+            _playerController = playerController;
         }
 
-        public override bool Perform(Vector3Int targetPosition)
+        public override bool Perform()
         {
             if (_tilemapService.CurrentTilemap.Value == null)
             {
                 return false;
             }
 
-            if (_tilemapService.GetTile(targetPosition) == _tileType)
+            if (_tilemapService.GetTile(_playerController.TargetPosition.Value) == _tileType)
             {
                 return false;
             }
@@ -34,7 +38,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Tools
                 return false;
             }
 
-            _tilemapService.ChangedTile(targetPosition, _tileType);
+            _tilemapService.ChangedTile(_playerController.TargetPosition.Value, _tileType);
             return true;
         }
     }

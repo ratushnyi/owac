@@ -3,7 +3,7 @@ using UnityEngine;
 using Zenject;
 using TendedTarsier.Script.Utilities.Extensions;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
-using MapItemModel = TendedTarsier.Script.Modules.General.Profiles.Map.MapItemModel;
+using TendedTarsier.Script.Modules.General.Profiles.Map;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
 {
@@ -27,7 +27,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
         public override bool Perform()
         {
             var targetPosition = transform.position + _direction.ToVector3() * _dropDistance;
-            var mapItem = new MapItemModel
+            var mapItem = new ItemMapModel
             {
                 ItemEntity = _emissionItem,
                 SortingLayerID = SpriteRenderer.sortingLayerID,

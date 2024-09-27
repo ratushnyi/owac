@@ -6,7 +6,7 @@ using Zenject;
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Tools
 {
     [CreateAssetMenu(menuName = "Items/ToolBase", fileName = "ToolBase")]
-    public class ToolBase : ScriptableObject
+    public class ToolBase : ScriptableObject, IPerformable
     {
         [SerializeField]
         private StatType _statType;
@@ -23,7 +23,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Tools
             StatsService = statsService;
         }
 
-        public virtual bool Perform(Vector3Int targetPosition)
+        public virtual bool Perform()
         {
             return UseResources();
         }

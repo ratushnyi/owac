@@ -1,11 +1,11 @@
 using System;
-using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Tools;
 using UnityEngine;
+using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Tools;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
 {
     [Serializable]
-    public class ItemModel : IPerformable
+    public class ItemModel
     {
         [field: SerializeField]
         public string Id { get; set; }
@@ -19,14 +19,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
         [field: SerializeField]
         public bool IsCountable { get; set; }
 
-        public bool Perform(Vector3Int targetPosition)
-        {
-            return Tool != null && Tool.Perform(targetPosition);
-        }
-
         public bool Perform()
         {
-            throw new NotImplementedException();
+            return Tool != null && Tool.Perform();
         }
     }
 }

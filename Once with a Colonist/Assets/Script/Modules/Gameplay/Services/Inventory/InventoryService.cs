@@ -8,13 +8,12 @@ using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 using TendedTarsier.Script.Modules.Gameplay.Services.Map;
 using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject;
-using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.General.Services;
 using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Configs.Stats;
 using TendedTarsier.Script.Modules.General.Panels;
 using TendedTarsier.Script.Modules.General.Profiles.Inventory;
-using MapItemModel = TendedTarsier.Script.Modules.General.Profiles.Map.MapItemModel;
+using TendedTarsier.Script.Modules.General.Profiles.Map;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 {
@@ -109,8 +108,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             _inventoryProfile.InventoryItems[itemId].Value--;
 
             var emitterPosition = GetPlayerPosition.Invoke();
-            var targetPosition = emitterPosition + GetTargetDirection.Invoke() * _statsConfig.DropDistance;
-            var mapItem = new MapItemModel
+            var targetPosition = emitterPosition + _statsConfig.DropDistance * GetTargetDirection.Invoke();
+            var mapItem = new ItemMapModel
             {
                 ItemEntity = new ItemEntity { Id = itemId, Count = 1 },
                 SortingLayerID = GetPlayerSortingLayerID.Invoke(),
@@ -176,7 +175,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             if (!string.IsNullOrEmpty(item))
             {
                 var itemModel = _inventoryConfig[item];
-                result = itemModel.Perform(GetTargetPosition.Invoke());
+                result = itemModel.Perform();
 
                 if (itemModel.IsCountable && result)
                 {

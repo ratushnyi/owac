@@ -9,7 +9,7 @@ using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject;
 using TendedTarsier.Script.Modules.General.Services;
 using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General;
-using MapItemModel = TendedTarsier.Script.Modules.General.Profiles.Map.MapItemModel;
+using TendedTarsier.Script.Modules.General.Profiles.Map;
 using MapProfile = TendedTarsier.Script.Modules.General.Profiles.Map.MapProfile;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
@@ -57,7 +57,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
             }
         }
 
-        public async UniTask DropMapItem(MapItemModel mapItemModel, Vector3 emitterPosition, Vector3 targetPosition)
+        public async UniTask DropMapItem(ItemMapModel itemMapModel, Vector3 emitterPosition, Vector3 targetPosition)
         {
             var tilemap = _tilemapService.GetTilemap(new Vector2Int(Mathf.CeilToInt(targetPosition.x), Mathf.CeilToInt(targetPosition.y)));
             if (tilemap == null)
@@ -65,11 +65,11 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
                 return;
             }
 
-            _mapProfile.MapItemsList.Add(mapItemModel);
+            _mapProfile.MapItemsList.Add(itemMapModel);
             _mapProfile.Save();
 
             var item = UnityEngine.Object.Instantiate(_mapConfig.ItemMapObjectPrefab, _propsLayerTransform);
-            item.Setup(_inventoryConfig[mapItemModel.ItemEntity.Id], mapItemModel, emitterPosition);
+            item.Setup(_inventoryConfig[itemMapModel.ItemEntity.Id], itemMapModel, emitterPosition);
             await item.DoMove(targetPosition);
             var sortingLayer = SortingLayer.NameToID(tilemap.GetComponent<Renderer>().sortingLayerName);
             item.Init(tilemap.gameObject.layer, sortingLayer, _mapConfig.ItemMapActivationDelay);

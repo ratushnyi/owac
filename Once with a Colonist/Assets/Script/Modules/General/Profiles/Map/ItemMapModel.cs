@@ -5,7 +5,7 @@ using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 namespace TendedTarsier.Script.Modules.General.Profiles.Map
 {
     [MemoryPackable]
-    public partial class MapItemModel
+    public partial class ItemMapModel
     {
         [MemoryPackAllowSerialize]
         public Vector3 Position { get; set; }

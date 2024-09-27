@@ -16,7 +16,7 @@ namespace TendedTarsier.Script.Modules.General.Profiles.Map
         public override string Name => "Map";
 
         [MemoryPackOrder(0)]
-        public List<MapItemModel> MapItemsList { get; [UsedImplicitly] set; } = new();
+        public List<ItemMapModel> MapItemsList { get; [UsedImplicitly] set; } = new();
 
         [MemoryPackOrder(1)]
         public Dictionary<Vector2Int, TileModel.TileType> ChangedTiles { get; [UsedImplicitly] set; } = new();
@@ -31,7 +31,7 @@ namespace TendedTarsier.Script.Modules.General.Profiles.Map
         {
             foreach (var mapItem in _mapConfig.ItemMapObjectsPreconditionList)
             {
-                MapItemsList.Add(new MapItemModel
+                MapItemsList.Add(new ItemMapModel
                     { Position = mapItem.transform.position, ItemEntity = mapItem.ItemEntity, SortingLayerID = mapItem.SpriteRenderer.sortingLayerID, LayerID = mapItem.gameObject.layer });
             }
         }
