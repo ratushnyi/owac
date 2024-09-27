@@ -6,11 +6,13 @@ namespace TendedTarsier.Script.Modules.General.Configs.Stats
     [Serializable]
     public class StatFeeModel
     {
-        [field:SerializeField] 
-        public StatType Type {get;set;}
-        [field:SerializeField] 
-        public int Rate {get;set;}
-        [field:SerializeField] 
-        public int Value {get;set;}
+        [field: SerializeField]
+        public StatType Type { get; set; }
+
+        [field: SerializeField]
+        public int Rate { get; set; }
+
+        [field: SerializeField]
+        public int Value { get; set; }
     }
 }

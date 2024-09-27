@@ -18,20 +18,5 @@ namespace TendedTarsier.Script.Modules.General.Configs.Stats
 
         [field: SerializeField]
         public List<StatFeeConditionModel> StatsFeeConditionalList { get; set; }
-
-        [field: SerializeField]
-        public StatFeeModel RunFee { get; set; }
-
-        [field: SerializeField]
-        public int WalkSpeed { get; set; } = 1;
-
-        [field: SerializeField]
-        public int RunSpeed { get; set; } = 2;
-        
-        [field: SerializeField]
-        public float MovementSpeed { get; set; } = 2;
-
-        [field: SerializeField]
-        public int DropDistance { get; set; } = 3;
     }
 }

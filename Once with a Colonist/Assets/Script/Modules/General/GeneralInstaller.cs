@@ -29,6 +29,8 @@ namespace TendedTarsier.Script.Modules.General
         private MenuConfig _menuConfig;
         [SerializeField]
         private StatsConfig _statsConfig;
+        [SerializeField]
+        private PlayerConfig _playerConfig;
 
         public override void InstallBindings()
         {
@@ -52,6 +54,7 @@ namespace TendedTarsier.Script.Modules.General
 
         private void BindProfiles()
         {
+            Container.BindProfile<PlayerProfile>();
             Container.BindProfile<StatsProfile>();
             Container.BindProfile<MapProfile>();
             Container.BindProfile<InventoryProfile>();
@@ -59,6 +62,7 @@ namespace TendedTarsier.Script.Modules.General
 
         private void BindConfigs()
         {
+            Container.Bind<PlayerConfig>().FromScriptableObject(_playerConfig).AsSingle().NonLazy();
             Container.Bind<GameplayConfig>().FromScriptableObject(_gameplayConfig).AsSingle().NonLazy();
             Container.Bind<GeneralConfig>().FromInstance(_generalConfig).AsSingle().NonLazy();
             Container.Bind<InventoryConfig>().FromScriptableObject(_inventoryConfig).AsSingle().NonLazy();

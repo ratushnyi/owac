@@ -2,11 +2,9 @@ using System.Collections.Generic;
 using TendedTarsier.Script.Modules.Gameplay.Panels.Inventory;
 using UniRx;
 using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
 using TendedTarsier.Script.Modules.General.Panels;
 using TendedTarsier.Script.Modules.General.Profiles.Inventory;
-using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Configs.Stats;
 
@@ -14,9 +12,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Panels.HUD
 {
     public class HUDPanel : PanelBase
     {
-        [field: SerializeField]
-        public Button MenuButton { get; set; }
-
         [field: SerializeField]
         public InventoryCellView SelectedItem { get; set; }
 

@@ -32,7 +32,12 @@ namespace TendedTarsier.Script.Modules.General.Profiles.Map
             foreach (var mapItem in _mapConfig.ItemMapObjectsPreconditionList)
             {
                 MapItemsList.Add(new ItemMapModel
-                    { Position = mapItem.transform.position, ItemEntity = mapItem.ItemEntity, SortingLayerID = mapItem.SpriteRenderer.sortingLayerID, LayerID = mapItem.gameObject.layer });
+                {
+                    Position = mapItem.transform.position,
+                    ItemEntity = mapItem.ItemEntity,
+                    SortingLayerID = mapItem.SpriteRenderer.sortingLayerID,
+                    LayerID = mapItem.gameObject.layer
+                });
             }
         }
     }

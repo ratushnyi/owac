@@ -3,14 +3,13 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
 using UniRx;
-using UnityEngine;
 using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 using TendedTarsier.Script.Modules.Gameplay.Services.Map;
 using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject;
+using TendedTarsier.Script.Modules.Gameplay.Services.Player;
 using TendedTarsier.Script.Modules.General.Services;
 using TendedTarsier.Script.Modules.General.Configs;
-using TendedTarsier.Script.Modules.General.Configs.Stats;
 using TendedTarsier.Script.Modules.General.Panels;
 using TendedTarsier.Script.Modules.General.Profiles.Inventory;
 using TendedTarsier.Script.Modules.General.Profiles.Map;
@@ -22,25 +21,23 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
     {
         private readonly PanelLoader<HUDPanel> _hudPanel;
         private readonly MapService _mapService;
-        private readonly StatsConfig _statsConfig;
+        private readonly PlayerService _playerService;
+        private readonly PlayerConfig _playerConfig;
         private readonly InventoryConfig _inventoryConfig;
         private readonly InventoryProfile _inventoryProfile;
-
-        public Func<Vector3Int> GetTargetPosition;
-        public Func<Vector3Int> GetTargetDirection;
-        public Func<Vector3> GetPlayerPosition;
-        public Func<int> GetPlayerSortingLayerID;
 
         private InventoryService(
             InventoryProfile inventoryProfile,
             InventoryConfig inventoryConfig,
-            StatsConfig statsConfig,
+            PlayerConfig playerConfig,
+            PlayerService playerService,
             MapService mapService,
             PanelLoader<HUDPanel> hudPanel)
         {
             _inventoryProfile = inventoryProfile;
             _inventoryConfig = inventoryConfig;
-            _statsConfig = statsConfig;
+            _playerConfig = playerConfig;
+            _playerService = playerService;
             _mapService = mapService;
             _hudPanel = hudPanel;
         }
@@ -107,15 +104,15 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 
             _inventoryProfile.InventoryItems[itemId].Value--;
 
-            var emitterPosition = GetPlayerPosition.Invoke();
-            var targetPosition = emitterPosition + _statsConfig.DropDistance * GetTargetDirection.Invoke();
+            var playerPosition = _playerService.PlayerPosition.Value;
+            var targetPosition = playerPosition + _playerConfig.DropDistance * _playerService.TargetDirection.Value;
             var mapItem = new ItemMapModel
             {
                 ItemEntity = new ItemEntity { Id = itemId, Count = 1 },
-                SortingLayerID = GetPlayerSortingLayerID.Invoke(),
+                SortingLayerID = _playerService.PlayerSortingLayerID.Value,
                 Position = targetPosition
             };
-            await _mapService.DropMapItem(mapItem, emitterPosition, targetPosition);
+            await _mapService.DropMapItem(mapItem, playerPosition, targetPosition);
         }
 
         public bool TryPut(string id, int count, Func<UniTask> beforeItemAdd = null)

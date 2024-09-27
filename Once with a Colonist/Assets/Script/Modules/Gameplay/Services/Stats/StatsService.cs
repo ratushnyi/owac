@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using UniRx;
-using UnityEngine;
 using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.HUD;
 using TendedTarsier.Script.Modules.General.Configs.Stats;
@@ -150,24 +149,13 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
             }
         }
 
-        public void OnSessionStarted()
-        {
-            _statsProfile.FirstStartDate ??= DateTime.UtcNow;
-            _statsProfile.LastSaveDate = DateTime.UtcNow;
-            _statsProfile.Save();
-        }
-
-        public void UpdateStatsProfile(Vector2 position, int soringLayerID, int layer)
-        {
-            _statsProfile.PlayerPosition = position;
-            _statsProfile.SoringLayerID = soringLayerID;
-            _statsProfile.Layer = layer;
-            _statsProfile.LastSaveDate = DateTime.UtcNow;
-            _statsProfile.Save();
-        }
-
         public bool IsSuitable(StatType statType, int value)
         {
+            if (value == 0)
+            {
+                return true;
+            }
+
             var profileElement = _statsProfile.StatsDictionary[statType];
             var levelModel = _statsConfig[statType][profileElement.Level.Value];
             var hypotheticalValue = profileElement.Value.Value + value;
@@ -179,6 +167,11 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
 
         public bool ApplyValue(StatType statType, int value)
         {
+            if (value == 0)
+            {
+                return true;
+            }
+
             var profileElement = _statsProfile.StatsDictionary[statType];
             var levelModel = _statsConfig[statType][profileElement.Level.Value];
             var newValue = Math.Min(levelModel.MaxValue, profileElement.Value.Value + value);

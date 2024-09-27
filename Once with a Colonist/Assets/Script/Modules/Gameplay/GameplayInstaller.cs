@@ -1,14 +1,15 @@
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Zenject;
 using TendedTarsier.Script.Utilities.Extensions;
-using TendedTarsier.Script.Modules.Gameplay.Character;
 using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
 using TendedTarsier.Script.Modules.Gameplay.Panels.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.HUD;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Map;
+using TendedTarsier.Script.Modules.Gameplay.Services.Player;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General;
@@ -18,21 +19,19 @@ namespace TendedTarsier.Script.Modules.Gameplay
 {
     public class GameplayInstaller : MonoInstaller
     {
-        [Header("Common")]
-        [SerializeField]
-        private PlayerController _playerController;
-        [SerializeField]
-        private PlayerProgressBarController _playerProgressBarController;
+        [Header("SceneObjects")]
         [SerializeField]
         private Transform _mapItemsContainerTransform;
         [SerializeField]
         private List<Tilemap> _groundTilemapsList;
-
-        [Header("UI")]
+        
+        [Header("System")]
+        [SerializeField]
+        private Canvas _gameplayCanvas;
         [SerializeField]
         private Camera _gameplayCamera;
         [SerializeField]
-        private Canvas _gameplayCanvas;
+        private CinemachineVirtualCamera _cinemachineCamera;
 
         [Header("Panels")]
         [SerializeField]
@@ -53,6 +52,7 @@ namespace TendedTarsier.Script.Modules.Gameplay
 
         private void BindInventoryItems()
         {
+            TypeAnalyzer.ShouldAllowDuringValidation<InventoryConfig>();
             Container.Resolve<InventoryConfig>().InventoryItems.ForEach(t => Container.Inject(t.Tool));
         }
 
@@ -63,12 +63,14 @@ namespace TendedTarsier.Script.Modules.Gameplay
             Container.BindService<HUDService>();
             Container.BindService<StatsService>();
             Container.BindService<MapService>();
+            Container.BindService<PlayerService>();
         }
 
         private void BindSystem()
         {
             Container.Bind<Canvas>().FromInstance(_gameplayCanvas).NonLazy();
             Container.Bind<Camera>().FromInstance(_gameplayCamera).NonLazy();
+            Container.Bind<CinemachineVirtualCamera>().FromInstance(_cinemachineCamera).NonLazy();
         }
 
         private void BindPanels()
@@ -80,8 +82,6 @@ namespace TendedTarsier.Script.Modules.Gameplay
 
         private void BindSceneObjects()
         {
-            Container.Bind<PlayerProgressBarController>().FromInstance(_playerProgressBarController).AsSingle();
-            Container.Bind<PlayerController>().FromInstance(_playerController).AsSingle();
             Container.Bind<List<Tilemap>>().WithId(GeneralConstants.GroundTilemapsListId).FromInstance(_groundTilemapsList);
             Container.Bind<Transform>().WithId(GeneralConstants.MapItemsContainerTransformId).FromInstance(_mapItemsContainerTransform);
         }

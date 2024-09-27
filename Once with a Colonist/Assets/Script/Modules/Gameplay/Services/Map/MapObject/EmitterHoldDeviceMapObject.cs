@@ -1,8 +1,7 @@
-using System;
 using Cysharp.Threading.Tasks;
-using TendedTarsier.Script.Modules.Gameplay.Character;
 using UnityEngine;
 using Zenject;
+using UniRx;
 using TendedTarsier.Script.Utilities.Extensions;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
@@ -10,34 +9,32 @@ using TendedTarsier.Script.Modules.General;
 using TendedTarsier.Script.Modules.General.Configs.Stats;
 using TendedTarsier.Script.Modules.General.Profiles.Map;
 using TendedTarsier.Script.Modules.General.Services.Input;
-using UniRx;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
 {
-    public class EmitterDeviceMapObject : DeviceMapObject
+    public class EmitterHoldDeviceMapObject : DeviceMapObject
     {
-        private ISubject<Unit> _onPlayerExit = new Subject<Unit>();
+        private readonly ISubject<Unit> _onPlayerExit = new Subject<Unit>();
+
         private MapService _mapService;
         private StatsService _statsService;
         private InputService _inputService;
-        private PlayerProgressBarController _playerProgressBarController;
 
         [SerializeField]
-        public int _dropDistance = 2;
+        private int _dropDistance = 2;
         [SerializeField]
-        public Direction _direction;
+        private Direction _direction;
         [SerializeField]
-        public ItemEntity _emissionItem;
+        private ItemEntity _emissionItem;
         [SerializeField]
-        public StatFeeModel _statFeeModel;
+        private StatFeeModel _statFeeModel;
 
         [Inject]
-        private void Construct(MapService mapService, StatsService statsService, InputService inputService, PlayerProgressBarController playerProgressBarController)
+        private void Construct(MapService mapService, StatsService statsService, InputService inputService)
         {
             _mapService = mapService;
             _statsService = statsService;
             _inputService = inputService;
-            _playerProgressBarController = playerProgressBarController;
         }
 
         private void OnTriggerExit2D(Collider2D other)
@@ -59,15 +56,15 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
 
             if (_statFeeModel.Rate != 0)
             {
-                var onPerformSuccess = UniTask.Delay(TimeSpan.FromSeconds(_statFeeModel.Rate));
                 var onPlayerExit = _onPlayerExit.First().ToUniTask();
                 var onCancelPerformed = _inputService.OnXButtonCanceled.First().ToUniTask();
-                _playerProgressBarController.ShowProgressBar(_statFeeModel.Rate);
-                var result = await UniTask.WhenAny(onPerformSuccess, onCancelPerformed, onPlayerExit);
+                var progressBar = _mapService.ShowProgressBar(this, _statFeeModel.Rate);
+
+                var result = await UniTask.WhenAny(progressBar.awaiter, onCancelPerformed, onPlayerExit);
 
                 if (result > 0)
                 {
-                    _playerProgressBarController.Cancel();
+                    progressBar.disposable.Dispose();
                     return false;
                 }
             }

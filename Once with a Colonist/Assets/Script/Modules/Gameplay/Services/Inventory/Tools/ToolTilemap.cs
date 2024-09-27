@@ -1,5 +1,5 @@
 using Cysharp.Threading.Tasks;
-using TendedTarsier.Script.Modules.Gameplay.Character;
+using TendedTarsier.Script.Modules.Gameplay.Services.Player;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using UnityEngine;
 using Zenject;
@@ -10,16 +10,16 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Tools
     public class ToolTilemap : ToolBase
     {
         private TilemapService _tilemapService;
-        private PlayerController _playerController;
+        private PlayerService _playerService;
 
         [SerializeField]
         private TileModel.TileType _tileType;
 
         [Inject]
-        public void Construct(TilemapService tilemapService, PlayerController playerController)
+        public void Construct(TilemapService tilemapService, PlayerService playerService)
         {
             _tilemapService = tilemapService;
-            _playerController = playerController;
+            _playerService = playerService;
         }
 
         public override UniTask<bool> Perform()
@@ -29,7 +29,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Tools
                 return new UniTask<bool>(false);
             }
 
-            if (_tilemapService.GetTile(_playerController.TargetPosition.Value) == _tileType)
+            var targetPosition = _playerService.TargetPosition;
+            if (_tilemapService.GetTile(targetPosition) == _tileType)
             {
                 return new UniTask<bool>(false);
             }
@@ -39,7 +40,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Tools
                 return new UniTask<bool>(false);
             }
 
-            _tilemapService.ChangedTile(_playerController.TargetPosition.Value, _tileType);
+            _tilemapService.ChangedTile(targetPosition, _tileType);
             return new UniTask<bool>(true);
         }
     }

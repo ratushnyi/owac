@@ -59,11 +59,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
                 .Subscribe(_ => OnMenuButtonClick())
                 .AddTo(CompositeDisposable);
 
-            _hudPanel.Instance.MenuButton
-                .OnClickAsObservable()
-                .Subscribe(_ => OnMenuButtonClick())
-                .AddTo(CompositeDisposable);
-
             _eventSystem.SetSelectedGameObject(_hudPanel.Instance.SelectedItem.gameObject);
         }
 

@@ -19,6 +19,9 @@ namespace TendedTarsier.Script.Modules.General.Configs
         public ItemMapObject ItemMapObjectPrefab { get; set; }
 
         [field: SerializeField]
+        public MapObjectProgressBar MapObjectProgressBarPrefab { get; set; }
+
+        [field: SerializeField]
         public List<ItemMapObject> ItemMapObjectsPreconditionList { get; set; } = new();
 
         [field: SerializeField]
