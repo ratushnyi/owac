@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.General.Configs.Stats;
 using UnityEngine;
@@ -23,9 +24,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Tools
             StatsService = statsService;
         }
 
-        public virtual bool Perform()
+        public virtual UniTask<bool> Perform()
         {
-            return UseResources();
+            return new UniTask<bool>(UseResources());
         }
     }
 }

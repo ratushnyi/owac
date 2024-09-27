@@ -168,14 +168,14 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             return item.Collider.enabled && TryPut(item.ItemEntity.Id, item.ItemEntity.Count, () => _mapService.RemoveMapItem(item));
         }
 
-        public bool Perform()
+        public async UniTask<bool> Perform()
         {
             var result = false;
             var item = _inventoryProfile.SelectedItem.Value;
             if (!string.IsNullOrEmpty(item))
             {
                 var itemModel = _inventoryConfig[item];
-                result = itemModel.Perform();
+                result = await itemModel.Perform();
 
                 if (itemModel.IsCountable && result)
                 {

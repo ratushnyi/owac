@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using TendedTarsier.Script.Modules.General;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
@@ -9,6 +10,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
             tag = GeneralConstants.DeviceTag;
         }
 
-        public abstract bool Perform();
+        public abstract UniTask<bool> Perform();
     }
 }

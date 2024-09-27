@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using TendedTarsier.Script.Modules.Gameplay.Character;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using UnityEngine;
@@ -21,25 +22,25 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Tools
             _playerController = playerController;
         }
 
-        public override bool Perform()
+        public override UniTask<bool> Perform()
         {
             if (_tilemapService.CurrentTilemap.Value == null)
             {
-                return false;
+                return new UniTask<bool>(false);
             }
 
             if (_tilemapService.GetTile(_playerController.TargetPosition.Value) == _tileType)
             {
-                return false;
+                return new UniTask<bool>(false);
             }
 
             if (!UseResources())
             {
-                return false;
+                return new UniTask<bool>(false);
             }
 
             _tilemapService.ChangedTile(_playerController.TargetPosition.Value, _tileType);
-            return true;
+            return new UniTask<bool>(true);
         }
     }
 }

@@ -22,6 +22,8 @@ namespace TendedTarsier.Script.Modules.Gameplay
         [SerializeField]
         private PlayerController _playerController;
         [SerializeField]
+        private PlayerProgressBarController _playerProgressBarController;
+        [SerializeField]
         private Transform _mapItemsContainerTransform;
         [SerializeField]
         private List<Tilemap> _groundTilemapsList;
@@ -39,7 +41,7 @@ namespace TendedTarsier.Script.Modules.Gameplay
         private HUDPanel _hudPanel;
         [SerializeField]
         private InventoryPanel _inventoryPanel;
-        
+
         public override void InstallBindings()
         {
             BindSystem();
@@ -78,6 +80,7 @@ namespace TendedTarsier.Script.Modules.Gameplay
 
         private void BindSceneObjects()
         {
+            Container.Bind<PlayerProgressBarController>().FromInstance(_playerProgressBarController).AsSingle();
             Container.Bind<PlayerController>().FromInstance(_playerController).AsSingle();
             Container.Bind<List<Tilemap>>().WithId(GeneralConstants.GroundTilemapsListId).FromInstance(_groundTilemapsList);
             Container.Bind<Transform>().WithId(GeneralConstants.MapItemsContainerTransformId).FromInstance(_mapItemsContainerTransform);
