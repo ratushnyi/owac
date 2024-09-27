@@ -14,17 +14,12 @@ using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Map;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using TendedTarsier.Script.Modules.General;
 
 namespace TendedTarsier.Script.Modules.Gameplay
 {
     public class GameplayInstaller : MonoInstaller
     {
-        public const string GroundTilemapsListId = "ground_tilemaps_list";
-        public const string MapItemsContainerTransformId = "map_items_container_transform";
-        public const string PlayerTag = "Player";
-        public const string GroundTag = "Ground";
-        public const string ItemTag =  "Item";
-
         [Header("Configs")]
         [SerializeField]
         private InventoryConfig _inventoryConfig;
@@ -99,8 +94,8 @@ namespace TendedTarsier.Script.Modules.Gameplay
         private void BindSceneObjects()
         {
             Container.Bind<PlayerController>().FromInstance(_playerController).AsSingle();
-            Container.Bind<List<Tilemap>>().WithId(GroundTilemapsListId).FromInstance(_groundTilemapsList);
-            Container.Bind<Transform>().WithId(MapItemsContainerTransformId).FromInstance(_mapItemsContainerTransform);
+            Container.Bind<List<Tilemap>>().WithId(GeneralConstants.GroundTilemapsListId).FromInstance(_groundTilemapsList);
+            Container.Bind<Transform>().WithId(GeneralConstants.MapItemsContainerTransformId).FromInstance(_mapItemsContainerTransform);
         }
     }
 }

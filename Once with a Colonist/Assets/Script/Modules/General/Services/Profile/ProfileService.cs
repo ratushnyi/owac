@@ -14,7 +14,7 @@ namespace TendedTarsier.Script.Modules.General.Services.Profile
     [UsedImplicitly]
     public class ProfileService : ServiceBase
     {
-        public static readonly string ProfilesDirectory = Path.Combine(Application.persistentDataPath, "Profiles");
+        public static readonly string ProfilesDirectory = Path.Combine(Application.persistentDataPath, GeneralConstants.ProfilesDirectory);
 
         private readonly List<IProfile> _profiles;
 

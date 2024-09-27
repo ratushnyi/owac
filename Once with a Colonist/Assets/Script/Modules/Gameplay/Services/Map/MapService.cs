@@ -2,15 +2,15 @@ using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using JetBrains.Annotations;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Inventory;
-using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
-using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
-using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
-using TendedTarsier.Script.Modules.General.Services;
-using UniRx;
 using UnityEngine;
 using Zenject;
-using ItemEntity = TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items.ItemEntity;
+using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
+using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
+using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Inventory;
+using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
+using TendedTarsier.Script.Modules.General.Services;
+using TendedTarsier.Script.Modules.General;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
 {
@@ -28,7 +28,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
         private readonly Transform _propsLayerTransform;
 
         private MapService(
-            [Inject(Id = GameplayInstaller.MapItemsContainerTransformId)] Transform propsLayerTransform,
+            [Inject(Id = GeneralConstants.MapItemsContainerTransformId)] 
+            Transform propsLayerTransform,
             InventoryConfig inventoryConfig,
             MapProfile mapProfile,
             TilemapService tilemapService,

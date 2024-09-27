@@ -10,6 +10,7 @@ using TendedTarsier.Script.Modules.Gameplay.Services.Map;
 using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapItem;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using TendedTarsier.Script.Modules.General;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Character
 {
@@ -154,11 +155,11 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         {
             switch (other.tag)
             {
-                case GameplayInstaller.GroundTag:
+                case GeneralConstants.GroundTag:
                     var tilemap = other.GetComponent<Tilemap>();
                     _tilemapService.OnGroundEnter(tilemap);
                     break;
-                case GameplayInstaller.ItemTag:
+                case GeneralConstants.ItemTag:
                     var mapItem = other.GetComponent<MapItem>();
                     _inventoryService.TryPut(mapItem);
                     break;
@@ -169,7 +170,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         {
             switch (other.tag)
             {
-                case GameplayInstaller.GroundTag:
+                case GeneralConstants.GroundTag:
                     var tilemap = other.GetComponent<Tilemap>();
                     _tilemapService.OnGroundExit(tilemap);
                     break;

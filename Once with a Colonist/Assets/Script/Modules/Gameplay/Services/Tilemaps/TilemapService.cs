@@ -4,10 +4,11 @@ using JetBrains.Annotations;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Zenject;
 using TendedTarsier.Script.Modules.General.Services;
 using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
 using TendedTarsier.Script.Modules.Gameplay.Configs.Tilemap;
-using Zenject;
+using TendedTarsier.Script.Modules.General;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
 {
@@ -24,9 +25,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
         private Vector3Int _lastTarget;
 
         private TilemapService(
-            [Inject(Id = GameplayInstaller.GroundTilemapsListId)]
+            [Inject(Id = GeneralConstants.GroundTilemapsListId)] 
             List<Tilemap> tilemaps,
-            MapProfile mapProfile, 
+            MapProfile mapProfile,
             TilemapConfig tilemapConfig)
         {
             _tilemaps = tilemaps;
@@ -86,7 +87,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
             {
                 return TileModel.TileType.None;
             }
-            
+
             var tile = _currentTilemap.Value.GetTile(chords);
             var model = _tilemapConfig.TileModelsList.FirstOrDefault(t => t.Tile == tile);
 
@@ -115,15 +116,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
 
         public Tilemap GetTilemap(Vector2Int tilePosition)
         {
-            foreach (var tilemap in _tilemaps)
-            {
-                if (tilemap.GetTile((Vector3Int)tilePosition) != null)
-                {
-                    return tilemap;
-                }
-            }
-
-            return null;
+            return _tilemaps.FirstOrDefault(tilemap => tilemap.GetTile((Vector3Int)tilePosition) != null);
         }
     }
 }
