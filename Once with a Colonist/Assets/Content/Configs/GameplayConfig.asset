@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fb641abc3c940d3aa41ff2e141955e6, type: 3}
   m_Name: GameplayConfig
   m_EditorClassIdentifier: 
-  <CameraLerpSpeed>k__BackingField: 2
-  <CameraBuffer>k__BackingField: {x: 4, y: 2}
   <MovementSpeed>k__BackingField: 2
   <DropDistance>k__BackingField: 5
   <EnergyRecoveryRate>k__BackingField: 10

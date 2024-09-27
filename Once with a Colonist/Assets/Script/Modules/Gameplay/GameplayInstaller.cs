@@ -24,7 +24,6 @@ namespace TendedTarsier.Script.Modules.Gameplay
         public const string PlayerTag = "Player";
         public const string GroundTag = "Ground";
         public const string ItemTag =  "Item";
-        public const string UntaggedTag =  "Untagged";
 
         [Header("Configs")]
         [SerializeField]

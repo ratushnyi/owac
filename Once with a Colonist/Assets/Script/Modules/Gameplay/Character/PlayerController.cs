@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Gameplay;
 using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
 using UniRx;
 using UnityEngine;
@@ -34,9 +33,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         private int _currentSpeed;
         private int _soringLayerID;
         private float _runFeeDelay;
-
-        private Camera _gameplayCamera;
-        private GameplayConfig _gameplayConfig;
+        
         private StatsConfig _statsConfig;
         private MapService _mapService;
         private StatsService _statsService;
@@ -48,8 +45,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
         [Inject]
         private void Construct(
-            Camera gameplayCamera,
-            GameplayConfig gameplayConfig,
             StatsConfig statsConfig,
             MapService mapService,
             StatsService statsService,
@@ -57,8 +52,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             InventoryService inventoryService,
             TilemapService tilemapService)
         {
-            _gameplayCamera = gameplayCamera;
-            _gameplayConfig = gameplayConfig;
             _statsConfig = statsConfig;
             _mapService = mapService;
             _statsService = statsService;
@@ -91,22 +84,11 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
         private void Update()
         {
-            UpdatePlayerPosition();
-            UpdateCameraPosition();
+            UpdateTarget();
+            UpdateSpeed();
         }
 
-        private void UpdateCameraPosition()
-        {
-            var difference = transform.position - _gameplayCamera.transform.position;
-            if (Mathf.Abs(difference.x) < _gameplayConfig.CameraBuffer.x && Mathf.Abs(difference.y) < _gameplayConfig.CameraBuffer.y)
-            {
-                return;
-            }
-
-            _gameplayCamera.transform.position = Vector3.Lerp(_gameplayCamera.transform.position, transform.position, _gameplayConfig.CameraLerpSpeed * Time.deltaTime);
-        }
-
-        private void UpdatePlayerPosition()
+        private void UpdateTarget()
         {
             if (_playerPosition == transform.position)
             {
@@ -121,9 +103,12 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             }
 
             TargetPosition.Value = new Vector3Int(Mathf.FloorToInt(_playerPosition.x), Mathf.RoundToInt(_playerPosition.y)) + TargetDirection.Value;
-            _tilemapService.ProcessTiles(TargetPosition.Value);
+            _tilemapService.ProcessTarget(TargetPosition.Value);
+        }
 
-            if (_currentSpeed == _statsConfig.RunSpeed)
+        private void UpdateSpeed()
+        {
+            if (_currentSpeed > _statsConfig.WalkSpeed && _rigidbody2D.velocity.magnitude > 0)
             {
                 _runFeeDelay -= Time.deltaTime;
 

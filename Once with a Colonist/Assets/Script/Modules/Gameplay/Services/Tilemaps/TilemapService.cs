@@ -93,7 +93,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
             return model?.Type ?? TileModel.TileType.None;
         }
 
-        public void ProcessTiles(Vector3Int? targetPosition)
+        public void ProcessTarget(Vector3Int? targetPosition)
         {
             if (_currentTilemap.Value != null && targetPosition != null)
             {

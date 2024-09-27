@@ -203,8 +203,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
             profileElement.Value.Value = newValue;
             profileElement.Experience.Value += experience;
 
-            _statsProfile.Save();
-
             return true;
         }
 
