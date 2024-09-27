@@ -5,7 +5,6 @@ using JetBrains.Annotations;
 using MemoryPack;
 using UniRx;
 using UnityEngine;
-using TendedTarsier.Script.Modules.General.Profile;
 using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
 using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using TendedTarsier.Script.Utilities.MemoryPack.FormatterProviders;

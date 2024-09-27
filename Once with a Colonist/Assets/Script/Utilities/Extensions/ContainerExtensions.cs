@@ -1,6 +1,5 @@
 using System.Linq;
 using TendedTarsier.Script.Modules.General.Panels;
-using TendedTarsier.Script.Modules.General.Profile;
 using TendedTarsier.Script.Modules.General.Services;
 using TendedTarsier.Script.Modules.General.Services.Profile;
 using UnityEngine;

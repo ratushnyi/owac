@@ -1,7 +1,6 @@
 using System;
 using MemoryPack;
 using UniRx;
-using TendedTarsier.Script.Modules.General.Profile;
 
 namespace TendedTarsier.Script.Modules.General.Services.Profile
 {
