@@ -20,14 +20,19 @@ namespace TendedTarsier.Script.Modules.General.Panels
         private readonly Canvas _canvas;
         private readonly DiContainer _container;
 
-        public T Instance;
-        public State PanelState;
+        public T Instance { get; private set; }
+        public State PanelState { get; private set; }
 
         private PanelLoader(T prefab, Canvas canvas, DiContainer container)
         {
             _prefab = prefab;
             _canvas = canvas;
             _container = container;
+
+            if (_prefab.ShowInstantly)
+            {
+                Show().Forget();
+            }
         }
 
         public async UniTask<T> Show()

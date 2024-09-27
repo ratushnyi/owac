@@ -1,59 +1,127 @@
-﻿using UniRx;
+﻿using System.Collections.Generic;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
+using UniRx;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Zenject;
 using TendedTarsier.Script.Modules.General.Services.Input;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
+using TendedTarsier.Script.Modules.Gameplay.Services.Map;
+using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapItem;
+using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using TendedTarsier.Script.Modules.General;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Character
 {
     public class PlayerController : MonoBehaviour
     {
+        [SerializeField]
+        private Rigidbody2D _rigidbody2D;
+        [SerializeField]
+        private Animator _animator;
+        [SerializeField]
+        private List<SpriteRenderer> _spriteRenderers;
+
         public readonly ReactiveProperty<Vector3Int> TargetDirection = new();
         public readonly ReactiveProperty<Vector3Int> TargetPosition = new();
 
         private readonly int _directionAnimatorKey = Animator.StringToHash("Direction");
         private readonly int _isMovingAnimatorKey = Animator.StringToHash("IsMoving");
 
+        private Vector3 _playerPosition;
         private Vector2 _moveDirection;
-        private float _speedModifier = 1;
-
-        private Rigidbody2D _rigidbody2D;
-        private Animator _animator;
-
+        private int _currentSpeed;
+        private int _soringLayerID;
+        private float _runFeeDelay;
+        
+        private StatsConfig _statsConfig;
+        private MapService _mapService;
+        private StatsService _statsService;
         private InputService _inputService;
         private InventoryService _inventoryService;
-        private StatsService _statsService;
         private TilemapService _tilemapService;
 
         private readonly CompositeDisposable _compositeDisposable = new();
 
         [Inject]
         private void Construct(
+            StatsConfig statsConfig,
+            MapService mapService,
+            StatsService statsService,
             InputService inputService,
             InventoryService inventoryService,
-            StatsService statsService,
             TilemapService tilemapService)
         {
+            _statsConfig = statsConfig;
+            _mapService = mapService;
+            _statsService = statsService;
             _inputService = inputService;
             _inventoryService = inventoryService;
-            _statsService = statsService;
             _tilemapService = tilemapService;
         }
 
         private void Start()
         {
-            _rigidbody2D = GetComponent<Rigidbody2D>();
-            _animator = GetComponent<Animator>();
-
             _inventoryService.GetTargetPosition = () => TargetPosition.Value;
-            _inventoryService.GetTargetDirection = () => TargetDirection.Value;
-            _inventoryService.GetCharacterPosition = () => transform.position;
+            _mapService.GetTargetDirection = () => TargetDirection.Value;
+            _mapService.GetPlayerTransform = () => transform;
+            _mapService.GetPlayerSortingLayerID = () => _soringLayerID;
 
-            transform.SetLocalPositionAndRotation(_statsService.PlayerPosition, Quaternion.identity);
+            if (!_statsService.IsFirstLoad)
+            {
+                transform.SetLocalPositionAndRotation(_statsService.PlayerPosition, Quaternion.identity);
+                ApplyLayer(_statsService.Layer, _statsService.SoringLayerID);
+            }
+            else
+            {
+                _soringLayerID = _spriteRenderers[0].sortingLayerID;
+            }
+
+            _currentSpeed = _statsConfig.WalkSpeed;
 
             SubscribeOnInput();
+        }
+
+        private void Update()
+        {
+            UpdateTarget();
+            UpdateSpeed();
+        }
+
+        private void UpdateTarget()
+        {
+            if (_playerPosition == transform.position)
+            {
+                return;
+            }
+
+            _playerPosition = transform.position;
+
+            if (_moveDirection != Vector2.zero)
+            {
+                TargetDirection.Value = Vector3Int.RoundToInt(_moveDirection);
+            }
+
+            TargetPosition.Value = new Vector3Int(Mathf.FloorToInt(_playerPosition.x), Mathf.RoundToInt(_playerPosition.y)) + TargetDirection.Value;
+            _tilemapService.ProcessTarget(TargetPosition.Value);
+        }
+
+        private void UpdateSpeed()
+        {
+            if (_currentSpeed > _statsConfig.WalkSpeed && _rigidbody2D.velocity.magnitude > 0)
+            {
+                _runFeeDelay -= Time.deltaTime;
+
+                if (_runFeeDelay <= 0)
+                {
+                    _statsService.ApplyValue(_statsConfig.RunFee.Type, _statsConfig.RunFee.Value);
+
+                    _runFeeDelay = _statsConfig.RunFee.Rate;
+
+                    OnSpeedChanged(true);
+                }
+            }
         }
 
         private void SubscribeOnInput()
@@ -87,13 +155,13 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         {
             switch (other.tag)
             {
-                case "Ground":
+                case GeneralConstants.GroundTag:
                     var tilemap = other.GetComponent<Tilemap>();
                     _tilemapService.OnGroundEnter(tilemap);
                     break;
-                case "Item":
-                    var mapItem = other.GetComponent<MapItemBase>();
-                    _inventoryService.TryPut(mapItem, transform);
+                case GeneralConstants.ItemTag:
+                    var mapItem = other.GetComponent<MapItem>();
+                    _inventoryService.TryPut(mapItem);
                     break;
             }
         }
@@ -102,16 +170,42 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         {
             switch (other.tag)
             {
-                case "Ground":
+                case GeneralConstants.GroundTag:
                     var tilemap = other.GetComponent<Tilemap>();
                     _tilemapService.OnGroundExit(tilemap);
                     break;
             }
         }
 
+        private void OnCollisionEnter2D(Collision2D _)
+        {
+            UpdateVelocity();
+        }
+
+        private void OnCollisionStay2D(Collision2D _)
+        {
+            UpdateVelocity();
+        }
+
+        private void OnCollisionExit2D(Collision2D _)
+        {
+            UpdateVelocity();
+        }
+
         private void OnSpeedChanged(bool isRunning)
         {
-            _speedModifier = isRunning ? 2 : 1;
+            var newSpeedValue = _statsConfig.WalkSpeed;
+            if (isRunning && _statsService.IsSuitable(_statsConfig.RunFee.Type, _statsConfig.RunFee.Value))
+            {
+                newSpeedValue = _statsConfig.RunSpeed;
+            }
+
+            if (_currentSpeed == newSpeedValue)
+            {
+                return;
+            }
+
+            _currentSpeed = newSpeedValue;
             UpdateVelocity();
         }
 
@@ -124,7 +218,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
         private void UpdateVelocity()
         {
-            _rigidbody2D.velocity = _statsService.MovementSpeed * _speedModifier * _moveDirection;
+            _rigidbody2D.velocity = _statsService.MovementSpeed * _currentSpeed * _moveDirection;
         }
 
         private Vector2 OnMove(Vector2 direction)
@@ -159,20 +253,30 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
                 }
             }
 
-            var transformPosition = transform.position;
-            if (direction != Vector2.zero)
-            {
-                TargetDirection.Value = Vector3Int.RoundToInt(direction);
-            }
-            TargetPosition.Value = new Vector3Int(Mathf.FloorToInt(transformPosition.x), Mathf.RoundToInt(transformPosition.y)) + TargetDirection.Value;
-            _tilemapService.ProcessTiles(_tilemapService.CurrentTilemap.Value, TargetPosition.Value);
-
             return direction;
+        }
+
+        public void ApplyLayer(string layer, string sortingLayer)
+        {
+            ApplyLayer(LayerMask.NameToLayer(layer), SortingLayer.NameToID(sortingLayer));
+        }
+
+        private void ApplyLayer(int layer, int sortingLayer)
+        {
+            gameObject.layer = layer;
+            _soringLayerID = sortingLayer;
+
+            foreach (var spriteRenderer in _spriteRenderers)
+            {
+                spriteRenderer.sortingLayerID = _soringLayerID;
+            }
+
+            _statsService.UpdateStatsProfile(transform.position, _soringLayerID, gameObject.layer);
         }
 
         private void OnDestroy()
         {
-            _statsService.OnSessionEnded(transform.position);
+            _statsService.UpdateStatsProfile(transform.position, _soringLayerID, gameObject.layer);
             _compositeDisposable.Dispose();
         }
     }

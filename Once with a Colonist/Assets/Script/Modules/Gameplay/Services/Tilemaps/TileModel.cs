@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
 {
     [Serializable]
     public class TileModel
@@ -10,7 +10,7 @@ namespace TendedTarsier
         [Serializable]
         public enum TileType
         {
-            Default,
+            None,
             Stone,
             Grass,
             Sett

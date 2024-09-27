@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21c68a1774ba447aa3befe87e95f7e6, type: 3}
+  m_Name: GeneralConfig
+  m_EditorClassIdentifier: 
+  <MenuScene>k__BackingField: Menu
+  <GameplayScene>k__BackingField: Gameplay
+  <MapItemsPreconditionList>k__BackingField:
+  - {fileID: 2019831184311285507, guid: 934cb070ff97344cd95232352c598133, type: 3}
+  - {fileID: 4471342278155799437, guid: 008dad82a734d4f4bb43d74b3674d4e4, type: 3}
+  - {fileID: 1542234645510507478, guid: a5bc51028838c49e1a73ace1397fadbe, type: 3}
+  - {fileID: 7861597345361840763, guid: 695012066aeb44d61b5633ac0ac83689, type: 3}
+  - {fileID: 2105207435361332622, guid: d54c466e1878040b899adebf191a0253, type: 3}
+  - {fileID: 2350275259587898902, guid: e09be341df3834cafa40f1f6e62b02ae, type: 3}
+  - {fileID: 1705366151952388823, guid: 106578b1ba48943da93dac99299c05e7, type: 3}
+  - {fileID: 184742999379730014, guid: f093854eedf1c46fdb39d624ab9647f4, type: 3}
+  - {fileID: 4486556494704750065, guid: d7315c23a504c41e187ba03c20305617, type: 3}
+  - {fileID: 7442606420551382516, guid: 0f2a2bf3b376249ebb398abf7b4fd209, type: 3}
+  - {fileID: 4526989482147161236, guid: 7d57e193600f44ae5836152fe256922f, type: 3}
+  - {fileID: 1083984076694478487, guid: e93a599a502fd45b08b96e753d395ba0, type: 3}
+  - {fileID: 6550659146289054198, guid: 6353b82b832214991a40e600044a709e, type: 3}

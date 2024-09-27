@@ -5,20 +5,27 @@ using JetBrains.Annotations;
 using MemoryPack;
 using UniRx;
 using UnityEngine;
-using TendedTarsier.Script.Modules.General.Profile;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
+using TendedTarsier.Script.Modules.General.Profiles.Stats;
+using TendedTarsier.Script.Utilities.MemoryPack.FormatterProviders;
 
 namespace TendedTarsier.Script.Modules.General.Services.Profile
 {
     [UsedImplicitly]
     public class ProfileService : ServiceBase
     {
-        public static readonly string ProfilesDirectory = Path.Combine(Application.persistentDataPath, "Profiles");
+        public static readonly string ProfilesDirectory = Path.Combine(Application.persistentDataPath, GeneralConstants.ProfilesDirectory);
 
         private readonly List<IProfile> _profiles;
 
         public ProfileService(List<IProfile> profiles)
         {
             _profiles = profiles;
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
 
             RegisterFormatters();
             LoadSections();
@@ -34,6 +41,7 @@ namespace TendedTarsier.Script.Modules.General.Services.Profile
             MemoryPackFormatterProvider.Register(new ReactivePropertyFormatter<string>());
             MemoryPackFormatterProvider.Register(new ReactivePropertyFormatter<int>());
             MemoryPackFormatterProvider.Register(new ReactivePropertyFormatter<float>());
+            MemoryPackFormatterProvider.Register(new ReactivePropertyFormatter<StatProfileElement>());
             MemoryPackFormatterProvider.Register(new ReactiveCollectionFormatter<bool>());
             MemoryPackFormatterProvider.Register(new ReactiveCollectionFormatter<string>());
             MemoryPackFormatterProvider.Register(new ReactiveCollectionFormatter<int>());
@@ -43,6 +51,7 @@ namespace TendedTarsier.Script.Modules.General.Services.Profile
             MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<string, int>());
             MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<string, float>());
             MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<string, ReactiveProperty<int>>());
+            MemoryPackFormatterProvider.Register(new ReactiveDictionaryFormatter<StatType, ReactiveProperty<StatProfileElement>>());
         }
 
         private void LoadSections()
@@ -79,6 +88,14 @@ namespace TendedTarsier.Script.Modules.General.Services.Profile
             profile.Init(this);
         }
 
+        public void SaveAll()
+        {
+            foreach (var profile in _profiles)
+            {
+                Save(profile);
+            }
+        }
+
         public void Save(IProfile profile)
         {
             try
@@ -113,6 +130,12 @@ namespace TendedTarsier.Script.Modules.General.Services.Profile
         {
             var fileName = name + ".json";
             return Path.Combine(ProfilesDirectory, fileName);
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            SaveAll();
         }
     }
 }

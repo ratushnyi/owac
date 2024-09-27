@@ -4,11 +4,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Zenject;
-using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.Gameplay.Character;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using TendedTarsier.Script.Modules.General;
+using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
 using UnityEngine.EventSystems;
+using InventoryProfile = TendedTarsier.Script.Modules.General.Profiles.Inventory.InventoryProfile;
+using StatsProfile = TendedTarsier.Script.Modules.General.Profiles.Stats.StatsProfile;
 
 namespace TendedTarsier.Script.Modules.Menu
 {
@@ -28,23 +31,23 @@ namespace TendedTarsier.Script.Modules.Menu
         [SerializeField]
         private Button _exitButton;
 
-        private PlayerProfile _playerProfile;
-        private TilemapProfile _tilemapProfile;
+        private StatsProfile _statsProfile;
+        private MapProfile _mapProfile;
         private InventoryProfile _inventoryProfile;
         private MenuConfig _menuConfig;
         private GeneralConfig _generalConfig;
         private EventSystem _eventSystem;
 
         [Inject]
-        private void Construct(PlayerProfile playerProfile,
-            TilemapProfile tilemapProfile,
+        private void Construct(StatsProfile statsProfile,
+            MapProfile mapProfile,
             InventoryProfile inventoryProfile,
             MenuConfig menuConfig,
             GeneralConfig generalConfig,
             EventSystem eventSystem)
         {
-            _playerProfile = playerProfile;
-            _tilemapProfile = tilemapProfile;
+            _statsProfile = statsProfile;
+            _mapProfile = mapProfile;
             _inventoryProfile = inventoryProfile;
             _menuConfig = menuConfig;
             _generalConfig = generalConfig;
@@ -76,7 +79,7 @@ namespace TendedTarsier.Script.Modules.Menu
 
         private void InitButtons()
         {
-            _continueButton.interactable = _playerProfile.StartDate != null;
+            _continueButton.interactable = _statsProfile.StartDate != null;
             _continueButton.OnClickAsObservable().Subscribe(OnContinueButtonClick).AddTo(_compositeDisposable);
             _newGameButton.OnClickAsObservable().Subscribe(OnNewGameButtonClick).AddTo(_compositeDisposable);
             _exitButton.OnClickAsObservable().Subscribe(OnExitButtonClick).AddTo(_compositeDisposable);
@@ -90,8 +93,8 @@ namespace TendedTarsier.Script.Modules.Menu
 
         private void OnNewGameButtonClick(Unit _)
         {
-            _playerProfile.Clear();
-            _tilemapProfile.Clear();
+            _statsProfile.Clear();
+            _mapProfile.Clear();
             _inventoryProfile.Clear();
             SceneManager.LoadScene(_generalConfig.GameplayScene);
         }

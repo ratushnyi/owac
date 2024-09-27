@@ -2,7 +2,7 @@
 using MemoryPack;
 using UniRx;
 
-namespace TendedTarsier
+namespace TendedTarsier.Script.Utilities.MemoryPack.FormatterProviders
 {
     public class ReactivePropertyFormatter<T> : MemoryPackFormatter<ReactiveProperty<T>>
     {

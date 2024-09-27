@@ -1,6 +1,4 @@
-using TendedTarsier.Script.Modules.General.Services.Profile;
-
-namespace TendedTarsier.Script.Modules.General.Profile
+namespace TendedTarsier.Script.Modules.General.Services.Profile
 {
     public interface IProfile
     {

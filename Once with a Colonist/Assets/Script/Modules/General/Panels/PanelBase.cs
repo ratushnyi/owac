@@ -6,6 +6,10 @@ namespace TendedTarsier.Script.Modules.General.Panels
 {
     public abstract class PanelBase : MonoBehaviour
     {
+        [SerializeField]
+        private bool _showInstantly;
+        public virtual bool ShowInstantly => _showInstantly;
+
         protected readonly CompositeDisposable CompositeDisposable = new();
 
         public virtual UniTask InitializeAsync()

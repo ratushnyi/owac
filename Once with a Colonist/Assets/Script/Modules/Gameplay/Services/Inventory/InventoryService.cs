@@ -3,45 +3,53 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using JetBrains.Annotations;
+using TendedTarsier.Script.Modules.Gameplay.Configs.Inventory;
 using UniRx;
 using UnityEngine;
-using Zenject;
-using TendedTarsier.Script.Modules.Gameplay.Configs;
+using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
+using TendedTarsier.Script.Modules.Gameplay.Services.Map;
+using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapItem;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
+using TendedTarsier.Script.Modules.General.Profiles.Inventory;
+using TendedTarsier.Script.Modules.General.Panels;
 using TendedTarsier.Script.Modules.General.Services;
+using ItemEntity = TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items.ItemEntity;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 {
     [UsedImplicitly]
     public class InventoryService : ServiceBase
     {
-        private readonly StatsService _statsService;
-        private readonly TilemapService _tilemapService;
+        private readonly PanelLoader<HUDPanel> _hudPanel;
+        private readonly MapService _mapService;
         private readonly InventoryConfig _inventoryConfig;
         private readonly InventoryProfile _inventoryProfile;
-        private readonly Transform _propsLayerTransform;
 
-        public Func<Vector3Int> GetTargetDirection;
         public Func<Vector3Int> GetTargetPosition;
-        public Func<Vector3> GetCharacterPosition;
 
         private InventoryService(
-            [Inject(Id = GameplayInstaller.PropsTransformId)] Transform propsLayerTransform,
             InventoryProfile inventoryProfile,
             InventoryConfig inventoryConfig,
-            TilemapService tilemapService,
-            StatsService statsService)
+            MapService mapService,
+            PanelLoader<HUDPanel> hudPanel)
         {
-            _propsLayerTransform = propsLayerTransform;
             _inventoryProfile = inventoryProfile;
             _inventoryConfig = inventoryConfig;
-            _tilemapService = tilemapService;
-            _statsService = statsService;
+            _mapService = mapService;
+            _hudPanel = hudPanel;
         }
 
         protected override void Initialize()
         {
+            base.Initialize();
+
             SubscribeOnItemsChanged();
+            SubscribeOnItemDropped();
+        }
+
+        private void SubscribeOnItemDropped()
+        {
+            _hudPanel.Instance.SelectedItem.OnButtonClicked.Subscribe(t => Drop(t).Forget()).AddTo(CompositeDisposable);
         }
 
         private void SubscribeOnItemsChanged()
@@ -93,7 +101,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
                 return true;
             }
 
-            if (_inventoryProfile.InventoryItems.Count >= _inventoryConfig.InventoryGrid.x * _inventoryConfig.InventoryGrid.y)
+            if (_inventoryProfile.InventoryItems.Count >= _inventoryConfig.InventoryCapacity)
             {
                 return false;
             }
@@ -129,38 +137,20 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             }
         }
 
-        public bool TryPut(MapItemBase item, Transform parent)
+        public bool TryPut(MapItem item)
         {
-            return item.Collider.enabled && TryPut(item.Id, item.Count, putObject);
-
-            async UniTask putObject()
-            {
-                item.Collider.enabled = false;
-                item.transform.parent = parent;
-                await item.transform.DOLocalMove(Vector3.zero, 0.5f).ToUniTask();
-                UnityEngine.Object.DestroyImmediate(item.gameObject);
-            }
+            return item.Collider.enabled && TryPut(item.ItemEntity.Id, item.ItemEntity.Count, () => _mapService.UnregisterMapItem(item));
         }
 
         public async UniTask Drop(string itemId)
         {
-            if (string.IsNullOrEmpty(itemId) || GetCharacterPosition == null || GetTargetDirection == null)
+            if (string.IsNullOrEmpty(itemId))
             {
                 return;
             }
 
-            var characterPosition = GetCharacterPosition.Invoke();
-            var targetDirection = GetTargetDirection.Invoke();
-            var item = UnityEngine.Object.Instantiate(_inventoryConfig.MapItemPrefab, _propsLayerTransform);
-            item.Count = 1;
-            item.Collider.enabled = false;
-            item.Id = itemId;
-            item.SpriteRenderer.sprite = _inventoryConfig[item.Id].Sprite;
-            _inventoryProfile.InventoryItems[item.Id].Value--;
-            item.transform.position = characterPosition;
-
-            await item.transform.DOMove(characterPosition + targetDirection * _statsService.DropDistance, 0.5f).SetEase(Ease.OutQuad).ToUniTask();
-            item.Collider.enabled = true;
+            _inventoryProfile.InventoryItems[itemId].Value--;
+            await _mapService.RegisterMapItem(new ItemEntity { Id = itemId, Count = 1 });
         }
 
         public bool Perform()
@@ -169,15 +159,16 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             {
                 return false;
             }
-            
+
             var result = false;
             var targetPosition = GetTargetPosition.Invoke();
             var item = _inventoryProfile.SelectedItem.Value;
             if (!string.IsNullOrEmpty(item))
             {
-                result = _inventoryConfig[item].Perform(_tilemapService.CurrentTilemap.Value, targetPosition);
+                var itemModel = _inventoryConfig[item];
+                result = itemModel.Perform(targetPosition);
 
-                if (result)
+                if (itemModel.IsCountable && result)
                 {
                     _inventoryProfile.InventoryItems[item].Value--;
                 }
