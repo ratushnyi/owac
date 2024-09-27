@@ -12,6 +12,7 @@ using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
 using UnityEngine.EventSystems;
 using InventoryProfile = TendedTarsier.Script.Modules.General.Profiles.Inventory.InventoryProfile;
+using MapProfile = TendedTarsier.Script.Modules.General.Profiles.Map.MapProfile;
 using StatsProfile = TendedTarsier.Script.Modules.General.Profiles.Stats.StatsProfile;
 
 namespace TendedTarsier.Script.Modules.Menu

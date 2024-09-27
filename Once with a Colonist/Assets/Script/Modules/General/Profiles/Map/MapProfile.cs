@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using MemoryPack;
-using UnityEngine;
-using Zenject;
-using TendedTarsier.Script.Modules.General.Services.Profile;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General.Configs;
+using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
+using TendedTarsier.Script.Modules.General.Services.Profile;
+using UnityEngine;
+using Zenject;
 
-namespace TendedTarsier.Script.Modules.General.Profiles.Tilemap
+namespace TendedTarsier.Script.Modules.General.Profiles.Map
 {
     [MemoryPackable(GenerateType.VersionTolerant)]
     public partial class MapProfile : ProfileBase

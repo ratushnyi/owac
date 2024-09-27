@@ -10,6 +10,7 @@ using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
 using TendedTarsier.Script.Modules.General.Services;
 using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General;
+using MapProfile = TendedTarsier.Script.Modules.General.Profiles.Map.MapProfile;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
 {

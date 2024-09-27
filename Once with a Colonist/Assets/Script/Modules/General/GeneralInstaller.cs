@@ -9,6 +9,7 @@ using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
 using TendedTarsier.Script.Modules.General.Profiles.Inventory;
 using TendedTarsier.Script.Modules.General.Services.Profile;
 using TendedTarsier.Script.Modules.General.Services.Input;
+using MapProfile = TendedTarsier.Script.Modules.General.Profiles.Map.MapProfile;
 
 namespace TendedTarsier.Script.Modules.General
 {
