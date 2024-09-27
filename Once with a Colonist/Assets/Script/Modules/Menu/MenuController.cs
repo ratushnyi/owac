@@ -80,7 +80,7 @@ namespace TendedTarsier.Script.Modules.Menu
 
         private void InitButtons()
         {
-            _continueButton.interactable = _statsProfile.StartDate != null;
+            _continueButton.interactable = _statsProfile.FirstStartDate != null;
             _continueButton.OnClickAsObservable().Subscribe(OnContinueButtonClick).AddTo(_compositeDisposable);
             _newGameButton.OnClickAsObservable().Subscribe(OnNewGameButtonClick).AddTo(_compositeDisposable);
             _exitButton.OnClickAsObservable().Subscribe(OnExitButtonClick).AddTo(_compositeDisposable);

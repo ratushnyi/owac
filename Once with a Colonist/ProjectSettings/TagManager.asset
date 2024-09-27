@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ground
   - Item
+  - Device
   layers:
   - Default
   - TransparentFX

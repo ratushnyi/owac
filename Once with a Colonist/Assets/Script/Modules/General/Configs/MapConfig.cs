@@ -11,14 +11,17 @@ namespace TendedTarsier.Script.Modules.General.Configs
     public class MapConfig : ScriptableObject
     {
         public TileBase this[TileModel.TileType type] => TileModelsList.FirstOrDefault(t => t.Type == type)?.Tile;
-        
+
         [field: SerializeField]
         public List<TileModel> TileModelsList { get; set; }
 
         [field: SerializeField]
         public ItemMapObject ItemMapObjectPrefab { get; set; }
-        
+
         [field: SerializeField]
         public List<ItemMapObject> ItemMapObjectsPreconditionList { get; set; } = new();
+
+        [field: SerializeField]
+        public float ItemMapActivationDelay { get; set; } = 1;
     }
 }

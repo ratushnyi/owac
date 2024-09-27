@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 
-namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
+namespace TendedTarsier.Script.Modules.Gameplay.Panels.Inventory
 {
     public class InventoryCellView : MonoBehaviour
     {

@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using TendedTarsier.Script.Modules.Gameplay.Panels.Inventory;
 using UnityEngine;
-using Zenject;
-using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 
 namespace TendedTarsier.Script.Modules.General.Configs

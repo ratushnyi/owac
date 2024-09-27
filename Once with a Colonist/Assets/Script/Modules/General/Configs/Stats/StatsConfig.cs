@@ -27,5 +27,11 @@ namespace TendedTarsier.Script.Modules.General.Configs.Stats
 
         [field: SerializeField]
         public int RunSpeed { get; set; } = 2;
+        
+        [field: SerializeField]
+        public float MovementSpeed { get; set; } = 2;
+
+        [field: SerializeField]
+        public int DropDistance { get; set; } = 3;
     }
 }

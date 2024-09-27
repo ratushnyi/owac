@@ -12,11 +12,13 @@ namespace TendedTarsier.Script.Modules.General.Profiles.Stats
     [MemoryPackable(GenerateType.VersionTolerant)]
     public partial class StatsProfile : ProfileBase
     {
-        private StatsConfig _config;
+        [MemoryPackIgnore]
+        public bool IsFirstStart => FirstStartDate == LastSaveDate;
+
         public override string Name => "Stats";
 
         [MemoryPackOrder(0)]
-        public DateTime? StartDate { get; set; }
+        public DateTime? FirstStartDate { get; set; }
 
         [MemoryPackOrder(1)]
         public DateTime? LastSaveDate { get; set; }

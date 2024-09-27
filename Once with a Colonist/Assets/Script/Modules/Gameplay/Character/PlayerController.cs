@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -11,6 +12,7 @@ using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General;
 using TendedTarsier.Script.Modules.General.Configs.Stats;
+using TendedTarsier.Script.Modules.General.Profiles.Stats;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Character
 {
@@ -34,18 +36,21 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         private int _currentSpeed;
         private int _soringLayerID;
         private float _runFeeDelay;
-        
+
         private StatsConfig _statsConfig;
         private MapService _mapService;
         private StatsService _statsService;
+        private StatsProfile _statsProfile;
         private InputService _inputService;
         private InventoryService _inventoryService;
         private TilemapService _tilemapService;
 
+        private IDisposable _useButtonDisposable;
         private readonly CompositeDisposable _compositeDisposable = new();
 
         [Inject]
         private void Construct(
+            StatsProfile statsProfile,
             StatsConfig statsConfig,
             MapService mapService,
             StatsService statsService,
@@ -53,6 +58,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             InventoryService inventoryService,
             TilemapService tilemapService)
         {
+            _statsProfile = statsProfile;
             _statsConfig = statsConfig;
             _mapService = mapService;
             _statsService = statsService;
@@ -64,14 +70,16 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         private void Start()
         {
             _inventoryService.GetTargetPosition = () => TargetPosition.Value;
-            _mapService.GetTargetDirection = () => TargetDirection.Value;
-            _mapService.GetPlayerTransform = () => transform;
+            _inventoryService.GetTargetDirection = () => TargetDirection.Value;
+            _inventoryService.GetPlayerPosition = () => transform.position;
+            _inventoryService.GetPlayerSortingLayerID = () => _soringLayerID;
             _mapService.GetPlayerSortingLayerID = () => _soringLayerID;
+            _mapService.GetPlayerTransform = () => transform;
 
-            if (!_statsService.IsFirstLoad)
+            if (!_statsProfile.IsFirstStart)
             {
-                transform.SetLocalPositionAndRotation(_statsService.PlayerPosition, Quaternion.identity);
-                ApplyLayer(_statsService.Layer, _statsService.SoringLayerID);
+                transform.SetLocalPositionAndRotation(_statsProfile.PlayerPosition, Quaternion.identity);
+                ApplyLayer(_statsProfile.Layer, _statsProfile.SoringLayerID);
             }
             else
             {
@@ -146,9 +154,16 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
                 .Subscribe(_ => OnSpeedChanged(false))
                 .AddTo(_compositeDisposable);
 
-            _inputService.OnXButtonPerformed
-                .Subscribe(_ => _inventoryService.Perform())
-                .AddTo(_compositeDisposable);
+            SubscribeOnUseInput(_inventoryService).AddTo(_compositeDisposable);
+        }
+
+        private IDisposable SubscribeOnUseInput(IPerformable performableEntity)
+        {
+            _useButtonDisposable?.Dispose();
+            _useButtonDisposable = _inputService.OnXButtonPerformed
+                .Subscribe(_ => performableEntity.Perform());
+
+            return _useButtonDisposable;
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -163,6 +178,10 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
                     var mapItem = other.GetComponent<ItemMapObject>();
                     _inventoryService.TryPut(mapItem);
                     break;
+                case GeneralConstants.DeviceTag:
+                    var deviceMapObject = other.GetComponent<DeviceMapObject>();
+                    SubscribeOnUseInput(deviceMapObject);
+                    break;
             }
         }
 
@@ -173,6 +192,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
                 case GeneralConstants.GroundTag:
                     var tilemap = other.GetComponent<Tilemap>();
                     _tilemapService.OnGroundExit(tilemap);
+                    break;
+                case GeneralConstants.DeviceTag:
+                    SubscribeOnUseInput(_inventoryService);
                     break;
             }
         }
@@ -218,7 +240,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
         private void UpdateVelocity()
         {
-            _rigidbody2D.velocity = _statsService.MovementSpeed * _currentSpeed * _moveDirection;
+            _rigidbody2D.velocity = _statsConfig.MovementSpeed * _currentSpeed * _moveDirection;
         }
 
         private Vector2 OnMove(Vector2 direction)

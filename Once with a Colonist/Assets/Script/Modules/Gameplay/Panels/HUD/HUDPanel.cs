@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TendedTarsier.Script.Modules.Gameplay.Panels.Inventory;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;

@@ -5,7 +5,6 @@ using UniRx;
 using UnityEngine;
 using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.HUD;
-using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Configs.Stats;
 using TendedTarsier.Script.Modules.General.Services;
 
@@ -15,26 +14,17 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
     public class StatsService : ServiceBase
     {
         private readonly HUDService _hudService;
-        private readonly GameplayConfig _gameplayConfig;
         private readonly StatsConfig _statsConfig;
         private readonly StatsProfile _statsProfile;
-        public float MovementSpeed => _gameplayConfig.MovementSpeed;
-        public int DropDistance => _gameplayConfig.DropDistance;
-        public Vector3 PlayerPosition => _statsProfile.PlayerPosition;
-        public bool IsFirstLoad => _statsProfile.StartDate == _statsProfile.LastSaveDate;
-        public int SoringLayerID => _statsProfile.SoringLayerID;
-        public int Layer => _statsProfile.Layer;
 
         private readonly Dictionary<StatType, IDisposable> _feeDisposables = new();
 
         public StatsService(
             HUDService hudService,
-            GameplayConfig gameplayConfig,
             StatsConfig statsConfig,
             StatsProfile statsProfile)
         {
             _hudService = hudService;
-            _gameplayConfig = gameplayConfig;
             _statsConfig = statsConfig;
             _statsProfile = statsProfile;
         }
@@ -162,7 +152,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
 
         public void OnSessionStarted()
         {
-            _statsProfile.StartDate ??= DateTime.UtcNow;
+            _statsProfile.FirstStartDate ??= DateTime.UtcNow;
             _statsProfile.LastSaveDate = DateTime.UtcNow;
             _statsProfile.Save();
         }
@@ -199,9 +189,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
                 return false;
             }
 
-            var experience = newValue - profileElement.Value.Value;
+            var experience = profileElement.Value.Value - newValue;
             profileElement.Value.Value = newValue;
-            profileElement.Experience.Value += experience;
+            profileElement.Experience.Value += Math.Max(experience, 0);
 
             return true;
         }
