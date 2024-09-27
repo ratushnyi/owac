@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using Zenject;
 using TendedTarsier.Script.Modules.General.Services;
-using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
 using TendedTarsier.Script.Modules.General;
 using TendedTarsier.Script.Modules.General.Configs;
 using MapProfile = TendedTarsier.Script.Modules.General.Profiles.Map.MapProfile;

@@ -14,7 +14,7 @@ using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Configs.Stats;
 using TendedTarsier.Script.Modules.General.Panels;
 using TendedTarsier.Script.Modules.General.Profiles.Inventory;
-using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
+using MapItemModel = TendedTarsier.Script.Modules.General.Profiles.Map.MapItemModel;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 {
@@ -23,7 +23,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
     {
         private readonly PanelLoader<HUDPanel> _hudPanel;
         private readonly MapService _mapService;
-        private readonly StatsService _statsService;
         private readonly StatsConfig _statsConfig;
         private readonly InventoryConfig _inventoryConfig;
         private readonly InventoryProfile _inventoryProfile;
@@ -37,14 +36,12 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             InventoryProfile inventoryProfile,
             InventoryConfig inventoryConfig,
             StatsConfig statsConfig,
-            StatsService statsService,
             MapService mapService,
             PanelLoader<HUDPanel> hudPanel)
         {
             _inventoryProfile = inventoryProfile;
             _inventoryConfig = inventoryConfig;
             _statsConfig = statsConfig;
-            _statsService = statsService;
             _mapService = mapService;
             _hudPanel = hudPanel;
         }

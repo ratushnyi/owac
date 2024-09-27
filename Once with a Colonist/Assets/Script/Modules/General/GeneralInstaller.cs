@@ -5,7 +5,6 @@ using TendedTarsier.Script.Utilities.Extensions;
 using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Configs.Stats;
 using TendedTarsier.Script.Modules.General.Profiles.Stats;
-using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
 using TendedTarsier.Script.Modules.General.Profiles.Inventory;
 using TendedTarsier.Script.Modules.General.Services.Profile;
 using TendedTarsier.Script.Modules.General.Services.Input;

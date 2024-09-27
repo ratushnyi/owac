@@ -3,7 +3,6 @@ using JetBrains.Annotations;
 using MemoryPack;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General.Configs;
-using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
 using TendedTarsier.Script.Modules.General.Services.Profile;
 using UnityEngine;
 using Zenject;
@@ -32,7 +31,8 @@ namespace TendedTarsier.Script.Modules.General.Profiles.Map
         {
             foreach (var mapItem in _mapConfig.ItemMapObjectsPreconditionList)
             {
-                MapItemsList.Add(new MapItemModel { Position = mapItem.transform.position, ItemEntity = mapItem.ItemEntity, SortingLayerID = mapItem.SpriteRenderer.sortingLayerID, LayerID = mapItem.gameObject.layer });
+                MapItemsList.Add(new MapItemModel
+                    { Position = mapItem.transform.position, ItemEntity = mapItem.ItemEntity, SortingLayerID = mapItem.SpriteRenderer.sortingLayerID, LayerID = mapItem.gameObject.layer });
             }
         }
     }

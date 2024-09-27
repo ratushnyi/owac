@@ -4,12 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Zenject;
-using TendedTarsier.Script.Modules.Gameplay.Character;
-using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
-using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
-using TendedTarsier.Script.Modules.General;
 using TendedTarsier.Script.Modules.General.Configs;
-using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
 using UnityEngine.EventSystems;
 using InventoryProfile = TendedTarsier.Script.Modules.General.Profiles.Inventory.InventoryProfile;
 using MapProfile = TendedTarsier.Script.Modules.General.Profiles.Map.MapProfile;
@@ -19,8 +14,6 @@ namespace TendedTarsier.Script.Modules.Menu
 {
     public class MenuController : MonoBehaviour
     {
-        private readonly CompositeDisposable _compositeDisposable = new CompositeDisposable();
-
         [SerializeField]
         private Image _background;
 
@@ -39,6 +32,8 @@ namespace TendedTarsier.Script.Modules.Menu
         private MenuConfig _menuConfig;
         private GeneralConfig _generalConfig;
         private EventSystem _eventSystem;
+
+        private readonly CompositeDisposable _compositeDisposable = new();
 
         [Inject]
         private void Construct(StatsProfile statsProfile,

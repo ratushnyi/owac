@@ -3,7 +3,7 @@ using UnityEngine;
 using Zenject;
 using TendedTarsier.Script.Utilities.Extensions;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
-using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
+using MapItemModel = TendedTarsier.Script.Modules.General.Profiles.Map.MapItemModel;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
 {

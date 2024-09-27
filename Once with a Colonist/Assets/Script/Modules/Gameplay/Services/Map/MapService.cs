@@ -6,10 +6,10 @@ using UnityEngine;
 using Zenject;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject;
-using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
 using TendedTarsier.Script.Modules.General.Services;
 using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General;
+using MapItemModel = TendedTarsier.Script.Modules.General.Profiles.Map.MapItemModel;
 using MapProfile = TendedTarsier.Script.Modules.General.Profiles.Map.MapProfile;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Map

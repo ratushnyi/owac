@@ -1,8 +1,8 @@
 using MemoryPack;
 using UnityEngine;
-using ItemEntity = TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items.ItemEntity;
+using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 
-namespace TendedTarsier.Script.Modules.General.Profiles.Tilemap
+namespace TendedTarsier.Script.Modules.General.Profiles.Map
 {
     [MemoryPackable]
     public partial class MapItemModel
