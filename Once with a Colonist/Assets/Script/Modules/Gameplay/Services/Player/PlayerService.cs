@@ -60,15 +60,11 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Player
         public override void Dispose()
         {
             base.Dispose();
-            _playerProfile.LastSaveDate = DateTime.UtcNow;
-            _playerProfile.Save();
-        }
-
-        public void UpdatePlayerMapModel()
-        {
             _playerProfile.PlayerMapModel.Position = PlayerPosition.Value;
             _playerProfile.PlayerMapModel.SortingLayerID = PlayerSortingLayerID.Value;
             _playerProfile.PlayerMapModel.LayerID = PlayerLayerID.Value;
+            _playerProfile.LastSaveDate = DateTime.UtcNow;
+            _playerProfile.Save();
         }
     }
 }

@@ -67,6 +67,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             _virtualCamera.Follow = transform;
             _currentSpeed = _playerConfig.WalkSpeed;
 
+            UpdateLayerData(gameObject.layer, _spriteRenderers[0].sortingLayerID);
+            UpdateTarget();
+
             SubscribeOnInput();
         }
 
@@ -261,20 +264,23 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         public void ApplyLayer(int layer, int sortingLayer)
         {
             gameObject.layer = layer;
-            _playerService.PlayerLayerID.Value = gameObject.layer;
-            _playerService.PlayerSortingLayerID.Value = sortingLayer;
 
             foreach (var spriteRenderer in _spriteRenderers)
             {
                 spriteRenderer.sortingLayerID = sortingLayer;
             }
 
-            _playerService.UpdatePlayerMapModel();
+            UpdateLayerData(layer, sortingLayer);
+        }
+
+        private void UpdateLayerData(int layer, int sortingLayer)
+        {
+            _playerService.PlayerLayerID.Value = layer;
+            _playerService.PlayerSortingLayerID.Value = sortingLayer;
         }
 
         private void OnDestroy()
         {
-            _playerService.UpdatePlayerMapModel();
             _compositeDisposable.Dispose();
         }
     }
