@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ground
   - Item
+  - Device
   layers:
   - Default
   - TransparentFX
@@ -51,4 +52,7 @@ TagManager:
     locked: 0
   - name: Layer 3
     uniqueID: 4189426099
+    locked: 0
+  - name: Overlay
+    uniqueID: 1943961081
     locked: 0

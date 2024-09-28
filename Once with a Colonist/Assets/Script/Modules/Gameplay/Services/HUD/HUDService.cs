@@ -8,9 +8,11 @@ using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using TendedTarsier.Script.Modules.General.Services;
 using TendedTarsier.Script.Modules.General.Services.Input;
 using TendedTarsier.Script.Modules.General.Services.Profile;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
+using TendedTarsier.Script.Modules.Gameplay.Panels.Inventory;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
+using TendedTarsier.Script.Modules.General.Configs;
+using TendedTarsier.Script.Modules.General.Configs.Stats;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
 {
@@ -54,11 +56,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
                 .AddTo(CompositeDisposable);
 
             _inputService.OnMenuButtonPerformed
-                .Subscribe(_ => OnMenuButtonClick())
-                .AddTo(CompositeDisposable);
-
-            _hudPanel.Instance.MenuButton
-                .OnClickAsObservable()
                 .Subscribe(_ => OnMenuButtonClick())
                 .AddTo(CompositeDisposable);
 

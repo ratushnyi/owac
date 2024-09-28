@@ -1,12 +1,13 @@
-using TendedTarsier.Script.Modules.Gameplay.Configs.Stats;
+using Cysharp.Threading.Tasks;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
+using TendedTarsier.Script.Modules.General.Configs.Stats;
 using UnityEngine;
 using Zenject;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Tools
 {
     [CreateAssetMenu(menuName = "Items/ToolBase", fileName = "ToolBase")]
-    public class ToolBase : ScriptableObject
+    public class ToolBase : ScriptableObject, IPerformable
     {
         [SerializeField]
         private StatType _statType;
@@ -23,9 +24,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Tools
             StatsService = statsService;
         }
 
-        public virtual bool Perform(Vector3Int targetPosition)
+        public virtual UniTask<bool> Perform()
         {
-            return UseResources();
+            return new UniTask<bool>(UseResources());
         }
     }
 }

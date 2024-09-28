@@ -4,12 +4,12 @@ using DG.Tweening;
 using JetBrains.Annotations;
 using UnityEngine;
 using Zenject;
-using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
-using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Inventory;
-using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
+using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject;
+using TendedTarsier.Script.Modules.Gameplay.Services.Player;
+using TendedTarsier.Script.Modules.General.Profiles.Map;
 using TendedTarsier.Script.Modules.General.Services;
+using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
@@ -17,29 +17,27 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
     [UsedImplicitly]
     public class MapService : ServiceBase
     {
-        public Func<Vector3Int> GetTargetDirection;
-        public Func<Transform> GetPlayerTransform;
-        public Func<int> GetPlayerSortingLayerID;
-
-        private readonly StatsService _statsService;
-        private readonly MapProfile _mapProfile;
         private readonly TilemapService _tilemapService;
+        private readonly PlayerService _playerService;
+        private readonly MapProfile _mapProfile;
+        private readonly MapConfig _mapConfig;
         private readonly InventoryConfig _inventoryConfig;
-        private readonly Transform _propsLayerTransform;
+        private readonly Transform _mapItemsContainer;
 
         private MapService(
-            [Inject(Id = GeneralConstants.MapItemsContainerTransformId)] 
-            Transform propsLayerTransform,
+            [Inject(Id = GeneralConstants.MapItemsContainerTransformId)] Transform mapItemsContainer,
             InventoryConfig inventoryConfig,
+            MapConfig mapConfig,
             MapProfile mapProfile,
-            TilemapService tilemapService,
-            StatsService statsService)
+            PlayerService playerService,
+            TilemapService tilemapService)
         {
-            _propsLayerTransform = propsLayerTransform;
+            _mapItemsContainer = mapItemsContainer;
             _inventoryConfig = inventoryConfig;
+            _mapConfig = mapConfig;
             _mapProfile = mapProfile;
+            _playerService = playerService;
             _tilemapService = tilemapService;
-            _statsService = statsService;
         }
 
         protected override void Initialize()
@@ -53,62 +51,54 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
         {
             foreach (var mapItem in _mapProfile.MapItemsList)
             {
-                var item = UnityEngine.Object.Instantiate(_inventoryConfig.MapItemPrefab, _propsLayerTransform);
-                item.ItemEntity = mapItem.ItemEntity;
-                item.SpriteRenderer.sprite = _inventoryConfig[mapItem.ItemEntity.Id].Sprite;
-                item.SpriteRenderer.sortingLayerID = mapItem.SortingLayerID;
-                item.transform.position = mapItem.Position;
-                item.gameObject.layer = mapItem.LayerID;
+                var item = UnityEngine.Object.Instantiate(_mapConfig.ItemMapObjectPrefab, _mapItemsContainer);
+                item.Setup(_inventoryConfig[mapItem.ItemEntity.Id], mapItem, mapItem.Position);
+                item.Init(mapItem.LayerID, mapItem.SortingLayerID, _mapConfig.ItemMapActivationDelay);
             }
         }
 
-        public async UniTask RegisterMapItem(ItemEntity itemEntity)
+        public async UniTask DropMapItem(ItemMapModel itemMapModel, Vector3 emitterPosition, Vector3 targetPosition)
         {
-            var playerTransform = GetPlayerTransform.Invoke();
-            var targetDirection = GetTargetDirection.Invoke();
-            var playerSortingLayer = GetPlayerSortingLayerID.Invoke();
-
-            var item = UnityEngine.Object.Instantiate(_inventoryConfig.MapItemPrefab, _propsLayerTransform);
-            item.ItemEntity.Count = 1;
-            item.Collider.enabled = false;
-            item.ItemEntity = itemEntity;
-            item.SpriteRenderer.sprite = _inventoryConfig[itemEntity.Id].Sprite;
-            item.SpriteRenderer.sortingLayerID = playerSortingLayer;
-            item.transform.position = playerTransform.position;
-            var targetPosition = playerTransform.position + targetDirection * _statsService.DropDistance;
             var tilemap = _tilemapService.GetTilemap(new Vector2Int(Mathf.CeilToInt(targetPosition.x), Mathf.CeilToInt(targetPosition.y)));
-            var sortingLayerID = SortingLayer.NameToID(tilemap.GetComponent<Renderer>().sortingLayerName);
-            await item.transform.DOMove(targetPosition, 0.5f).SetEase(Ease.OutQuad).ToUniTask();
-            item.SpriteRenderer.sortingLayerID = sortingLayerID;
-            item.gameObject.layer = tilemap.gameObject.layer;
-            item.Collider.enabled = true;
-            _mapProfile.MapItemsList.Add(new MapItemModel
+            if (tilemap == null)
             {
-                Position = item.transform.position,
-                ItemEntity = itemEntity,
-                SortingLayerID = sortingLayerID
-            });
+                return;
+            }
+
+            _mapProfile.MapItemsList.Add(itemMapModel);
             _mapProfile.Save();
+
+            var item = UnityEngine.Object.Instantiate(_mapConfig.ItemMapObjectPrefab, _mapItemsContainer);
+            item.Setup(_inventoryConfig[itemMapModel.ItemEntity.Id], itemMapModel, emitterPosition);
+            await item.DoMove(targetPosition);
+            var sortingLayer = SortingLayer.NameToID(tilemap.GetComponent<Renderer>().sortingLayerName);
+            item.Init(tilemap.gameObject.layer, sortingLayer, _mapConfig.ItemMapActivationDelay);
         }
 
-        public async UniTask UnregisterMapItem(MapItem.MapItem item)
+        public async UniTask RemoveMapItem(ItemMapObject objectBase)
         {
-            var index = _mapProfile.MapItemsList.FindIndex(t => t.ItemEntity.Equals(item.ItemEntity) && t.Position == item.transform.position);
+            var index = _mapProfile.MapItemsList.FindIndex(t => t.ItemEntity.Equals(objectBase.ItemEntity) && t.Position == objectBase.transform.position);
 
             if (index == -1)
             {
-                Debug.LogError($"{nameof(UnregisterMapItem)} failed. Item with ID {item.ItemEntity.Id} in position {item.transform.position} not found.");
+                Debug.LogError($"{nameof(RemoveMapItem)} failed. Item with ID {objectBase.ItemEntity.Id} in position {objectBase.transform.position} not found.");
                 return;
             }
 
             _mapProfile.MapItemsList.RemoveAt(index);
             _mapProfile.Save();
 
-            item.Collider.enabled = false;
-            item.transform.parent = GetPlayerTransform.Invoke();
-            item.SpriteRenderer.sortingLayerID = GetPlayerSortingLayerID.Invoke();
-            await item.transform.DOLocalMove(Vector3.zero, 0.5f).ToUniTask();
-            UnityEngine.Object.DestroyImmediate(item.gameObject);
+            objectBase.Collider.enabled = false;
+            objectBase.transform.parent = _playerService.PlayerController.transform;
+            objectBase.SpriteRenderer.sortingLayerID = _playerService.PlayerSortingLayerID.Value;
+            await objectBase.transform.DOLocalMove(Vector3.zero, 0.5f).ToUniTask();
+            UnityEngine.Object.DestroyImmediate(objectBase.gameObject);
+        }
+
+        public (UniTask awaiter, IDisposable disposable) ShowProgressBar(DeviceMapObject deviceMapObject, int rate)
+        {
+            var progressBar = UnityEngine.Object.Instantiate(_mapConfig.MapObjectProgressBarPrefab, deviceMapObject.ProgressBarContainer);
+            return (progressBar.ShowProgressBar(rate), progressBar);
         }
     }
 }

@@ -4,21 +4,17 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Zenject;
-using TendedTarsier.Script.Modules.Gameplay.Character;
-using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
-using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
-using TendedTarsier.Script.Modules.General;
-using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
+using TendedTarsier.Script.Modules.General.Configs;
+using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using UnityEngine.EventSystems;
 using InventoryProfile = TendedTarsier.Script.Modules.General.Profiles.Inventory.InventoryProfile;
+using MapProfile = TendedTarsier.Script.Modules.General.Profiles.Map.MapProfile;
 using StatsProfile = TendedTarsier.Script.Modules.General.Profiles.Stats.StatsProfile;
 
 namespace TendedTarsier.Script.Modules.Menu
 {
     public class MenuController : MonoBehaviour
     {
-        private readonly CompositeDisposable _compositeDisposable = new CompositeDisposable();
-
         [SerializeField]
         private Image _background;
 
@@ -31,6 +27,7 @@ namespace TendedTarsier.Script.Modules.Menu
         [SerializeField]
         private Button _exitButton;
 
+        private PlayerProfile _playerProfile;
         private StatsProfile _statsProfile;
         private MapProfile _mapProfile;
         private InventoryProfile _inventoryProfile;
@@ -38,14 +35,19 @@ namespace TendedTarsier.Script.Modules.Menu
         private GeneralConfig _generalConfig;
         private EventSystem _eventSystem;
 
+        private readonly CompositeDisposable _compositeDisposable = new();
+
         [Inject]
-        private void Construct(StatsProfile statsProfile,
+        private void Construct(
+            PlayerProfile playerProfile,
+            StatsProfile statsProfile,
             MapProfile mapProfile,
             InventoryProfile inventoryProfile,
             MenuConfig menuConfig,
             GeneralConfig generalConfig,
             EventSystem eventSystem)
         {
+            _playerProfile = playerProfile;
             _statsProfile = statsProfile;
             _mapProfile = mapProfile;
             _inventoryProfile = inventoryProfile;
@@ -79,7 +81,7 @@ namespace TendedTarsier.Script.Modules.Menu
 
         private void InitButtons()
         {
-            _continueButton.interactable = _statsProfile.StartDate != null;
+            _continueButton.interactable = _playerProfile.FirstStartDate != null;
             _continueButton.OnClickAsObservable().Subscribe(OnContinueButtonClick).AddTo(_compositeDisposable);
             _newGameButton.OnClickAsObservable().Subscribe(OnNewGameButtonClick).AddTo(_compositeDisposable);
             _exitButton.OnClickAsObservable().Subscribe(OnExitButtonClick).AddTo(_compositeDisposable);
@@ -93,6 +95,7 @@ namespace TendedTarsier.Script.Modules.Menu
 
         private void OnNewGameButtonClick(Unit _)
         {
+            _playerProfile.Clear();
             _statsProfile.Clear();
             _mapProfile.Clear();
             _inventoryProfile.Clear();

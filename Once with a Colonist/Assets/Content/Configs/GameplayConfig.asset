@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: GameplayConfig
   m_EditorClassIdentifier: 
   <MovementSpeed>k__BackingField: 2
-  <DropDistance>k__BackingField: 5
+  <DropDistance>k__BackingField: 2
   <EnergyRecoveryRate>k__BackingField: 10

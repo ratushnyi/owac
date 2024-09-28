@@ -6,9 +6,9 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using Zenject;
 using TendedTarsier.Script.Modules.General.Services;
-using TendedTarsier.Script.Modules.General.Profiles.Tilemap;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Tilemap;
 using TendedTarsier.Script.Modules.General;
+using TendedTarsier.Script.Modules.General.Configs;
+using MapProfile = TendedTarsier.Script.Modules.General.Profiles.Map.MapProfile;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
 {
@@ -19,7 +19,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
 
         private readonly ReactiveProperty<Tilemap> _currentTilemap = new();
         private readonly MapProfile _mapProfile;
-        private readonly TilemapConfig _tilemapConfig;
+        private readonly MapConfig _mapConfig;
         private readonly List<Tilemap> _tilemaps;
 
         private Vector3Int _lastTarget;
@@ -28,10 +28,10 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
             [Inject(Id = GeneralConstants.GroundTilemapsListId)] 
             List<Tilemap> tilemaps,
             MapProfile mapProfile,
-            TilemapConfig tilemapConfig)
+            MapConfig mapConfig)
         {
             _tilemaps = tilemaps;
-            _tilemapConfig = tilemapConfig;
+            _mapConfig = mapConfig;
             _mapProfile = mapProfile;
         }
 
@@ -49,7 +49,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
                 var tilemap = GetTilemap(changedTile.Key);
                 if (tilemap != null)
                 {
-                    tilemap.SetTile((Vector3Int)changedTile.Key, _tilemapConfig[changedTile.Value]);
+                    tilemap.SetTile((Vector3Int)changedTile.Key, _mapConfig[changedTile.Value]);
                 }
             }
         }
@@ -69,10 +69,10 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
 
         public void ChangedTile(Vector3Int chords, TileModel.TileType type)
         {
-            var tile = _tilemapConfig[type];
+            var tile = _mapConfig[type];
             if (tile == null)
             {
-                Debug.LogError($"{nameof(TilemapConfig)} does not contain a model for {type}");
+                Debug.LogError($"{nameof(MapConfig)} does not contain a model for {type}");
                 return;
             }
 
@@ -89,7 +89,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
             }
 
             var tile = _currentTilemap.Value.GetTile(chords);
-            var model = _tilemapConfig.TileModelsList.FirstOrDefault(t => t.Tile == tile);
+            var model = _mapConfig.TileModelsList.FirstOrDefault(t => t.Tile == tile);
 
             return model?.Type ?? TileModel.TileType.None;
         }

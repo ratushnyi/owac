@@ -198,12 +198,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _eventSystem: {fileID: 1651026451088510884}
-  _inventoryConfig: {fileID: 11400000, guid: 7381e0c11e3a147669df38ec813b0d28, type: 2}
-  _tilemapConfig: {fileID: 11400000, guid: 64f7cbd12842b4b44abac05e62cd0230, type: 2}
   _gameplayConfig: {fileID: 11400000, guid: 56b27b7ebda124fd9800526cb58cd2bb, type: 2}
-  _statsConfig: {fileID: 11400000, guid: c5adf31d4e8fb471884b73b6ce7814ca, type: 2}
-  _menuConfig: {fileID: 11400000, guid: d5e6f928d12924e2d89f3d7ddcb8672b, type: 2}
   _generalConfig: {fileID: 11400000, guid: dd4fb64bf7eff46d0823f236dd25e2ea, type: 2}
+  _inventoryConfig: {fileID: 11400000, guid: 7381e0c11e3a147669df38ec813b0d28, type: 2}
+  _mapConfig: {fileID: 11400000, guid: 64f7cbd12842b4b44abac05e62cd0230, type: 2}
+  _menuConfig: {fileID: 11400000, guid: d5e6f928d12924e2d89f3d7ddcb8672b, type: 2}
+  _statsConfig: {fileID: 11400000, guid: c5adf31d4e8fb471884b73b6ce7814ca, type: 2}
+  _playerConfig: {fileID: 11400000, guid: 3597becb1f0304a7f8b47b7918960051, type: 2}
 --- !u!1001 &4215933544263831939
 PrefabInstance:
   m_ObjectHideFlags: 0

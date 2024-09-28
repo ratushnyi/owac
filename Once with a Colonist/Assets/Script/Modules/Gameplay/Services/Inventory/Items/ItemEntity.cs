@@ -11,7 +11,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
         public string Id { get; set; }
 
         [field: SerializeField]
-        public int Count { get; set; }
+        public int Count { get; set; } = 1;
 
         public bool Equals(ItemEntity other)
         {

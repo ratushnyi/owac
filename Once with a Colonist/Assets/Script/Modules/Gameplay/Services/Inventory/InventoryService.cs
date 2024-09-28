@@ -1,40 +1,43 @@
 using System;
 using System.Linq;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using JetBrains.Annotations;
-using TendedTarsier.Script.Modules.Gameplay.Configs.Inventory;
 using UniRx;
-using UnityEngine;
 using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
+using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 using TendedTarsier.Script.Modules.Gameplay.Services.Map;
-using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapItem;
-using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
-using TendedTarsier.Script.Modules.General.Profiles.Inventory;
-using TendedTarsier.Script.Modules.General.Panels;
+using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject;
+using TendedTarsier.Script.Modules.Gameplay.Services.Player;
 using TendedTarsier.Script.Modules.General.Services;
-using ItemEntity = TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items.ItemEntity;
+using TendedTarsier.Script.Modules.General.Configs;
+using TendedTarsier.Script.Modules.General.Panels;
+using TendedTarsier.Script.Modules.General.Profiles.Inventory;
+using TendedTarsier.Script.Modules.General.Profiles.Map;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 {
     [UsedImplicitly]
-    public class InventoryService : ServiceBase
+    public class InventoryService : ServiceBase, IPerformable
     {
         private readonly PanelLoader<HUDPanel> _hudPanel;
         private readonly MapService _mapService;
+        private readonly PlayerService _playerService;
+        private readonly PlayerConfig _playerConfig;
         private readonly InventoryConfig _inventoryConfig;
         private readonly InventoryProfile _inventoryProfile;
-
-        public Func<Vector3Int> GetTargetPosition;
 
         private InventoryService(
             InventoryProfile inventoryProfile,
             InventoryConfig inventoryConfig,
+            PlayerConfig playerConfig,
+            PlayerService playerService,
             MapService mapService,
             PanelLoader<HUDPanel> hudPanel)
         {
             _inventoryProfile = inventoryProfile;
             _inventoryConfig = inventoryConfig;
+            _playerConfig = playerConfig;
+            _playerService = playerService;
             _mapService = mapService;
             _hudPanel = hudPanel;
         }
@@ -92,6 +95,26 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             }
         }
 
+        private async UniTask Drop(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId))
+            {
+                return;
+            }
+
+            _inventoryProfile.InventoryItems[itemId].Value--;
+
+            var playerPosition = _playerService.PlayerPosition.Value;
+            var targetPosition = playerPosition + _playerConfig.DropDistance * _playerService.TargetDirection.Value;
+            var mapItem = new ItemMapModel
+            {
+                ItemEntity = new ItemEntity { Id = itemId, Count = 1 },
+                SortingLayerID = _playerService.PlayerSortingLayerID.Value,
+                Position = targetPosition
+            };
+            await _mapService.DropMapItem(mapItem, playerPosition, targetPosition);
+        }
+
         public bool TryPut(string id, int count, Func<UniTask> beforeItemAdd = null)
         {
             var existItem = _inventoryProfile.InventoryItems.FirstOrDefault(t => t.Key == id);
@@ -137,36 +160,19 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             }
         }
 
-        public bool TryPut(MapItem item)
+        public bool TryPut(ItemMapObject item)
         {
-            return item.Collider.enabled && TryPut(item.ItemEntity.Id, item.ItemEntity.Count, () => _mapService.UnregisterMapItem(item));
+            return item.Collider.enabled && TryPut(item.ItemEntity.Id, item.ItemEntity.Count, () => _mapService.RemoveMapItem(item));
         }
 
-        public async UniTask Drop(string itemId)
+        public async UniTask<bool> Perform()
         {
-            if (string.IsNullOrEmpty(itemId))
-            {
-                return;
-            }
-
-            _inventoryProfile.InventoryItems[itemId].Value--;
-            await _mapService.RegisterMapItem(new ItemEntity { Id = itemId, Count = 1 });
-        }
-
-        public bool Perform()
-        {
-            if (GetTargetPosition == null)
-            {
-                return false;
-            }
-
             var result = false;
-            var targetPosition = GetTargetPosition.Invoke();
             var item = _inventoryProfile.SelectedItem.Value;
             if (!string.IsNullOrEmpty(item))
             {
                 var itemModel = _inventoryConfig[item];
-                result = itemModel.Perform(targetPosition);
+                result = await itemModel.Perform();
 
                 if (itemModel.IsCountable && result)
                 {
