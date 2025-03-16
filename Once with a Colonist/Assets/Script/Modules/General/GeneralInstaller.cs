@@ -8,6 +8,7 @@ using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using TendedTarsier.Script.Modules.General.Profiles.Inventory;
 using TendedTarsier.Script.Modules.General.Services.Profile;
 using TendedTarsier.Script.Modules.General.Services.Input;
+using Unity.Netcode;
 using MapProfile = TendedTarsier.Script.Modules.General.Profiles.Map.MapProfile;
 
 namespace TendedTarsier.Script.Modules.General
@@ -16,6 +17,8 @@ namespace TendedTarsier.Script.Modules.General
     {
         [SerializeField]
         private EventSystem _eventSystem;
+        [SerializeField]
+        private NetworkManager _networkManager;
         [Header("Configs")]
         [SerializeField]
         private GameplayConfig _gameplayConfig;
@@ -44,6 +47,7 @@ namespace TendedTarsier.Script.Modules.General
         {
             Container.Bind<GameplayInput>().FromNew().AsSingle();
             Container.Bind<EventSystem>().FromInstance(_eventSystem).AsSingle();
+            Container.Bind<NetworkManager>().FromInstance(_networkManager).AsSingle();
         }
 
         private void BindServices()

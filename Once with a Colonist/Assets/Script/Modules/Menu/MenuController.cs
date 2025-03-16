@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using Zenject;
 using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Profiles.Stats;
+using Unity.Netcode;
 using UnityEngine.EventSystems;
 using InventoryProfile = TendedTarsier.Script.Modules.General.Profiles.Inventory.InventoryProfile;
 using MapProfile = TendedTarsier.Script.Modules.General.Profiles.Map.MapProfile;
@@ -25,6 +26,9 @@ namespace TendedTarsier.Script.Modules.Menu
         private Button _newGameButton;
 
         [SerializeField]
+        private Button _joinGameButton;
+
+        [SerializeField]
         private Button _exitButton;
 
         private PlayerProfile _playerProfile;
@@ -34,6 +38,7 @@ namespace TendedTarsier.Script.Modules.Menu
         private MenuConfig _menuConfig;
         private GeneralConfig _generalConfig;
         private EventSystem _eventSystem;
+        private NetworkManager _networkManager;
 
         private readonly CompositeDisposable _compositeDisposable = new();
 
@@ -45,7 +50,8 @@ namespace TendedTarsier.Script.Modules.Menu
             InventoryProfile inventoryProfile,
             MenuConfig menuConfig,
             GeneralConfig generalConfig,
-            EventSystem eventSystem)
+            EventSystem eventSystem,
+            NetworkManager networkManager)
         {
             _playerProfile = playerProfile;
             _statsProfile = statsProfile;
@@ -54,6 +60,7 @@ namespace TendedTarsier.Script.Modules.Menu
             _menuConfig = menuConfig;
             _generalConfig = generalConfig;
             _eventSystem = eventSystem;
+            _networkManager = networkManager;
         }
 
         private void Start()
@@ -67,12 +74,14 @@ namespace TendedTarsier.Script.Modules.Menu
             _background.color = Color.black;
             _continueButton.targetGraphic.color = Color.clear;
             _newGameButton.targetGraphic.color = Color.clear;
+            _joinGameButton.targetGraphic.color = Color.clear;
             _exitButton.targetGraphic.color = Color.clear;
 
             var sequence = DOTween.Sequence();
             sequence.Append(_background.DOColor(_menuConfig.BackgroundFadeOutColor, _menuConfig.BackgroundFadeOutDuration));
             sequence.Join(_continueButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
             sequence.Join(_newGameButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
+            sequence.Join(_joinGameButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
             sequence.Join(_exitButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
             sequence.SetEase(_menuConfig.BackgroundFadeOutCurve);
 
@@ -84,13 +93,15 @@ namespace TendedTarsier.Script.Modules.Menu
             _continueButton.interactable = _playerProfile.FirstStartDate != null;
             _continueButton.OnClickAsObservable().Subscribe(OnContinueButtonClick).AddTo(_compositeDisposable);
             _newGameButton.OnClickAsObservable().Subscribe(OnNewGameButtonClick).AddTo(_compositeDisposable);
+            _joinGameButton.OnClickAsObservable().Subscribe(OnJoinGameButtonClick).AddTo(_compositeDisposable);
             _exitButton.OnClickAsObservable().Subscribe(OnExitButtonClick).AddTo(_compositeDisposable);
             _eventSystem.SetSelectedGameObject(_continueButton.interactable ? _continueButton.gameObject : _newGameButton.gameObject);
         }
 
         private void OnContinueButtonClick(Unit _)
         {
-            SceneManager.LoadScene(_generalConfig.GameplayScene);
+            _networkManager.StartHost();
+            _networkManager.SceneManager.LoadScene(_generalConfig.GameplayScene, LoadSceneMode.Single);
         }
 
         private void OnNewGameButtonClick(Unit _)
@@ -99,7 +110,14 @@ namespace TendedTarsier.Script.Modules.Menu
             _statsProfile.Clear();
             _mapProfile.Clear();
             _inventoryProfile.Clear();
-            SceneManager.LoadScene(_generalConfig.GameplayScene);
+            _networkManager.StartHost();
+            _networkManager.SceneManager.LoadScene(_generalConfig.GameplayScene, LoadSceneMode.Single);
+        }
+
+        private void OnJoinGameButtonClick(Unit _)
+        {
+            _networkManager.StartClient();
+            _networkManager.SceneManager.LoadScene(_generalConfig.GameplayScene, LoadSceneMode.Single);
         }
 
         private void OnExitButtonClick(Unit _)

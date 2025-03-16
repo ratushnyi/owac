@@ -6,8 +6,10 @@ using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using TendedTarsier.Script.Modules.General.Services;
 using UniRx;
+using Unity.Netcode;
 using UnityEngine;
 using Zenject;
+using Object = UnityEngine.Object;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Player
 {
@@ -25,22 +27,27 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Player
         private readonly PlayerProfile _playerProfile;
         private readonly PlayerConfig _playerConfig;
         private readonly DiContainer _container;
+        private readonly NetworkManager _networkManager;
 
         public PlayerService(
             [Inject(Id = GeneralConstants.MapItemsContainerTransformId)] Transform mapItemsContainer,
             PlayerProfile playerProfile,
             PlayerConfig playerConfig,
-            DiContainer container)
+            DiContainer container,
+            NetworkManager networkManager)
         {
             _mapItemsContainer = mapItemsContainer;
             _playerProfile = playerProfile;
             _playerConfig = playerConfig;
             _container = container;
+            _networkManager = networkManager;
         }
 
         protected override void Initialize()
         {
-            PlayerController = _container.InstantiatePrefabForComponent<PlayerController>(_playerConfig.PlayerPrefab, _mapItemsContainer);
+            PlayerController = Object.Instantiate(_playerConfig.PlayerPrefab, _mapItemsContainer);
+            _container.Inject(PlayerController);
+
             if (!_playerProfile.IsFirstStart)
             {
                 PlayerController.transform.SetLocalPositionAndRotation(_playerProfile.PlayerMapModel.Position, Quaternion.identity);

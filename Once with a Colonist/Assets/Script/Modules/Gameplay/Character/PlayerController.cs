@@ -13,10 +13,11 @@ using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General;
 using TendedTarsier.Script.Modules.General.Configs;
+using Unity.Netcode;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Character
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : NetworkBehaviour
     {
         private readonly int _directionAnimatorKey = Animator.StringToHash("Direction");
         private readonly int _isMovingAnimatorKey = Animator.StringToHash("IsMoving");
@@ -53,8 +54,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             TilemapService tilemapService,
             CinemachineVirtualCamera virtualCamera)
         {
-            _playerService = playerService;
             _playerConfig = playerConfig;
+            _playerService = playerService;
             _statsService = statsService;
             _inputService = inputService;
             _inventoryService = inventoryService;
@@ -92,9 +93,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             {
                 _playerService.TargetDirection.Value = Vector3Int.RoundToInt(_moveDirection);
             }
-
-            _tilemapService.ProcessTarget(
-                new Vector3Int(Mathf.FloorToInt(_playerService.PlayerPosition.Value.x), Mathf.RoundToInt(_playerService.PlayerPosition.Value.y)) + _playerService.TargetDirection.Value);
+            var target = new Vector3Int(Mathf.FloorToInt(_playerService.PlayerPosition.Value.x), Mathf.RoundToInt(_playerService.PlayerPosition.Value.y)) + _playerService.TargetDirection.Value;
+            _tilemapService.ProcessTarget(target);
         }
 
         private void UpdateSpeed()
@@ -194,6 +194,11 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
         private void OnSpeedChanged(bool isRunning)
         {
+            if (!IsOwner)
+            {
+                return;
+            }
+
             var newSpeedValue = _playerConfig.WalkSpeed;
             if (isRunning && _statsService.IsSuitable(_playerConfig.RunFee.Type, _playerConfig.RunFee.Value))
             {
@@ -211,6 +216,10 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
         private void ProcessMovement(Vector2 moveDirection)
         {
+            if (!IsOwner)
+            {
+                return;
+            }
             _moveDirection = OnMove(moveDirection);
             UpdateVelocity();
             _animator.SetBool(_isMovingAnimatorKey, _moveDirection.magnitude > 0);
@@ -279,9 +288,10 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             _playerService.PlayerSortingLayerID.Value = sortingLayer;
         }
 
-        private void OnDestroy()
+        public override void OnDestroy()
         {
             _compositeDisposable.Dispose();
+            base.OnDestroy();
         }
     }
 }
