@@ -23,10 +23,8 @@ namespace TendedTarsier.Script.Modules.General.Services.Profile
             _profiles = profiles;
         }
 
-        protected override void Initialize()
+        public override void Initialize()
         {
-            base.Initialize();
-
             RegisterFormatters();
             LoadSections();
         }
@@ -134,7 +132,6 @@ namespace TendedTarsier.Script.Modules.General.Services.Profile
 
         public override void Dispose()
         {
-            base.Dispose();
             SaveAll();
         }
     }

@@ -2,7 +2,6 @@ using JetBrains.Annotations;
 using UniRx;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using TendedTarsier.Script.Modules.General;
 using TendedTarsier.Script.Modules.General.Panels;
 using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using TendedTarsier.Script.Modules.General.Services;
@@ -10,9 +9,9 @@ using TendedTarsier.Script.Modules.General.Services.Input;
 using TendedTarsier.Script.Modules.General.Services.Profile;
 using TendedTarsier.Script.Modules.Gameplay.Panels.HUD;
 using TendedTarsier.Script.Modules.Gameplay.Panels.Inventory;
-using TendedTarsier.Script.Modules.Gameplay.Services.Inventory;
 using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Configs.Stats;
+using Unity.Netcode;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
 {
@@ -22,6 +21,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
         private readonly EventSystem _eventSystem;
         private readonly ProfileService _profileService;
         private readonly InputService _inputService;
+        private readonly NetworkManager _networkManager;
         private readonly GeneralConfig _generalConfig;
         private readonly PanelLoader<HUDPanel> _hudPanel;
         private readonly PanelLoader<InventoryPanel> _inventoryPanel;
@@ -31,21 +31,21 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
             ProfileService profileService,
             InputService inputService,
             GeneralConfig generalConfig,
+            NetworkManager networkManager,
             PanelLoader<InventoryPanel> inventoryPanel,
             PanelLoader<HUDPanel> hudPanel)
         {
             _inventoryPanel = inventoryPanel;
             _hudPanel = hudPanel;
             _generalConfig = generalConfig;
+            _networkManager = networkManager;
             _inputService = inputService;
             _profileService = profileService;
             _eventSystem = eventSystem;
         }
 
-        protected override void Initialize()
+        public override void Initialize()
         {
-            base.Initialize();
-
             SubscribeOnInput();
         }
 
@@ -79,7 +79,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
         private void OnMenuButtonClick()
         {
             _profileService.SaveAll();
-            SceneManager.LoadScene(_generalConfig.MenuScene);
+            _networkManager.SceneManager.LoadScene(_generalConfig.MenuScene, LoadSceneMode.Single);
         }
 
         public void ShowStatBar(StatType statType, StatModel statModel, StatProfileElement statProfile)

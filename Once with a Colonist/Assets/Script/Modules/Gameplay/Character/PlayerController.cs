@@ -13,6 +13,7 @@ using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General;
 using TendedTarsier.Script.Modules.General.Configs;
+using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using Unity.Netcode;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Character
@@ -33,6 +34,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
         private int _currentSpeed;
         private float _runFeeDelay;
 
+        private PlayerProfile _playerProfile;
         private PlayerConfig _playerConfig;
         private PlayerService _playerService;
         private StatsService _statsService;
@@ -46,6 +48,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
 
         [Inject]
         private void Construct(
+            PlayerProfile playerProfile,
             PlayerConfig playerConfig,
             PlayerService playerService,
             StatsService statsService,
@@ -54,6 +57,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             TilemapService tilemapService,
             CinemachineVirtualCamera virtualCamera)
         {
+            _playerProfile = playerProfile;
             _playerConfig = playerConfig;
             _playerService = playerService;
             _statsService = statsService;
@@ -63,18 +67,32 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
             _virtualCamera = virtualCamera;
         }
 
-        private void Start()
+        public void Initialize()
         {
+            if (!IsOwner)
+            {
+                return;
+            }
+
+            if (!_playerProfile.IsFirstStart)
+            {
+                transform.SetLocalPositionAndRotation(_playerProfile.PlayerMapModel.Position, Quaternion.identity);
+                ApplyLayer(_playerProfile.PlayerMapModel.LayerID, _playerProfile.PlayerMapModel.SortingLayerID);
+            }
+            else
+            {
+                UpdateLayerData(gameObject.layer, _spriteRenderers[0].sortingLayerID);
+            }
+
             _virtualCamera.Follow = transform;
             _currentSpeed = _playerConfig.WalkSpeed;
-
-            UpdateLayerData(gameObject.layer, _spriteRenderers[0].sortingLayerID);
-            UpdateTarget();
+            _rigidbody2D.simulated = true;
 
             SubscribeOnInput();
+            SubscribeOnUpdate();
         }
 
-        private void Update()
+        private void OnUpdate(long deltaTime)
         {
             UpdateTarget();
             UpdateSpeed();
@@ -112,6 +130,13 @@ namespace TendedTarsier.Script.Modules.Gameplay.Character
                     OnSpeedChanged(true);
                 }
             }
+        }
+
+        private void SubscribeOnUpdate()
+        {
+            Observable.EveryUpdate()
+                .Subscribe(OnUpdate)
+                .AddTo(_compositeDisposable);
         }
 
         private void SubscribeOnInput()

@@ -35,10 +35,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
             _mapProfile = mapProfile;
         }
 
-        protected override void Initialize()
+        public override void Initialize()
         {
-            base.Initialize();
-
             LoadTileMap();
         }
 

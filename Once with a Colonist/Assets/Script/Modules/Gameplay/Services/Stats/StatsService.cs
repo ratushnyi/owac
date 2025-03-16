@@ -28,9 +28,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
             _statsProfile = statsProfile;
         }
 
-        protected override void Initialize()
+        public override void Initialize()
         {
-            base.Initialize();
             InitializeProfile();
             InitializeStats();
             InitializeFees();

@@ -42,10 +42,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             _hudPanel = hudPanel;
         }
 
-        protected override void Initialize()
+        public override void Initialize()
         {
-            base.Initialize();
-
             SubscribeOnItemsChanged();
             SubscribeOnItemDropped();
         }

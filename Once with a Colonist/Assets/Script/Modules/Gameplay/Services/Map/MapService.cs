@@ -40,10 +40,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
             _tilemapService = tilemapService;
         }
 
-        protected override void Initialize()
+        public override void Initialize()
         {
-            base.Initialize();
-
             InitMapItems();
         }
 

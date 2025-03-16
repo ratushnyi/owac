@@ -17,14 +17,14 @@ using TendedTarsier.Script.Modules.General.Configs;
 
 namespace TendedTarsier.Script.Modules.Gameplay
 {
-    public class GameplayInstaller : MonoInstaller
+    public class GameplayInstaller : MonoInstaller, IInitializable
     {
         [Header("SceneObjects")]
         [SerializeField]
         private Transform _mapItemsContainerTransform;
         [SerializeField]
         private List<Tilemap> _groundTilemapsList;
-        
+
         [Header("System")]
         [SerializeField]
         private Canvas _gameplayCanvas;
@@ -47,6 +47,10 @@ namespace TendedTarsier.Script.Modules.Gameplay
             BindServices();
             BindPanels();
             BindSceneObjects();
+        }
+
+        public void Initialize()
+        {
             BindInventoryItems();
         }
 

@@ -1,15 +1,14 @@
 using System;
+using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
 using TendedTarsier.Script.Modules.Gameplay.Character;
 using TendedTarsier.Script.Modules.General;
-using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using TendedTarsier.Script.Modules.General.Services;
 using UniRx;
 using Unity.Netcode;
 using UnityEngine;
 using Zenject;
-using Object = UnityEngine.Object;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Player
 {
@@ -25,40 +24,39 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Player
 
         private readonly Transform _mapItemsContainer;
         private readonly PlayerProfile _playerProfile;
-        private readonly PlayerConfig _playerConfig;
         private readonly DiContainer _container;
         private readonly NetworkManager _networkManager;
 
         public PlayerService(
             [Inject(Id = GeneralConstants.MapItemsContainerTransformId)] Transform mapItemsContainer,
             PlayerProfile playerProfile,
-            PlayerConfig playerConfig,
             DiContainer container,
             NetworkManager networkManager)
         {
             _mapItemsContainer = mapItemsContainer;
             _playerProfile = playerProfile;
-            _playerConfig = playerConfig;
             _container = container;
             _networkManager = networkManager;
         }
 
-        protected override void Initialize()
+        public override void Initialize()
         {
-            PlayerController = Object.Instantiate(_playerConfig.PlayerPrefab, _mapItemsContainer);
-            _container.Inject(PlayerController);
-
-            if (!_playerProfile.IsFirstStart)
-            {
-                PlayerController.transform.SetLocalPositionAndRotation(_playerProfile.PlayerMapModel.Position, Quaternion.identity);
-                PlayerController.ApplyLayer(_playerProfile.PlayerMapModel.LayerID, _playerProfile.PlayerMapModel.SortingLayerID);
-            }
-
-            OnSessionStarted();
+            OnSessionStarted().Forget();
         }
 
-        public void OnSessionStarted()
+        private async UniTask InitializePlayer()
         {
+            await UniTask.WaitUntil(() => _networkManager.IsConnectedClient);
+            var playerObject = _networkManager.LocalClient.PlayerObject;
+            playerObject.TrySetParent(_mapItemsContainer);
+            PlayerController = playerObject.GetComponent<PlayerController>();
+            _container.Inject(PlayerController);
+            PlayerController.Initialize();
+        }
+
+        private async UniTaskVoid OnSessionStarted()
+        {
+            await InitializePlayer();
             _playerProfile.FirstStartDate ??= DateTime.UtcNow;
             _playerProfile.LastSaveDate = DateTime.UtcNow;
             _playerProfile.Save();
@@ -66,7 +64,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Player
 
         public override void Dispose()
         {
-            base.Dispose();
             _playerProfile.PlayerMapModel.Position = PlayerPosition.Value;
             _playerProfile.PlayerMapModel.SortingLayerID = PlayerSortingLayerID.Value;
             _playerProfile.PlayerMapModel.LayerID = PlayerLayerID.Value;

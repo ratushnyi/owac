@@ -43,10 +43,8 @@ namespace TendedTarsier.Script.Modules.General.Services.Input
             _gameplayInput = gameplayInput;
         }
 
-        protected override void Initialize()
+        public override void Initialize()
         {
-            base.Initialize();
-
             InitInput();
         }
 
