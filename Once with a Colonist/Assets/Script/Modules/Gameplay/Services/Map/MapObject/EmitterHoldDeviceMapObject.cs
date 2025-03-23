@@ -7,7 +7,6 @@ using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.General;
 using TendedTarsier.Script.Modules.General.Configs.Stats;
-using TendedTarsier.Script.Modules.General.Profiles.Map;
 using TendedTarsier.Script.Modules.General.Services.Input;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
@@ -70,19 +69,13 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
             }
 
             var targetPosition = transform.position + _direction.ToVector3() * _dropDistance;
-            var mapItem = new ItemMapModel
-            {
-                ItemEntity = _emissionItem,
-                SortingLayerID = SpriteRenderer.sortingLayerID,
-                Position = targetPosition
-            };
 
             if (!_statsService.ApplyValue(_statFeeModel.Type, _statFeeModel.Value))
             {
                 return false;
             }
 
-            _mapService.DropMapItem(mapItem, transform.position, targetPosition).Forget();
+            _mapService.DropMapItem(_emissionItem, transform.position, targetPosition);
             return true;
         }
     }

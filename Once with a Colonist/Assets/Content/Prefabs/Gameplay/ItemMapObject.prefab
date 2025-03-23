@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3765728290932740880}
   - component: {fileID: 3765728290932740881}
   - component: {fileID: 3765728290932740886}
+  - component: {fileID: -8625290397940495385}
   - component: {fileID: 3765728290932740887}
   m_Layer: 20
   m_Name: ItemMapObject
@@ -121,6 +122,27 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.2
+--- !u!114 &-8625290397940495385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3765728290932740882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3452769139
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &3765728290932740887
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133,8 +155,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e7e479a33084f54872fab968a5458dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Collider>k__BackingField: {fileID: 3765728290932740886}
+  <SpriteRenderer>k__BackingField: {fileID: 3765728290932740881}
   <ItemEntity>k__BackingField:
     <Id>k__BackingField: 
     <Count>k__BackingField: 0
-  <Collider>k__BackingField: {fileID: 3765728290932740886}
-  <SpriteRenderer>k__BackingField: {fileID: 3765728290932740881}

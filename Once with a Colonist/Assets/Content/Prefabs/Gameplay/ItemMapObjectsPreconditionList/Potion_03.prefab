@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &5056016028977369200
+--- !u!1001 &5732893852527704838
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -11,22 +11,22 @@ PrefabInstance:
     - target: {fileID: -8625290397940495385, guid: 8e2434e0be2cd4d9db683ada4a2367cc,
         type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 469518133
+      value: 692640398
       objectReference: {fileID: 0}
     - target: {fileID: -8625290397940495385, guid: 8e2434e0be2cd4d9db683ada4a2367cc,
         type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
-      value: 1131501468
+      value: 1762293326
       objectReference: {fileID: 0}
     - target: {fileID: 3765728290932740880, guid: 8e2434e0be2cd4d9db683ada4a2367cc,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.9
+      value: 8.53
       objectReference: {fileID: 0}
     - target: {fileID: 3765728290932740880, guid: 8e2434e0be2cd4d9db683ada4a2367cc,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.56
+      value: -8.04
       objectReference: {fileID: 0}
     - target: {fileID: 3765728290932740880, guid: 8e2434e0be2cd4d9db683ada4a2367cc,
         type: 3}
@@ -72,7 +72,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -461933305, guid: a0c08e3576e6a474ca938b12645f8849,
+      objectReference: {fileID: 475387561, guid: a0c08e3576e6a474ca938b12645f8849,
         type: 3}
     - target: {fileID: 3765728290932740881, guid: 8e2434e0be2cd4d9db683ada4a2367cc,
         type: 3}
@@ -82,12 +82,12 @@ PrefabInstance:
     - target: {fileID: 3765728290932740882, guid: 8e2434e0be2cd4d9db683ada4a2367cc,
         type: 3}
       propertyPath: m_Name
-      value: StoneMaker
+      value: Potion_03
       objectReference: {fileID: 0}
     - target: {fileID: 3765728290932740887, guid: 8e2434e0be2cd4d9db683ada4a2367cc,
         type: 3}
       propertyPath: <ItemEntity>k__BackingField._id
-      value: stone_maker
+      value: potion
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -1,17 +1,29 @@
 using System;
 using MemoryPack;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
 {
     [Serializable, MemoryPackable]
-    public partial class ItemEntity : IEquatable<ItemEntity>
+    public partial class ItemEntity : IEquatable<ItemEntity>, INetworkSerializable
     {
-        [field: SerializeField]
-        public string Id { get; set; }
+        [SerializeField]
+        private string _id;
+        [SerializeField]
+        private int _count = 1;
 
-        [field: SerializeField]
-        public int Count { get; set; } = 1;
+         public string Id
+        {
+            get => _id;
+            set => _id = value;
+        }
+
+         public int Count
+        {
+            get => _count;
+            set => _count = value;
+        }
 
         public bool Equals(ItemEntity other)
         {
@@ -34,6 +46,12 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items
         public override int GetHashCode()
         {
             return HashCode.Combine(Id, Count);
+        }
+
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+        {
+            serializer.SerializeValue(ref _id);
+            serializer.SerializeValue(ref _count);
         }
     }
 }

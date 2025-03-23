@@ -2,7 +2,6 @@ using Cysharp.Threading.Tasks;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.General.Configs.Stats;
-using TendedTarsier.Script.Modules.General.Profiles.Map;
 using TendedTarsier.Script.Utilities.Extensions;
 using UnityEngine;
 using Zenject;
@@ -45,14 +44,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
             }
 
             var targetPosition = transform.position + _direction.ToVector3() * _dropDistance;
-            var mapItem = new ItemMapModel
-            {
-                ItemEntity = _emissionItem,
-                SortingLayerID = SpriteRenderer.sortingLayerID,
-                Position = targetPosition
-            };
-
-            _mapService.DropMapItem(mapItem, transform.position, targetPosition).Forget();
+            _mapService.DropMapItem(_emissionItem, transform.position, targetPosition);
             return true;
         }
     }
