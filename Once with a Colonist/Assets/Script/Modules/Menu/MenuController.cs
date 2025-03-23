@@ -8,6 +8,7 @@ using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using Unity.Netcode;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using InventoryProfile = TendedTarsier.Script.Modules.General.Profiles.Inventory.InventoryProfile;
 using MapProfile = TendedTarsier.Script.Modules.General.Profiles.Map.MapProfile;
 using StatsProfile = TendedTarsier.Script.Modules.General.Profiles.Stats.StatsProfile;
@@ -20,13 +21,13 @@ namespace TendedTarsier.Script.Modules.Menu
         private Image _background;
 
         [SerializeField]
-        private Button _continueButton;
+        private Button _loadWorldButton;
 
         [SerializeField]
-        private Button _newGameButton;
+        private Button _newWorldButton;
 
         [SerializeField]
-        private Button _joinGameButton;
+        private Button _joinWorldButton;
 
         [SerializeField]
         private Button _clearCacheButton;
@@ -75,17 +76,17 @@ namespace TendedTarsier.Script.Modules.Menu
         private void InitBackground()
         {
             _background.color = Color.black;
-            _continueButton.targetGraphic.color = Color.clear;
-            _newGameButton.targetGraphic.color = Color.clear;
-            _joinGameButton.targetGraphic.color = Color.clear;
+            _loadWorldButton.targetGraphic.color = Color.clear;
+            _newWorldButton.targetGraphic.color = Color.clear;
+            _joinWorldButton.targetGraphic.color = Color.clear;
             _clearCacheButton.targetGraphic.color = Color.clear;
             _exitButton.targetGraphic.color = Color.clear;
 
             var sequence = DOTween.Sequence();
             sequence.Append(_background.DOColor(_menuConfig.BackgroundFadeOutColor, _menuConfig.BackgroundFadeOutDuration));
-            sequence.Join(_continueButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
-            sequence.Join(_newGameButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
-            sequence.Join(_joinGameButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
+            sequence.Join(_loadWorldButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
+            sequence.Join(_newWorldButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
+            sequence.Join(_joinWorldButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
             sequence.Join(_clearCacheButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
             sequence.Join(_exitButton.targetGraphic.DOColor(Color.white, _menuConfig.BackgroundFadeOutDuration));
             sequence.SetEase(_menuConfig.BackgroundFadeOutCurve);
@@ -95,17 +96,19 @@ namespace TendedTarsier.Script.Modules.Menu
 
         private void InitButtons()
         {
-            _continueButton.interactable = _playerProfile.FirstStartDate != null;
-            _continueButton.OnClickAsObservable().Subscribe(_ => OnContinueButtonClick()).AddTo(_compositeDisposable);
-            _newGameButton.OnClickAsObservable().Subscribe(_ => OnNewGameButtonClick()).AddTo(_compositeDisposable);
-            _joinGameButton.OnClickAsObservable().Subscribe(_ => OnJoinGameButtonClick()).AddTo(_compositeDisposable);
+            _loadWorldButton.interactable = _playerProfile.FirstStartDate != null;
+            _clearCacheButton.interactable = _playerProfile.FirstStartDate != null;
+            _loadWorldButton.OnClickAsObservable().Subscribe(_ => OnContinueButtonClick()).AddTo(_compositeDisposable);
+            _newWorldButton.OnClickAsObservable().Subscribe(_ => OnNewGameButtonClick()).AddTo(_compositeDisposable);
+            _joinWorldButton.OnClickAsObservable().Subscribe(_ => OnJoinGameButtonClick()).AddTo(_compositeDisposable);
             _clearCacheButton.OnClickAsObservable().Subscribe(_ => OnClearCacheButtonClick()).AddTo(_compositeDisposable);
             _exitButton.OnClickAsObservable().Subscribe(_ => OnExitButtonClick()).AddTo(_compositeDisposable);
-            _eventSystem.SetSelectedGameObject(_continueButton.interactable ? _continueButton.gameObject : _newGameButton.gameObject);
+            _eventSystem.SetSelectedGameObject(_loadWorldButton.interactable ? _loadWorldButton.gameObject : _newWorldButton.gameObject);
         }
 
         private void OnContinueButtonClick()
         {
+            _networkManager.StartHost();
             _networkManager.SceneManager.LoadScene(_generalConfig.GameplayScene, LoadSceneMode.Single);
         }
 
@@ -123,7 +126,8 @@ namespace TendedTarsier.Script.Modules.Menu
 
         private void OnClearCacheButtonClick()
         {
-            _continueButton.interactable = false;
+            _loadWorldButton.interactable = false;
+            _clearCacheButton.interactable = false;
             _playerProfile.Clear();
             _statsProfile.Clear();
             _mapProfile.Clear();

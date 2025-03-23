@@ -79,7 +79,15 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
         private void OnMenuButtonClick()
         {
             _profileService.SaveAll();
-            _networkManager.SceneManager.LoadScene(_generalConfig.MenuScene, LoadSceneMode.Single);
+            _networkManager.Shutdown();
+            if (_networkManager.IsServer)
+            {
+                _networkManager.SceneManager.LoadScene(_generalConfig.MenuScene, LoadSceneMode.Single);
+            }
+            else
+            {
+                SceneManager.LoadScene(_generalConfig.MenuScene);
+            }
         }
 
         public void ShowStatBar(StatType statType, StatModel statModel, StatProfileElement statProfile)

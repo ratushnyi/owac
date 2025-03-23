@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 56361644}
   - component: {fileID: 56361643}
   m_Layer: 5
-  m_Name: JoinGameButton
+  m_Name: JoinWorldButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -403,7 +403,7 @@ GameObject:
   - component: {fileID: 594377012}
   - component: {fileID: 594377010}
   m_Layer: 5
-  m_Name: NewGameButton
+  m_Name: NewWorldButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -770,7 +770,7 @@ GameObject:
   - component: {fileID: 1113964070}
   - component: {fileID: 1113964068}
   m_Layer: 5
-  m_Name: ContinueButton
+  m_Name: LoadWorldButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -980,7 +980,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Game
+  m_text: New World
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1174,9 +1174,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _background: {fileID: 1270221671}
-  _continueButton: {fileID: 1113964068}
-  _newGameButton: {fileID: 594377010}
-  _joinGameButton: {fileID: 56361643}
+  _loadWorldButton: {fileID: 1113964068}
+  _newWorldButton: {fileID: 594377010}
+  _joinWorldButton: {fileID: 56361643}
   _clearCacheButton: {fileID: 1060247454}
   _exitButton: {fileID: 1719992935}
 --- !u!1 &1446312305
@@ -1191,7 +1191,7 @@ GameObject:
   - component: {fileID: 1446312308}
   - component: {fileID: 1446312307}
   m_Layer: 5
-  m_Name: JoinGameGroup
+  m_Name: JoinWorldGroup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1432,7 +1432,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Continue
+  m_text: Load World
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1538,8 +1538,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1113964067}
   - {fileID: 594377009}
+  - {fileID: 1113964067}
   - {fileID: 1446312306}
   - {fileID: 1719992934}
   m_Father: {fileID: 1287860034}
@@ -1632,7 +1632,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Join Game
+  m_text: Join World
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
