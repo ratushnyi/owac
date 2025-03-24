@@ -35,11 +35,22 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
             _inventoryConfig = inventoryConfig;
         }
 
-        private void Start()
+        protected override void OnNetworkInitialized()
         {
             Initialize().Forget();
         }
 
+        public void Setup(ItemMapModel itemMapModel, Vector3 basePosition, Vector3? targetPosition = null)
+        {
+            _itemMapModel.Value = itemMapModel;
+            _basePosition.Value = basePosition;
+            if (targetPosition.HasValue)
+            {
+                _targetPositionExist.Value = true;
+                _targetPosition.Value = targetPosition.Value;
+            }
+        }
+        
         private async UniTaskVoid Initialize()
         {
             Collider.enabled = false;
@@ -57,17 +68,6 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
             }
 
             Collider.enabled = true;
-        }
-
-        public void Setup(ItemMapModel itemMapModel, Vector3 basePosition, Vector3? targetPosition = null)
-        {
-            _itemMapModel.Value = itemMapModel;
-            _basePosition.Value = basePosition;
-            if (targetPosition.HasValue)
-            {
-                _targetPositionExist.Value = true;
-                _targetPosition.Value = targetPosition.Value;
-            }
         }
     }
 }

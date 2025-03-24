@@ -16,5 +16,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
         }
 
         public abstract UniTask<bool> Perform();
+        
+        protected override void OnNetworkInitialized()
+        {
+        }
     }
 }

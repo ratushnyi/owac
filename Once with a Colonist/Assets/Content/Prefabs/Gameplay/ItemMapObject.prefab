@@ -158,5 +158,5 @@ MonoBehaviour:
   <Collider>k__BackingField: {fileID: 3765728290932740886}
   <SpriteRenderer>k__BackingField: {fileID: 3765728290932740881}
   <ItemEntity>k__BackingField:
-    <Id>k__BackingField: 
-    <Count>k__BackingField: 0
+    _id: 
+    _count: 1

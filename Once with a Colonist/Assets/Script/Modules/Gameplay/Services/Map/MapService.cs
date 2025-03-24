@@ -4,7 +4,6 @@ using DG.Tweening;
 using JetBrains.Annotations;
 using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 using UnityEngine;
-using Zenject;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject;
 using TendedTarsier.Script.Modules.Gameplay.Services.Player;
@@ -23,22 +22,19 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
         private readonly PlayerService _playerService;
         private readonly MapProfile _mapProfile;
         private readonly MapConfig _mapConfig;
-        private readonly DiContainer _container;
 
         private MapService(
             MapConfig mapConfig,
             MapProfile mapProfile,
             PlayerService playerService,
             TilemapService tilemapService,
-            NetworkManager networkManager,
-            DiContainer container)
+            NetworkManager networkManager)
         {
             _mapConfig = mapConfig;
             _mapProfile = mapProfile;
             _playerService = playerService;
             _tilemapService = tilemapService;
             _networkManager = networkManager;
-            _container = container;
         }
 
         public override void Initialize()
@@ -56,11 +52,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
             {
                 var networkItem = _networkManager.SpawnManager.InstantiateAndSpawn(_mapConfig.ItemMapObjectPrefab);
                 var item = networkItem.GetComponent<ItemMapObject>();
-                _container.Inject(item);
                 item.Setup(mapItem, mapItem.Position);
             }
         }
-        
 
         public void DropMapItem(ItemEntity itemEntity, Vector3 emitterPosition, Vector3 targetPosition)
         {
@@ -80,10 +74,9 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
 
             _mapProfile.MapItemsList.Add(itemMapModel);
             _mapProfile.Save();
-            
+
             var networkItem = _networkManager.SpawnManager.InstantiateAndSpawn(_mapConfig.ItemMapObjectPrefab);
             var item = networkItem.GetComponent<ItemMapObject>();
-            _container.Inject(item);
             item.Setup(itemMapModel, emitterPosition, targetPosition);
         }
 
