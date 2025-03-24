@@ -80,24 +80,24 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
             item.Setup(itemMapModel, emitterPosition, targetPosition);
         }
 
-        public async UniTask RemoveMapItem(ItemMapObject objectBase)
+        public async UniTask RemoveMapItem(ItemMapObject item)
         {
-            var index = _mapProfile.MapItemsList.FindIndex(t => t.ItemEntity.Equals(objectBase.ItemEntity) && t.Position == objectBase.transform.position);
+            var index = _mapProfile.MapItemsList.FindIndex(t => t.ItemEntity.Equals(item.ItemEntity) && t.Position == item.transform.position);
 
             if (index == -1)
             {
-                Debug.LogError($"{nameof(RemoveMapItem)} failed. Item with ID {objectBase.ItemEntity.Id} in position {objectBase.transform.position} not found.");
+                Debug.LogError($"{nameof(RemoveMapItem)} failed. Item with ID {item.ItemEntity.Id} in position {item.transform.position} not found.");
                 return;
             }
 
             _mapProfile.MapItemsList.RemoveAt(index);
             _mapProfile.Save();
 
-            objectBase.Collider.enabled = false;
-            objectBase.transform.parent = _playerService.PlayerController.transform;
-            objectBase.SpriteRenderer.sortingLayerID = _playerService.PlayerSortingLayerID.Value;
-            await objectBase.transform.DOLocalMove(Vector3.zero, 0.5f).ToUniTask();
-            UnityEngine.Object.DestroyImmediate(objectBase.gameObject);
+            item.Collider.enabled = false;
+            item.transform.parent = _playerService.PlayerController.transform;
+            item.SpriteRenderer.sortingLayerID = _playerService.PlayerSortingLayerID.Value;
+            await item.transform.DOLocalMove(Vector3.zero, 0.5f).ToUniTask();
+            UnityEngine.Object.DestroyImmediate(item.gameObject);
         }
 
         public (UniTask awaiter, IDisposable disposable) ShowProgressBar(DeviceMapObject deviceMapObject, int rate)

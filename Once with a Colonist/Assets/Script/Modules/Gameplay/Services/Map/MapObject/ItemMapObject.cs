@@ -10,12 +10,12 @@ using Zenject;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
 {
-    public class ItemMapObject : MapObjectBase
+    public class ItemMapObject : NetworkInjectableMapObject
     {
         private readonly NetworkVariable<ItemMapModel> _itemMapModel = new();
         private readonly NetworkVariable<Vector3> _basePosition = new();
         private readonly NetworkVariable<Vector3> _targetPosition = new();
-        private readonly NetworkVariable<bool> _targetPositionExist = new();
+        private readonly NetworkVariable<bool> _isAnimatedToTargetMove = new();
 
         private Transform _mapItemsContainer;
         private MapConfig _mapConfig;
@@ -35,20 +35,22 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
             _inventoryConfig = inventoryConfig;
         }
 
-        protected override void OnNetworkInitialized()
+        protected override void OnNetworkObjectInjected()
         {
             Initialize().Forget();
         }
 
-        public void Setup(ItemMapModel itemMapModel, Vector3 basePosition, Vector3? targetPosition = null)
+        public void Setup(ItemMapModel itemMapModel, Vector3 basePosition)
         {
             _itemMapModel.Value = itemMapModel;
             _basePosition.Value = basePosition;
-            if (targetPosition.HasValue)
-            {
-                _targetPositionExist.Value = true;
-                _targetPosition.Value = targetPosition.Value;
-            }
+        }
+
+        public void Setup(ItemMapModel itemMapModel, Vector3 basePosition, Vector3 targetPosition)
+        {
+            Setup(itemMapModel, basePosition);
+            _targetPosition.Value = targetPosition;
+            _isAnimatedToTargetMove.Value = true;
         }
         
         private async UniTaskVoid Initialize()
@@ -62,7 +64,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
             transform.position = _basePosition.Value;
             tag = GeneralConstants.ItemTag;
 
-            if (_targetPositionExist.Value)
+            if (_isAnimatedToTargetMove.Value)
             {
                 await transform.DOMove(_targetPosition.Value, _mapConfig.ItemMapActivationDelay).SetEase(Ease.OutQuad).ToUniTask();
             }

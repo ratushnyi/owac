@@ -1,7 +1,5 @@
-using Cysharp.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
-using Zenject;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
 {
@@ -19,20 +17,5 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject
         {
             Collider.isTrigger = true;
         }
-
-        public override void OnNetworkSpawn()
-        {
-            base.OnNetworkSpawn();
-            InitializeNetworkObject().Forget();
-        }
-
-        private async UniTaskVoid InitializeNetworkObject()
-        {
-            await UniTask.Yield();
-            gameObject.AddComponent<ZenAutoInjecter>();
-            OnNetworkInitialized();
-        }
-
-        protected abstract void OnNetworkInitialized();
     }
 }
