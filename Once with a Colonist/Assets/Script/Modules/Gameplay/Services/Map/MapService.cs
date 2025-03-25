@@ -11,19 +11,21 @@ using TendedTarsier.Script.Modules.General.Profiles.Map;
 using TendedTarsier.Script.Modules.General.Services;
 using TendedTarsier.Script.Modules.General.Configs;
 using Unity.Netcode;
+using Zenject;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
 {
     [UsedImplicitly]
     public class MapService : ServiceBase
     {
-        private readonly NetworkManager _networkManager;
-        private readonly TilemapService _tilemapService;
-        private readonly PlayerService _playerService;
-        private readonly MapProfile _mapProfile;
-        private readonly MapConfig _mapConfig;
+        private NetworkManager _networkManager;
+        private TilemapService _tilemapService;
+        private PlayerService _playerService;
+        private MapProfile _mapProfile;
+        private MapConfig _mapConfig;
 
-        private MapService(
+        [Inject]
+        private void Construct(
             MapConfig mapConfig,
             MapProfile mapProfile,
             PlayerService playerService,

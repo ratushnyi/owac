@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.IO;
+using TendedTarsier.Script.Modules.General;
 using TendedTarsier.Script.Modules.General.Services.Profile;
 using UnityEditor;
 
@@ -13,9 +14,9 @@ namespace TendedTarsier.Script.Utilities
         [MenuItem(ProfileMenu + "Clean Profiles", false, 1)]
         private static void CleanProfiles()
         {
-            if (Directory.Exists(ProfileService.ProfilesDirectory))
+            if (Directory.Exists(GeneralConstants.ProfilesPath))
             {
-                Directory.Delete(ProfileService.ProfilesDirectory, true);
+                Directory.Delete(GeneralConstants.ProfilesPath, true);
             }
         }
     }

@@ -12,20 +12,22 @@ using TendedTarsier.Script.Modules.General.Services;
 using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Panels;
 using TendedTarsier.Script.Modules.General.Profiles.Inventory;
+using Zenject;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 {
     [UsedImplicitly]
     public class InventoryService : ServiceBase, IPerformable
     {
-        private readonly PanelLoader<HUDPanel> _hudPanel;
-        private readonly MapService _mapService;
-        private readonly PlayerService _playerService;
-        private readonly PlayerConfig _playerConfig;
-        private readonly InventoryConfig _inventoryConfig;
-        private readonly InventoryProfile _inventoryProfile;
+        private PanelLoader<HUDPanel> _hudPanel;
+        private MapService _mapService;
+        private PlayerService _playerService;
+        private PlayerConfig _playerConfig;
+        private InventoryConfig _inventoryConfig;
+        private InventoryProfile _inventoryProfile;
 
-        private InventoryService(
+        [Inject]
+        private void Construct(
             InventoryProfile inventoryProfile,
             InventoryConfig inventoryConfig,
             PlayerConfig playerConfig,

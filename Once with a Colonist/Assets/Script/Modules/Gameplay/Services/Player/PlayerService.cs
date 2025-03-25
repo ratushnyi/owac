@@ -15,19 +15,20 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Player
     [UsedImplicitly]
     public class PlayerService : ServiceBase
     {
-        public Vector3Int TargetPosition => new Vector3Int(Mathf.FloorToInt(PlayerPosition.Value.x), Mathf.RoundToInt(PlayerPosition.Value.y)) + TargetDirection.Value;
-        public PlayerController PlayerController { get; private set; }
         public readonly ReactiveProperty<Vector3Int> TargetDirection = new();
         public readonly ReactiveProperty<Vector3> PlayerPosition = new();
         public readonly ReactiveProperty<int> PlayerSortingLayerID = new();
         public readonly ReactiveProperty<int> PlayerLayerID = new();
+        public Vector3Int TargetPosition => new Vector3Int(Mathf.FloorToInt(PlayerPosition.Value.x), Mathf.RoundToInt(PlayerPosition.Value.y)) + TargetDirection.Value;
+        public PlayerController PlayerController { get; private set; }
 
-        private readonly Transform _mapItemsContainer;
-        private readonly PlayerProfile _playerProfile;
-        private readonly DiContainer _container;
-        private readonly NetworkManager _networkManager;
+        private Transform _mapItemsContainer;
+        private PlayerProfile _playerProfile;
+        private DiContainer _container;
+        private NetworkManager _networkManager;
 
-        public PlayerService(
+        [Inject]
+        private void Construct(
             [Inject(Id = GeneralConstants.MapItemsContainerTransformId)] Transform mapItemsContainer,
             PlayerProfile playerProfile,
             DiContainer container,

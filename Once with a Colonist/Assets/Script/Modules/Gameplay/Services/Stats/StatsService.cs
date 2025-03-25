@@ -6,19 +6,21 @@ using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.HUD;
 using TendedTarsier.Script.Modules.General.Configs.Stats;
 using TendedTarsier.Script.Modules.General.Services;
+using Zenject;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Stats
 {
     [UsedImplicitly]
     public class StatsService : ServiceBase
     {
-        private readonly HUDService _hudService;
-        private readonly StatsConfig _statsConfig;
-        private readonly StatsProfile _statsProfile;
-
         private readonly Dictionary<StatType, IDisposable> _feeDisposables = new();
 
-        public StatsService(
+        private HUDService _hudService;
+        private StatsConfig _statsConfig;
+        private StatsProfile _statsProfile;
+
+        [Inject]
+        private void Construct(
             HUDService hudService,
             StatsConfig statsConfig,
             StatsProfile statsProfile)

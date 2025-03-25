@@ -12,21 +12,23 @@ using TendedTarsier.Script.Modules.Gameplay.Panels.Inventory;
 using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Configs.Stats;
 using Unity.Netcode;
+using Zenject;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.HUD
 {
     [UsedImplicitly]
     public class HUDService : ServiceBase
     {
-        private readonly EventSystem _eventSystem;
-        private readonly ProfileService _profileService;
-        private readonly InputService _inputService;
-        private readonly NetworkManager _networkManager;
-        private readonly GeneralConfig _generalConfig;
-        private readonly PanelLoader<HUDPanel> _hudPanel;
-        private readonly PanelLoader<InventoryPanel> _inventoryPanel;
+        private EventSystem _eventSystem;
+        private ProfileService _profileService;
+        private InputService _inputService;
+        private NetworkManager _networkManager;
+        private GeneralConfig _generalConfig;
+        private PanelLoader<HUDPanel> _hudPanel;
+        private PanelLoader<InventoryPanel> _inventoryPanel;
 
-        public HUDService(
+        [Inject]
+        private void Construct(
             EventSystem eventSystem,
             ProfileService profileService,
             InputService inputService,

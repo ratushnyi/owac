@@ -19,6 +19,8 @@ namespace TendedTarsier.Script.Modules.General
         private EventSystem _eventSystem;
         [SerializeField]
         private NetworkManager _networkManager;
+        [SerializeField]
+        private NetworkObject _networkServiceHandler;
         [Header("Configs")]
         [SerializeField]
         private GameplayConfig _gameplayConfig;
@@ -47,13 +49,13 @@ namespace TendedTarsier.Script.Modules.General
         {
             Container.Bind<GameplayInput>().FromNew().AsSingle();
             Container.Bind<EventSystem>().FromInstance(_eventSystem).AsSingle();
-            Container.Bind<NetworkManager>().FromInstance(_networkManager).AsSingle();
+            Container.Bind<NetworkManager>().FromInstance(Instantiate(_networkManager)).AsSingle();
         }
 
         private void BindServices()
         {
-            Container.BindService<ProfileService>();
-            Container.BindService<InputService>();
+            Container.BindService<ProfileService>(_networkServiceHandler);
+            Container.BindService<InputService>(_networkServiceHandler);
         }
 
         private void BindProfiles()

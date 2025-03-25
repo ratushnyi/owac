@@ -14,6 +14,7 @@ using TendedTarsier.Script.Modules.Gameplay.Services.Stats;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.General;
 using TendedTarsier.Script.Modules.General.Configs;
+using Unity.Netcode;
 
 namespace TendedTarsier.Script.Modules.Gameplay
 {
@@ -32,6 +33,8 @@ namespace TendedTarsier.Script.Modules.Gameplay
         private Camera _gameplayCamera;
         [SerializeField]
         private CinemachineVirtualCamera _cinemachineCamera;
+        [SerializeField]
+        private NetworkObject _networkServiceHandler;
 
         [Header("Panels")]
         [SerializeField]
@@ -62,12 +65,12 @@ namespace TendedTarsier.Script.Modules.Gameplay
 
         private void BindServices()
         {
-            Container.BindService<TilemapService>();
-            Container.BindService<InventoryService>();
-            Container.BindService<HUDService>();
-            Container.BindService<StatsService>();
-            Container.BindService<MapService>();
-            Container.BindService<PlayerService>();
+            Container.BindService<TilemapService>(_networkServiceHandler);
+            Container.BindService<InventoryService>(_networkServiceHandler);
+            Container.BindService<HUDService>(_networkServiceHandler);
+            Container.BindService<StatsService>(_networkServiceHandler);
+            Container.BindService<MapService>(_networkServiceHandler);
+            Container.BindService<PlayerService>(_networkServiceHandler);
         }
 
         private void BindSystem()

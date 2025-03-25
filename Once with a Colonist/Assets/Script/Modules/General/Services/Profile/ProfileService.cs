@@ -8,17 +8,17 @@ using UniRx;
 using UnityEngine;
 using TendedTarsier.Script.Modules.General.Profiles.Stats;
 using TendedTarsier.Script.Utilities.MemoryPack.FormatterProviders;
+using Zenject;
 
 namespace TendedTarsier.Script.Modules.General.Services.Profile
 {
     [UsedImplicitly]
     public class ProfileService : ServiceBase
     {
-        public static readonly string ProfilesDirectory = Path.Combine(Application.persistentDataPath, GeneralConstants.ProfilesDirectory);
+        private List<IProfile> _profiles;
 
-        private readonly List<IProfile> _profiles;
-
-        public ProfileService(List<IProfile> profiles)
+        [Inject]
+        private void Construct(List<IProfile> profiles)
         {
             _profiles = profiles;
         }
@@ -98,9 +98,9 @@ namespace TendedTarsier.Script.Modules.General.Services.Profile
         {
             try
             {
-                if (!Directory.Exists(ProfilesDirectory))
+                if (!Directory.Exists(GeneralConstants.ProfilesPath))
                 {
-                    Directory.CreateDirectory(ProfilesDirectory);
+                    Directory.CreateDirectory(GeneralConstants.ProfilesPath);
                 }
 
                 var file = GetSectionPath(profile.Name);
@@ -124,10 +124,10 @@ namespace TendedTarsier.Script.Modules.General.Services.Profile
             Save(profile);
         }
 
-        private string GetSectionPath(string name)
+        private string GetSectionPath(string sectionName)
         {
-            var fileName = name + ".json";
-            return Path.Combine(ProfilesDirectory, fileName);
+            var fileName = sectionName + ".json";
+            return Path.Combine(GeneralConstants.ProfilesPath, fileName);
         }
 
         public override void Dispose()
