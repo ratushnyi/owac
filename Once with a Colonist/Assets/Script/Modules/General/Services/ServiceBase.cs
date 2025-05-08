@@ -1,18 +1,21 @@
 using System;
 using UniRx;
+using Unity.Netcode;
 using Zenject;
 
 namespace TendedTarsier.Script.Modules.General.Services
 {
-    public abstract class ServiceBase : IDisposable
+    public abstract class ServiceBase : NetworkBehaviour, IDisposable, IInitializable
     {
         protected readonly CompositeDisposable CompositeDisposable = new();
 
         [Inject]
-        protected virtual void Initialize()
+        private void Inject()
         {
             Observable.OnceApplicationQuit().Subscribe(_ => Terminate());
         }
+
+        public abstract void Initialize();
 
         private void Terminate()
         {
@@ -21,7 +24,7 @@ namespace TendedTarsier.Script.Modules.General.Services
 
         public virtual void Dispose()
         {
-            CompositeDisposable.Dispose();
+            CompositeDisposable?.Dispose();
         }
     }
 }

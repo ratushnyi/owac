@@ -16,24 +16,19 @@ MonoBehaviour:
   - <Type>k__BackingField: 1
     <Tile>k__BackingField: {fileID: 11400000, guid: 96945c2584c47b44ebe75d015b3cde49,
       type: 2}
-  <PlayerPrefab>k__BackingField: {fileID: 5628018141983903119, guid: ef67ba864d1ecc042b5f4cf48455c0a6,
-    type: 3}
-  <ItemMapObjectPrefab>k__BackingField: {fileID: 3765728290932740887, guid: 8e2434e0be2cd4d9db683ada4a2367cc,
+  <ItemMapObjectPrefab>k__BackingField: {fileID: -8625290397940495385, guid: 8e2434e0be2cd4d9db683ada4a2367cc,
     type: 3}
   <MapObjectProgressBarPrefab>k__BackingField: {fileID: 9059987416978826778, guid: 058fdbed7edde4c629ea0a746b5b2d2d,
     type: 3}
   <ItemMapObjectsPreconditionList>k__BackingField:
-  - {fileID: 2019831184311285507, guid: 934cb070ff97344cd95232352c598133, type: 3}
-  - {fileID: 4471342278155799437, guid: 008dad82a734d4f4bb43d74b3674d4e4, type: 3}
-  - {fileID: 1542234645510507478, guid: a5bc51028838c49e1a73ace1397fadbe, type: 3}
-  - {fileID: 7861597345361840763, guid: 695012066aeb44d61b5633ac0ac83689, type: 3}
-  - {fileID: 2105207435361332622, guid: d54c466e1878040b899adebf191a0253, type: 3}
-  - {fileID: 2350275259587898902, guid: e09be341df3834cafa40f1f6e62b02ae, type: 3}
-  - {fileID: 1705366151952388823, guid: 106578b1ba48943da93dac99299c05e7, type: 3}
-  - {fileID: 184742999379730014, guid: f093854eedf1c46fdb39d624ab9647f4, type: 3}
-  - {fileID: 4486556494704750065, guid: d7315c23a504c41e187ba03c20305617, type: 3}
-  - {fileID: 7442606420551382516, guid: 0f2a2bf3b376249ebb398abf7b4fd209, type: 3}
-  - {fileID: 4526989482147161236, guid: 7d57e193600f44ae5836152fe256922f, type: 3}
-  - {fileID: 1083984076694478487, guid: e93a599a502fd45b08b96e753d395ba0, type: 3}
-  - {fileID: 6550659146289054198, guid: 6353b82b832214991a40e600044a709e, type: 3}
+  - {fileID: 8243872273242506087, guid: 6353b82b832214991a40e600044a709e, type: 3}
+  - {fileID: 6041366089585290143, guid: ea5a191a75ad4a3daa04e73ff15a8b48, type: 3}
+  - {fileID: 6370370639089998322, guid: 0be7cc43e8d2b52ea8bae3f2ed0ccd63, type: 3}
+  - {fileID: 8921025547975288849, guid: 9da6b93ac84b4a6d8a944f1a7fce396c, type: 3}
+  - {fileID: 298056212215775492, guid: a3be22ed74ed1a21c9b3771efd0facad, type: 3}
+  - {fileID: 6633764986162625314, guid: 5b2e341a4226968029a447f83a5233f8, type: 3}
+  - {fileID: 6853352841945468218, guid: e789cc866f1937cc6ad9403d4fd81105, type: 3}
+  - {fileID: 3514635883448369028, guid: 341f323f12f6560feb18b8132c69d4f3, type: 3}
+  - {fileID: 8253804273506230110, guid: 39f87fc001f059bb7ae9a4fc29782ac3, type: 3}
+  - {fileID: 4683943086601600447, guid: a73d2f553a2b66b07921927cdda862c3, type: 3}
   <ItemMapActivationDelay>k__BackingField: 1

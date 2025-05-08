@@ -15,18 +15,18 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
     [UsedImplicitly]
     public class TilemapService : ServiceBase
     {
-        public IReadOnlyReactiveProperty<Tilemap> CurrentTilemap => _currentTilemap;
-
         private readonly ReactiveProperty<Tilemap> _currentTilemap = new();
-        private readonly MapProfile _mapProfile;
-        private readonly MapConfig _mapConfig;
-        private readonly List<Tilemap> _tilemaps;
+        public IReadOnlyReactiveProperty<Tilemap> CurrentTilemap => _currentTilemap;
+        
+        private MapProfile _mapProfile;
+        private MapConfig _mapConfig;
+        private List<Tilemap> _tilemaps;
 
         private Vector3Int _lastTarget;
 
-        private TilemapService(
-            [Inject(Id = GeneralConstants.GroundTilemapsListId)] 
-            List<Tilemap> tilemaps,
+        [Inject]
+        private void Construct(
+            [Inject(Id = GeneralConstants.GroundTilemapsListId)] List<Tilemap> tilemaps,
             MapProfile mapProfile,
             MapConfig mapConfig)
         {
@@ -35,10 +35,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps
             _mapProfile = mapProfile;
         }
 
-        protected override void Initialize()
+        public override void Initialize()
         {
-            base.Initialize();
-
             LoadTileMap();
         }
 

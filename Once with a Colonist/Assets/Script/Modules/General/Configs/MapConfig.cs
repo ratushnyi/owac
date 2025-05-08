@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject;
+using Unity.Netcode;
 
 namespace TendedTarsier.Script.Modules.General.Configs
 {
@@ -16,7 +17,7 @@ namespace TendedTarsier.Script.Modules.General.Configs
         public List<TileModel> TileModelsList { get; set; }
 
         [field: SerializeField]
-        public ItemMapObject ItemMapObjectPrefab { get; set; }
+        public NetworkObject ItemMapObjectPrefab { get; set; }
 
         [field: SerializeField]
         public MapObjectProgressBar MapObjectProgressBarPrefab { get; set; }

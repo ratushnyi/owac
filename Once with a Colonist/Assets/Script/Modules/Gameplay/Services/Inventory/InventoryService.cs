@@ -12,21 +12,22 @@ using TendedTarsier.Script.Modules.General.Services;
 using TendedTarsier.Script.Modules.General.Configs;
 using TendedTarsier.Script.Modules.General.Panels;
 using TendedTarsier.Script.Modules.General.Profiles.Inventory;
-using TendedTarsier.Script.Modules.General.Profiles.Map;
+using Zenject;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 {
     [UsedImplicitly]
     public class InventoryService : ServiceBase, IPerformable
     {
-        private readonly PanelLoader<HUDPanel> _hudPanel;
-        private readonly MapService _mapService;
-        private readonly PlayerService _playerService;
-        private readonly PlayerConfig _playerConfig;
-        private readonly InventoryConfig _inventoryConfig;
-        private readonly InventoryProfile _inventoryProfile;
+        private PanelLoader<HUDPanel> _hudPanel;
+        private MapService _mapService;
+        private PlayerService _playerService;
+        private PlayerConfig _playerConfig;
+        private InventoryConfig _inventoryConfig;
+        private InventoryProfile _inventoryProfile;
 
-        private InventoryService(
+        [Inject]
+        private void Construct(
             InventoryProfile inventoryProfile,
             InventoryConfig inventoryConfig,
             PlayerConfig playerConfig,
@@ -42,17 +43,15 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             _hudPanel = hudPanel;
         }
 
-        protected override void Initialize()
+        public override void Initialize()
         {
-            base.Initialize();
-
             SubscribeOnItemsChanged();
             SubscribeOnItemDropped();
         }
 
         private void SubscribeOnItemDropped()
         {
-            _hudPanel.Instance.SelectedItem.OnButtonClicked.Subscribe(t => Drop(t).Forget()).AddTo(CompositeDisposable);
+            _hudPanel.Instance.SelectedItem.OnButtonClicked.Subscribe(Drop).AddTo(CompositeDisposable);
         }
 
         private void SubscribeOnItemsChanged()
@@ -95,7 +94,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             }
         }
 
-        private async UniTask Drop(string itemId)
+        private void Drop(string itemId)
         {
             if (string.IsNullOrEmpty(itemId))
             {
@@ -106,13 +105,8 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
 
             var playerPosition = _playerService.PlayerPosition.Value;
             var targetPosition = playerPosition + _playerConfig.DropDistance * _playerService.TargetDirection.Value;
-            var mapItem = new ItemMapModel
-            {
-                ItemEntity = new ItemEntity { Id = itemId, Count = 1 },
-                SortingLayerID = _playerService.PlayerSortingLayerID.Value,
-                Position = targetPosition
-            };
-            await _mapService.DropMapItem(mapItem, playerPosition, targetPosition);
+            var itemEntity = new ItemEntity { Id = itemId, Count = 1 };
+            _mapService.DropMapItem(itemEntity, playerPosition, targetPosition);
         }
 
         public bool TryPut(string id, int count, Func<UniTask> beforeItemAdd = null)
@@ -120,7 +114,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
             var existItem = _inventoryProfile.InventoryItems.FirstOrDefault(t => t.Key == id);
             if (existItem.Key != null)
             {
-                addExistItem();
+                addExistItem().Forget();
                 return true;
             }
 
@@ -129,10 +123,10 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
                 return false;
             }
 
-            addNewItem();
+            addNewItem().Forget();
             return true;
 
-            async void addExistItem()
+            async UniTask addExistItem()
             {
                 if (beforeItemAdd != null)
                 {
@@ -141,7 +135,7 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Inventory
                 existItem.Value.Value += count;
             }
 
-            async void addNewItem()
+            async UniTask addNewItem()
             {
                 if (beforeItemAdd != null)
                 {

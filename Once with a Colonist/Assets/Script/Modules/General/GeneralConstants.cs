@@ -1,7 +1,12 @@
+using System.IO;
+using UnityEngine;
+
 namespace TendedTarsier.Script.Modules.General
 {
     public static class GeneralConstants
     {
+        public static readonly string ProfilesPath = Path.Combine(Application.persistentDataPath, GeneralConstants.ProfilesDirectory);
+
         public const string GroundTilemapsListId = "ground_tilemaps_list";
         public const string MapItemsContainerTransformId = "map_items_container_transform";
         public const string PlayerTag = "Player";

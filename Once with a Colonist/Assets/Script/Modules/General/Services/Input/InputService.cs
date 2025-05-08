@@ -2,13 +2,14 @@ using System;
 using JetBrains.Annotations;
 using UniRx;
 using UnityEngine.InputSystem;
+using Zenject;
 
 namespace TendedTarsier.Script.Modules.General.Services.Input
 {
     [UsedImplicitly]
     public class InputService : ServiceBase
     {
-        private readonly GameplayInput _gameplayInput;
+        private GameplayInput _gameplayInput;
 
         public IObservable<InputAction.CallbackContext> OnLeftStickStarted { get; private set; }
         public IObservable<InputAction.CallbackContext> OnLeftStickPerformed { get; private set; }
@@ -38,15 +39,14 @@ namespace TendedTarsier.Script.Modules.General.Services.Input
         public IObservable<InputAction.CallbackContext> OnMenuButtonPerformed { get; private set; }
         public IObservable<InputAction.CallbackContext> OnMenuButtonCanceled { get; private set; }
 
-        public InputService(GameplayInput gameplayInput)
+        [Inject]
+        private void Construct(GameplayInput gameplayInput)
         {
             _gameplayInput = gameplayInput;
         }
 
-        protected override void Initialize()
+        public override void Initialize()
         {
-            base.Initialize();
-
             InitInput();
         }
 

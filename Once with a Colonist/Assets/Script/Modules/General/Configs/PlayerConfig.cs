@@ -1,4 +1,3 @@
-using TendedTarsier.Script.Modules.Gameplay.Character;
 using TendedTarsier.Script.Modules.General.Configs.Stats;
 using UnityEngine;
 
@@ -7,9 +6,6 @@ namespace TendedTarsier.Script.Modules.General.Configs
     [CreateAssetMenu(menuName = "Config/PlayerConfig", fileName = "PlayerConfig")]
     public class PlayerConfig : ScriptableObject
     {
-        [field: SerializeField]
-        public PlayerController PlayerPrefab { get; set; }
-
         [field: SerializeField]
         public StatFeeModel RunFee { get; set; }
 

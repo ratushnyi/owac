@@ -2,48 +2,49 @@ using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using JetBrains.Annotations;
+using TendedTarsier.Script.Modules.Gameplay.Services.Inventory.Items;
 using UnityEngine;
-using Zenject;
 using TendedTarsier.Script.Modules.Gameplay.Services.Tilemaps;
 using TendedTarsier.Script.Modules.Gameplay.Services.Map.MapObject;
 using TendedTarsier.Script.Modules.Gameplay.Services.Player;
 using TendedTarsier.Script.Modules.General.Profiles.Map;
 using TendedTarsier.Script.Modules.General.Services;
 using TendedTarsier.Script.Modules.General.Configs;
-using TendedTarsier.Script.Modules.General;
+using Unity.Netcode;
+using Zenject;
 
 namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
 {
     [UsedImplicitly]
     public class MapService : ServiceBase
     {
-        private readonly TilemapService _tilemapService;
-        private readonly PlayerService _playerService;
-        private readonly MapProfile _mapProfile;
-        private readonly MapConfig _mapConfig;
-        private readonly InventoryConfig _inventoryConfig;
-        private readonly Transform _mapItemsContainer;
+        private NetworkManager _networkManager;
+        private TilemapService _tilemapService;
+        private PlayerService _playerService;
+        private MapProfile _mapProfile;
+        private MapConfig _mapConfig;
 
-        private MapService(
-            [Inject(Id = GeneralConstants.MapItemsContainerTransformId)] Transform mapItemsContainer,
-            InventoryConfig inventoryConfig,
+        [Inject]
+        private void Construct(
             MapConfig mapConfig,
             MapProfile mapProfile,
             PlayerService playerService,
-            TilemapService tilemapService)
+            TilemapService tilemapService,
+            NetworkManager networkManager)
         {
-            _mapItemsContainer = mapItemsContainer;
-            _inventoryConfig = inventoryConfig;
             _mapConfig = mapConfig;
             _mapProfile = mapProfile;
             _playerService = playerService;
             _tilemapService = tilemapService;
+            _networkManager = networkManager;
         }
 
-        protected override void Initialize()
+        public override void Initialize()
         {
-            base.Initialize();
-
+            if (!_networkManager.IsServer)
+            {
+                return;
+            }
             InitMapItems();
         }
 
@@ -51,13 +52,13 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
         {
             foreach (var mapItem in _mapProfile.MapItemsList)
             {
-                var item = UnityEngine.Object.Instantiate(_mapConfig.ItemMapObjectPrefab, _mapItemsContainer);
-                item.Setup(_inventoryConfig[mapItem.ItemEntity.Id], mapItem, mapItem.Position);
-                item.Init(mapItem.LayerID, mapItem.SortingLayerID, _mapConfig.ItemMapActivationDelay);
+                var networkItem = _networkManager.SpawnManager.InstantiateAndSpawn(_mapConfig.ItemMapObjectPrefab);
+                var item = networkItem.GetComponent<ItemMapObject>();
+                item.Setup(mapItem, mapItem.Position);
             }
         }
 
-        public async UniTask DropMapItem(ItemMapModel itemMapModel, Vector3 emitterPosition, Vector3 targetPosition)
+        public void DropMapItem(ItemEntity itemEntity, Vector3 emitterPosition, Vector3 targetPosition)
         {
             var tilemap = _tilemapService.GetTilemap(new Vector2Int(Mathf.CeilToInt(targetPosition.x), Mathf.CeilToInt(targetPosition.y)));
             if (tilemap == null)
@@ -65,34 +66,40 @@ namespace TendedTarsier.Script.Modules.Gameplay.Services.Map
                 return;
             }
 
+            var itemMapModel = new ItemMapModel
+            {
+                SortingLayerID = SortingLayer.NameToID(tilemap.GetComponent<Renderer>().sortingLayerName),
+                LayerID = tilemap.gameObject.layer,
+                ItemEntity = itemEntity,
+                Position = targetPosition
+            };
+
             _mapProfile.MapItemsList.Add(itemMapModel);
             _mapProfile.Save();
 
-            var item = UnityEngine.Object.Instantiate(_mapConfig.ItemMapObjectPrefab, _mapItemsContainer);
-            item.Setup(_inventoryConfig[itemMapModel.ItemEntity.Id], itemMapModel, emitterPosition);
-            await item.DoMove(targetPosition);
-            var sortingLayer = SortingLayer.NameToID(tilemap.GetComponent<Renderer>().sortingLayerName);
-            item.Init(tilemap.gameObject.layer, sortingLayer, _mapConfig.ItemMapActivationDelay);
+            var networkItem = _networkManager.SpawnManager.InstantiateAndSpawn(_mapConfig.ItemMapObjectPrefab);
+            var item = networkItem.GetComponent<ItemMapObject>();
+            item.Setup(itemMapModel, emitterPosition, targetPosition);
         }
 
-        public async UniTask RemoveMapItem(ItemMapObject objectBase)
+        public async UniTask RemoveMapItem(ItemMapObject item)
         {
-            var index = _mapProfile.MapItemsList.FindIndex(t => t.ItemEntity.Equals(objectBase.ItemEntity) && t.Position == objectBase.transform.position);
+            var index = _mapProfile.MapItemsList.FindIndex(t => t.ItemEntity.Equals(item.ItemEntity) && t.Position == item.transform.position);
 
             if (index == -1)
             {
-                Debug.LogError($"{nameof(RemoveMapItem)} failed. Item with ID {objectBase.ItemEntity.Id} in position {objectBase.transform.position} not found.");
+                Debug.LogError($"{nameof(RemoveMapItem)} failed. Item with ID {item.ItemEntity.Id} in position {item.transform.position} not found.");
                 return;
             }
 
             _mapProfile.MapItemsList.RemoveAt(index);
             _mapProfile.Save();
 
-            objectBase.Collider.enabled = false;
-            objectBase.transform.parent = _playerService.PlayerController.transform;
-            objectBase.SpriteRenderer.sortingLayerID = _playerService.PlayerSortingLayerID.Value;
-            await objectBase.transform.DOLocalMove(Vector3.zero, 0.5f).ToUniTask();
-            UnityEngine.Object.DestroyImmediate(objectBase.gameObject);
+            item.Collider.enabled = false;
+            item.transform.parent = _playerService.PlayerController.transform;
+            item.SpriteRenderer.sortingLayerID = _playerService.PlayerSortingLayerID.Value;
+            await item.transform.DOLocalMove(Vector3.zero, 0.5f).ToUniTask();
+            UnityEngine.Object.DestroyImmediate(item.gameObject);
         }
 
         public (UniTask awaiter, IDisposable disposable) ShowProgressBar(DeviceMapObject deviceMapObject, int rate)
